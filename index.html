@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HiringCat QA Daily Checklist</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #16a34a;
+      --primary-light: #4ade80;
+      --primary-dark: #166534;
+      --accent: #2563eb;
+      --success: #00b894;
+      --danger: #e17055;
+      --warning: #f59e0b;
+      --skip: #94a3b8;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #172033;
+      --text-light: #64748b;
+      --border: #e8edf4;
+      --shadow: 0 4px 22px rgba(15, 23, 42, 0.07);
+      --radius: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px 16px 40px;
+      max-width: 860px;
+      margin: 0 auto;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, textarea, select { font: inherit; }
+    a { color: inherit; }
+
+    .hero {
+      background: linear-gradient(135deg, #16a34a 0%, #22c55e 48%, #2563eb 100%);
+      border-radius: 24px;
+      padding: 32px 24px 28px;
+      text-align: center;
+      color: white;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.11);
+    }
+    .hero::before { top: -60px; right: -60px; width: 160px; height: 160px; }
+    .hero::after { bottom: -40px; left: -40px; width: 120px; height: 120px; background: rgba(255,255,255,0.08); }
+    .hero h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      position: relative;
+      letter-spacing: 0;
+    }
+    .hero .tagline {
+      font-size: 0.95rem;
+      opacity: 0.93;
+      font-weight: 600;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .date-pill {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      padding: 8px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      position: relative;
+    }
+
+    .progress-card,
+    .setup-card,
+    .results-card,
+    .section {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .progress-card { padding: 20px; margin-bottom: 20px; }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .progress-header span { font-weight: 800; font-size: 0.95rem; }
+    .progress-pct { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+    .progress-track {
+      background: #eef2f7;
+      border-radius: 12px;
+      height: 14px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 12px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0%;
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .stat-chip {
+      text-align: center;
+      padding: 9px 8px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .stat-total { background: #ecfdf5; color: #166534; }
+    .stat-tested { background: #e8f4fd; color: #1d4ed8; }
+    .stat-pass { background: #e6f9f0; color: #00856a; }
+    .stat-fail { background: #fde8e4; color: #c44025; }
+    .stat-skip { background: #f0f0f5; color: #475569; }
+    .stat-num { display: block; font-size: 1.2rem; font-weight: 800; line-height: 1.1; }
+
+    .setup-card { padding: 18px; margin-bottom: 20px; }
+    .setup-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .setup-top h2 { font-size: 1rem; font-weight: 800; margin-bottom: 3px; }
+    .setup-top p { color: var(--text-light); font-size: 0.84rem; }
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .field input,
+    .task-notes {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #fbfdff;
+      color: var(--text);
+      border-radius: 10px;
+      min-height: 44px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .field input:focus,
+    .task-notes:focus {
+      border-color: rgba(37, 99, 235, 0.48);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.09);
+    }
+    .field small {
+      display: block;
+      color: var(--text-light);
+      font-size: 0.72rem;
+      margin-top: 5px;
+    }
+    .private-warning {
+      margin-top: 14px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      border-radius: 12px;
+      padding: 11px 13px;
+      font-size: 0.82rem;
+      font-weight: 650;
+    }
+
+    .section {
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+      touch-action: manipulation;
+    }
+    .section-header:hover { background: #fafcff; }
+    .section-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: white;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 1rem;
+      font-weight: 800;
+      flex: 1;
+      line-height: 1.3;
+    }
+    .section-header h2 small {
+      display: block;
+      font-weight: 600;
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .section-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      background: #eef2f7;
+      color: var(--text-light);
+      white-space: nowrap;
+    }
+    .section-badge.done {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .section-chevron {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      transition: transform 0.25s;
+    }
+    .section.collapsed .section-chevron { transform: rotate(-90deg); }
+    .section.collapsed .section-body { display: none; }
+    .section-body { padding: 0 20px 20px; }
+
+    .intro-text {
+      background: linear-gradient(135deg, #f8fafc, #eef6ff);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 0.88rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--primary-light);
+    }
+    .intro-text strong { color: var(--text); }
+
+    .task-card {
+      background: #fbfdff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .task {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .task-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      border: 2.5px solid #d7dde7;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: all 0.2s;
+      position: relative;
+      appearance: none;
+      -webkit-appearance: none;
+      background: white;
+      touch-action: manipulation;
+    }
+    .task-check:checked { background: var(--primary); border-color: var(--primary); }
+    .task-check:checked::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 7px;
+      width: 6px;
+      height: 11px;
+      border: solid white;
+      border-width: 0 2.5px 2.5px 0;
+      transform: rotate(45deg);
+    }
+    .task-content { flex: 1; min-width: 0; }
+    .task-title {
+      font-weight: 800;
+      font-size: 0.94rem;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .task-card.checked .task-title {
+      text-decoration: line-through;
+      color: var(--text-light);
+    }
+    .task-card.checked .steps,
+    .task-card.checked .expected,
+    .task-card.checked .link-row { opacity: 0.68; }
+
+    .link-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 4px 0 10px;
+    }
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 36px;
+      padding: 7px 13px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .link-btn:hover { transform: translateY(-1px); }
+    .link-dashboard { background: #ecfdf5; color: #15803d; border-color: #bbf7d0; }
+    .link-public { background: #e8f4fd; color: #1d4ed8; border-color: #bfdbfe; }
+    .link-settings { background: #f0eaff; color: #6d28d9; border-color: #ddd6fe; }
+    .link-danger { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+
+    .steps { list-style: none; padding: 0; }
+    .step {
+      display: flex;
+      gap: 10px;
+      padding: 5px 0;
+      font-size: 0.85rem;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #eef6ff;
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .expected {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: var(--text-light);
+    }
+    .expected strong { color: var(--text); }
+    .tip {
+      background: #fff8e6;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: #856404;
+      margin-top: 10px;
+      border: 1px solid #fde68a;
+    }
+
+    .verdict {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .verdict button {
+      flex: 1;
+      min-height: 42px;
+      padding: 8px 0;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      font-weight: 800;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      touch-action: manipulation;
+    }
+    .v-pass { background: #e6f9f0; color: #00856a; border-color: #c3efe0; }
+    .v-pass:hover, .v-pass.active { background: var(--success); color: white; border-color: var(--success); }
+    .v-fail { background: #fde8e4; color: #c44025; border-color: #f8d2ca; }
+    .v-fail:hover, .v-fail.active { background: var(--danger); color: white; border-color: var(--danger); }
+    .v-skip { background: #f0f0f5; color: #475569; border-color: #e0e0e8; }
+    .v-skip:hover, .v-skip.active { background: var(--skip); color: white; border-color: var(--skip); }
+    .notes-wrap { margin-top: 10px; }
+    .notes-wrap label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--text-light);
+    }
+    .task-notes {
+      resize: vertical;
+      min-height: 68px;
+      font-size: 0.84rem;
+    }
+
+    .results-card {
+      padding: 24px;
+      margin-top: 20px;
+      display: none;
+    }
+    .results-card h2 { font-size: 1.1rem; margin-bottom: 16px; }
+    .result-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-title { min-width: 0; }
+    .result-title strong { display: block; font-weight: 800; }
+    .result-title span { display: block; color: var(--text-light); font-size: 0.77rem; margin-top: 2px; }
+    .result-status {
+      font-weight: 800;
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .rs-pass { background: #e6f9f0; color: #00856a; }
+    .rs-fail { background: #fde8e4; color: #c44025; }
+    .rs-skip { background: #f0f0f5; color: #475569; }
+    .rs-none { background: #f0f0f5; color: #94a3b8; }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .btn-group .btn { flex: 1; }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: none;
+      font-size: 0.92rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      touch-action: manipulation;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-copy { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+    .btn-pdf { background: linear-gradient(135deg, #e17055, #f59e0b); color: white; }
+    .btn-reset {
+      background: #f0f0f5;
+      color: var(--text-light);
+      margin-top: 20px;
+      width: 100%;
+      font-size: 0.85rem;
+      padding: 12px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 680px) {
+      body { padding: 12px 10px 30px; }
+      .hero { padding: 24px 16px 22px; border-radius: 18px; }
+      .hero h1 { font-size: 1.4rem; }
+      .setup-top { display: block; }
+      .setup-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .stat-total { grid-column: span 2; }
+      .section-header { padding: 14px; gap: 10px; }
+      .section-body { padding: 0 14px 14px; }
+      .section-header h2 { font-size: 0.92rem; }
+      .section-badge { padding: 4px 9px; }
+      .task-card { padding: 14px; }
+      .verdict { flex-direction: column; }
+      .btn-group { flex-direction: column; }
+      .result-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>HiringCat QA Checklist</h1>
+    <p class="tagline" id="heroTagline">Hi QA Tester! Daily testing checklist</p>
+    <div class="date-pill" id="dateBar"></div>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-header">
+      <span>Your progress today</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-chip stat-total"><span class="stat-num" id="statTotal">0</span>Total</div>
+      <div class="stat-chip stat-tested"><span class="stat-num" id="statTested">0</span>Tested</div>
+      <div class="stat-chip stat-pass"><span class="stat-num" id="statPass">0</span>Passed</div>
+      <div class="stat-chip stat-fail"><span class="stat-num" id="statFail">0</span>Failed</div>
+      <div class="stat-chip stat-skip"><span class="stat-num" id="statSkip">0</span>Skipped</div>
+    </div>
+  </div>
+
+  <div class="setup-card">
+    <div class="setup-top">
+      <div>
+        <h2>Testing Setup</h2>
+        <p>Yahan sirf public test links aur non-secret data rakhein. Passwords, API keys, SMTP password, license key ya private token kabhi paste na karein.</p>
+      </div>
+    </div>
+    <div class="setup-grid">
+      <div class="field">
+        <label for="testerName">Tester name</label>
+        <input id="testerName" data-config="testerName" type="text" placeholder="QA Tester">
+      </div>
+      <div class="field">
+        <label for="appBase">HiringCat app URL</label>
+        <input id="appBase" data-config="appBase" type="url" placeholder="https://hiringcat.com" value="https://hiringcat.com">
+      </div>
+      <div class="field">
+        <label for="orgSlug">Organization slug</label>
+        <input id="orgSlug" data-config="orgSlug" type="text" placeholder="your-company">
+        <small>Example: hiringcat.com/careers/your-company</small>
+      </div>
+      <div class="field">
+        <label for="jobSlug">Job slug</label>
+        <input id="jobSlug" data-config="jobSlug" type="text" placeholder="frontend-developer">
+        <small>Example: hiringcat.com/apply/your-company/frontend-developer</small>
+      </div>
+      <div class="field">
+        <label for="customDomain">Custom domain</label>
+        <input id="customDomain" data-config="customDomain" type="url" placeholder="https://careers.company.com">
+      </div>
+      <div class="field">
+        <label for="testEmail">Test email</label>
+        <input id="testEmail" data-config="testEmail" type="email" placeholder="qa@example.com">
+      </div>
+    </div>
+    <div class="private-warning">
+      Important: Test credentials Loom ya public QA page mein show na karein. Fail mark karte waqt screenshot/video attach karna required hai.
+    </div>
+  </div>
+
+  <main id="sectionsRoot"></main>
+
+  <div class="results-card" id="resultsBox">
+    <h2>Today's Results</h2>
+    <div id="resultsList"></div>
+    <div class="btn-group">
+      <button class="btn btn-copy" onclick="copyResults()">Copy Report</button>
+      <button class="btn btn-pdf" onclick="downloadPDF()">Download PDF</button>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;">
+    <button class="btn btn-pdf" style="width:100%" onclick="downloadPDF()">Download PDF Report</button>
+  </div>
+  <button class="btn btn-reset" onclick="resetAll()">Reset All for Tomorrow</button>
+
+  <div class="footer">HiringCat QA System &middot; Static GitHub Pages checklist</div>
+
+  <script>
+    const now = new Date();
+    const dateOpts = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+    const dateStr = now.toLocaleDateString("en-US", dateOpts);
+    document.getElementById("dateBar").textContent = dateStr;
+
+    const storageKey = "hiringcat-qa-" + now.toISOString().slice(0, 10);
+    const configKey = "hiringcat-qa-config";
+    const DEFAULT_CONFIG = {
+      testerName: "QA Tester",
+      appBase: "https://hiringcat.com",
+      orgSlug: "",
+      jobSlug: "",
+      customDomain: "",
+      testEmail: ""
+    };
+
+    const SECTIONS = [
+      {
+        id: "login",
+        title: "Login / Signup",
+        subtitle: "Account access, errors, redirects",
+        colors: ["#16a34a", "#4ade80"],
+        intro: "Sab se pehle gate test karein. Agar login/signup toot gaya to baqi dashboard features test nahi honge.",
+        tasks: [
+          {
+            title: "Create a new account and reach dashboard",
+            links: [{ label: "Sign Up", url: "{{appBase}}/sign-up", type: "dashboard" }],
+            steps: [
+              "Open Sign Up page in a fresh browser or incognito window.",
+              "Use the private test email given by team. Do not write password in this QA page.",
+              "Complete email verification if required.",
+              "Confirm dashboard opens after signup."
+            ],
+            expected: "New user lands on dashboard/onboarding without blank screen, console crash, or wrong redirect."
+          },
+          {
+            title: "Sign in, wrong password, logout",
+            links: [{ label: "Sign In", url: "{{appBase}}/sign-in", type: "dashboard" }, { label: "Dashboard", url: "{{appBase}}/dashboard", type: "dashboard" }],
+            steps: [
+              "Try login with wrong password first.",
+              "Confirm clear error appears.",
+              "Login with correct private credentials.",
+              "Logout and confirm protected dashboard is not accessible without login."
+            ],
+            expected: "Wrong login shows error. Correct login opens dashboard. Logout blocks private pages."
+          }
+        ]
+      },
+      {
+        id: "onboarding",
+        title: "Onboarding / Organization Setup",
+        subtitle: "Company setup and first dashboard entry",
+        colors: ["#2563eb", "#60a5fa"],
+        intro: "New company setup ko simple school admission form jaisa test karein: name, URL slug, first job, then dashboard.",
+        tasks: [
+          {
+            title: "Create organization during onboarding",
+            links: [{ label: "Onboarding", url: "{{appBase}}/dashboard/onboarding", type: "dashboard" }],
+            steps: [
+              "Open onboarding after signup.",
+              "Add company/organization name.",
+              "Check slug auto-generation and manually edit it once.",
+              "Complete setup and confirm dashboard opens."
+            ],
+            expected: "Organization saves, duplicate/invalid slug shows helpful error, and dashboard shows selected organization."
+          },
+          {
+            title: "New account first job setup",
+            links: [{ label: "Create Job", url: "{{appBase}}/dashboard/jobs/new", type: "dashboard" }],
+            steps: [
+              "Start first job from onboarding or Create Job.",
+              "Add minimum required job details.",
+              "Save as draft once.",
+              "Reopen draft and confirm data is still there."
+            ],
+            expected: "Draft persists after refresh and can be reopened without losing title, description, rounds, or fields."
+          }
+        ]
+      },
+      {
+        id: "create-job",
+        title: "Create Job",
+        subtitle: "Job title, description, draft, publish",
+        colors: ["#7c3aed", "#a78bfa"],
+        intro: "Company job banati hai. Yeh HiringCat ka main admin flow hai, isliye validation aur save/publish dono test karna zaroori hai.",
+        tasks: [
+          {
+            title: "Create and publish a new job",
+            links: [{ label: "New Job", url: "{{appBase}}/dashboard/jobs/new", type: "dashboard" }, { label: "Jobs List", url: "{{appBase}}/dashboard/jobs", type: "dashboard" }],
+            steps: [
+              "Open Create Job.",
+              "Add title, description, location, workplace/job type, salary/range if available.",
+              "Use rich text editor: bold, list, link if present.",
+              "Click Publish."
+            ],
+            expected: "Job publishes as Live/Open, appears in jobs list, and public apply link is generated."
+          },
+          {
+            title: "Create job validation errors",
+            links: [{ label: "New Job", url: "{{appBase}}/dashboard/jobs/new", type: "dashboard" }],
+            steps: [
+              "Try publishing with empty title.",
+              "Try invalid or duplicate slug if slug field is visible.",
+              "Remove required description/details and publish again.",
+              "Check error placement near the field."
+            ],
+            expected: "Required fields show clear errors and invalid job is not published."
+          },
+          {
+            title: "Save draft, reopen, then publish",
+            links: [{ label: "Draft Jobs", url: "{{appBase}}/dashboard/jobs?status=draft", type: "dashboard" }],
+            steps: [
+              "Save job as Draft.",
+              "Refresh page or leave and come back from Draft tab.",
+              "Confirm draft data remains.",
+              "Publish draft and check it moves to Open/Live."
+            ],
+            expected: "Draft recovery works and publish does not duplicate the job."
+          }
+        ]
+      },
+      {
+        id: "application-fields",
+        title: "Application Form Fields",
+        subtitle: "Candidate profile, CV, custom fields",
+        colors: ["#0f766e", "#2dd4bf"],
+        intro: "Candidate se jo information leni hai, uski fields job ke andar set hoti hain. Required/optional behavior ko carefully test karein.",
+        tasks: [
+          {
+            title: "Enable default candidate fields",
+            links: [{ label: "Job Settings", url: "{{appBase}}/dashboard/jobs", type: "dashboard" }],
+            steps: [
+              "Open a job details/settings page.",
+              "Enable name, email, phone, CV, LinkedIn, and cover letter where available.",
+              "Set CV required once, then optional once.",
+              "Save changes and refresh."
+            ],
+            expected: "Selected fields save correctly and public apply form reflects the same required/optional settings."
+          },
+          {
+            title: "Add and test custom fields",
+            links: [{ label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Add custom fields: short text, long text, URL, number, date, dropdown, checkbox, and file upload.",
+              "Make at least one field required.",
+              "Open apply page and submit with missing required field.",
+              "Fill everything and submit again."
+            ],
+            expected: "Required custom fields block submission until completed. Filled custom values appear in candidate profile."
+          }
+        ]
+      },
+      {
+        id: "rounds",
+        title: "Rounds / Questions",
+        subtitle: "CV, video, audio, text, scoring rules",
+        colors: ["#ea580c", "#fb923c"],
+        intro: "Rounds HiringCat ka screening engine hain. Tester ko question type, required status, time limit, retake aur AI rule behavior dekhna hai.",
+        tasks: [
+          {
+            title: "Configure CV screening round",
+            links: [{ label: "Create Job", url: "{{appBase}}/dashboard/jobs/new", type: "dashboard" }],
+            steps: [
+              "Enable CV screening round.",
+              "Add basic screening rules like years of experience or required skill.",
+              "Upload a good CV during candidate test.",
+              "Upload a bad/unreadable CV during negative test."
+            ],
+            expected: "Good CV completes test. Bad/unreadable CV shows clear error and does not silently pass."
+          },
+          {
+            title: "Configure question types and required rules",
+            links: [{ label: "Job Questions", url: "{{appBase}}/dashboard/jobs", type: "dashboard" }],
+            steps: [
+              "Add video, audio, text, file upload, MCQ, rating, yes/no, dropdown, date, URL, number questions.",
+              "Set some questions required and some optional.",
+              "Set time limit and retake limit for video/audio.",
+              "Save and reopen job."
+            ],
+            expected: "All question types save and show on candidate flow with correct required/time/retake behavior."
+          },
+          {
+            title: "Round automation and scoring rules",
+            links: [{ label: "Automation Rules", url: "{{appBase}}/dashboard/settings/automation", type: "settings" }],
+            steps: [
+              "Add pass/fail or shortlist rule for a round if available.",
+              "Submit candidate answers that should pass.",
+              "Submit candidate answers that should fail.",
+              "Check candidate status and rule explanation."
+            ],
+            expected: "Rule result matches the configured logic and gives understandable explanation."
+          }
+        ]
+      },
+      {
+        id: "careers",
+        title: "Public Careers Page",
+        subtitle: "Open jobs, inactive jobs, branding",
+        colors: ["#0891b2", "#22d3ee"],
+        intro: "Careers page public hai. Yahan candidate company ke jobs dekh kar apply start karta hai.",
+        tasks: [
+          {
+            title: "Careers page shows only public jobs",
+            links: [{ label: "Careers Page", url: "{{careersUrl}}", type: "public" }],
+            steps: [
+              "Open careers page in logged-out browser.",
+              "Confirm published/open jobs are visible.",
+              "Confirm draft, paused, or closed jobs are hidden or disabled as expected.",
+              "Click a job card."
+            ],
+            expected: "Public careers page loads without login and job card opens correct apply page."
+          },
+          {
+            title: "Careers page branding and mobile layout",
+            links: [{ label: "Careers Settings", url: "{{appBase}}/dashboard/settings/careers", type: "settings" }, { label: "Branding", url: "{{appBase}}/dashboard/settings/branding", type: "settings" }],
+            steps: [
+              "Change logo, colors, hero/careers content, and template if available.",
+              "Open careers page on desktop.",
+              "Open same page on mobile width.",
+              "Check text, buttons, logo, and cards do not overlap."
+            ],
+            expected: "Branding changes reflect on public page and mobile layout remains readable."
+          }
+        ]
+      },
+      {
+        id: "apply",
+        title: "Candidate Apply Flow",
+        subtitle: "Name, email, CV, consent, submit",
+        colors: ["#dc2626", "#fb7185"],
+        intro: "Candidate ki taraf se complete apply flow test karein. Is flow se dashboard mein application create hoti hai.",
+        tasks: [
+          {
+            title: "Submit a normal candidate application",
+            links: [{ label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Open apply page logged out.",
+              "Fill candidate name and email.",
+              "Upload readable PDF/DOCX CV if required.",
+              "Accept consent checkbox and submit."
+            ],
+            expected: "Application starts/submits successfully and completion or next-question screen appears."
+          },
+          {
+            title: "Apply form negative cases",
+            links: [{ label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Submit with empty name.",
+              "Submit with invalid email.",
+              "Try missing required CV.",
+              "Try unsupported or unreadable CV file."
+            ],
+            expected: "Each invalid case shows clear error and candidate cannot continue until fixed."
+          },
+          {
+            title: "Candidate consent and privacy text",
+            links: [{ label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Open apply page.",
+              "Leave AI consent unchecked if checkbox is required.",
+              "Try to continue.",
+              "Read visible privacy/consent copy."
+            ],
+            expected: "Submit button stays blocked or shows clear consent error. Copy is understandable."
+          }
+        ]
+      },
+      {
+        id: "cv-video",
+        title: "CV Upload + Video/Audio/Text Screening",
+        subtitle: "Recorder, uploads, final submit",
+        colors: ["#4338ca", "#818cf8"],
+        intro: "CV aur video upload heavy features hain. Browser permission, upload progress aur final submit ko carefully check karein.",
+        tasks: [
+          {
+            title: "Video/audio recorder permission and upload",
+            links: [{ label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Start screening question with video or audio.",
+              "Allow camera/mic permission.",
+              "Record a short answer.",
+              "Wait for upload progress to finish, then click Next/Submit."
+            ],
+            expected: "Recorder works, upload completes, and tester cannot submit before upload finishes."
+          },
+          {
+            title: "Deny camera/mic permission",
+            links: [{ label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Open apply page in incognito.",
+              "Deny camera/mic permission.",
+              "Try video/audio question.",
+              "Check recovery instructions."
+            ],
+            expected: "Candidate sees useful error explaining how to allow permission or use allowed fallback if configured."
+          },
+          {
+            title: "Text answer screening mode",
+            links: [{ label: "Screen Test", url: "{{appBase}}/screen/test-token", type: "public" }],
+            steps: [
+              "Use a screening test link if team provides one.",
+              "Choose text response mode if visible.",
+              "Write sample answer and submit.",
+              "Check score/result page."
+            ],
+            expected: "Text screening can submit without video and result/explanation appears."
+          }
+        ]
+      },
+      {
+        id: "candidate-dashboard",
+        title: "Candidate Dashboard / Pipeline",
+        subtitle: "Applications, CV, answers, stages",
+        colors: ["#0e7490", "#67e8f9"],
+        intro: "Candidate submit hone ke baad HR dashboard mein uska record nazar aana chahiye. Yeh main verification hai.",
+        tasks: [
+          {
+            title: "Submitted candidate appears in job pipeline",
+            links: [{ label: "Jobs List", url: "{{appBase}}/dashboard/jobs", type: "dashboard" }, { label: "Candidates", url: "{{appBase}}/dashboard/candidates", type: "dashboard" }],
+            steps: [
+              "Submit a test candidate application.",
+              "Open dashboard jobs/candidates page.",
+              "Search candidate by name or email.",
+              "Open full application profile."
+            ],
+            expected: "Candidate appears with correct job, contact info, source/status, submitted time, and no duplicate records."
+          },
+          {
+            title: "Review CV, answers, notes, status",
+            links: [{ label: "Candidates", url: "{{appBase}}/dashboard/candidates", type: "dashboard" }],
+            steps: [
+              "Open candidate detail page.",
+              "Preview/download CV.",
+              "Play video/audio answer or read text answer.",
+              "Add note, review/score, shortlist/reject or change stage."
+            ],
+            expected: "All candidate data is visible, media loads, notes save, and status/stage updates persist after refresh."
+          },
+          {
+            title: "Bulk and filter behavior in pipeline",
+            links: [{ label: "Jobs", url: "{{appBase}}/dashboard/jobs", type: "dashboard" }],
+            steps: [
+              "Open a job with multiple candidates.",
+              "Use search/status filters.",
+              "Try stage filters if available.",
+              "Check counts against visible candidates."
+            ],
+            expected: "Filters and counts stay consistent with actual candidates."
+          }
+        ]
+      },
+      {
+        id: "scheduling",
+        title: "Scheduling",
+        subtitle: "Availability, booking link, upcoming interviews",
+        colors: ["#1d4ed8", "#93c5fd"],
+        intro: "Scheduling ka matlab HR apni availability set karta hai aur candidate slot book karta hai.",
+        tasks: [
+          {
+            title: "Set availability in scheduling dashboard",
+            links: [{ label: "Scheduling", url: "{{appBase}}/dashboard/scheduling", type: "dashboard" }],
+            steps: [
+              "Open Scheduling page.",
+              "Set weekly availability and timezone.",
+              "Save settings.",
+              "Refresh and confirm data stays saved."
+            ],
+            expected: "Availability persists and timezone is correct."
+          },
+          {
+            title: "Candidate books interview slot",
+            links: [{ label: "Schedule Link", url: "{{appBase}}/schedule/test-token", type: "public" }],
+            steps: [
+              "Use a real schedule token from candidate detail/email.",
+              "Open schedule page logged out.",
+              "Pick date/time slot.",
+              "Submit booking details."
+            ],
+            expected: "Booking confirms, slot is no longer double-bookable, and upcoming interview appears in dashboard."
+          },
+          {
+            title: "Public booking page",
+            links: [{ label: "Availability Page", url: "{{availabilityUrl}}", type: "public" }],
+            steps: [
+              "Open public availability page.",
+              "Check slots on desktop and mobile.",
+              "Try booking using test name/email.",
+              "Verify confirmation."
+            ],
+            expected: "Public booking flow works without login and uses correct organization branding."
+          }
+        ]
+      },
+      {
+        id: "emails",
+        title: "Emails / Inbox / Templates",
+        subtitle: "Candidate emails, test email, inbox",
+        colors: ["#be123c", "#fb7185"],
+        intro: "Email flows ko do sides se test karein: dashboard mein send/test, aur candidate inbox mein receive.",
+        tasks: [
+          {
+            title: "Candidate-facing email templates",
+            links: [{ label: "Email Templates", url: "{{appBase}}/dashboard/settings/emails", type: "settings" }],
+            steps: [
+              "Open Email Templates.",
+              "Edit subject/body of one safe test template.",
+              "Preview template.",
+              "Send test email to signed-in account."
+            ],
+            expected: "Template saves, preview matches editor, and test email is delivered to tester account."
+          },
+          {
+            title: "Inbox messages and candidate email thread",
+            links: [{ label: "Inbox", url: "{{appBase}}/dashboard/inbox", type: "dashboard" }],
+            steps: [
+              "Open Inbox.",
+              "Select a candidate conversation.",
+              "Send a test reply if test SMTP/email is enabled.",
+              "Check message appears in thread."
+            ],
+            expected: "Inbox loads conversations, reply state is clear, and sent message is recorded."
+          },
+          {
+            title: "Incomplete application follow-up email",
+            links: [{ label: "Follow-ups", url: "{{appBase}}/dashboard/settings/followups", type: "settings" }],
+            steps: [
+              "Start an application but stop before final submit.",
+              "Check follow-up template/settings.",
+              "Trigger follow-up manually if team provides admin action.",
+              "Check candidate receives correct reminder."
+            ],
+            expected: "Follow-up behavior matches settings and does not send duplicate reminders."
+          }
+        ]
+      },
+      {
+        id: "automation",
+        title: "Automation Rules",
+        subtitle: "Triggers, actions, logs",
+        colors: ["#ca8a04", "#fde047"],
+        intro: "Automation ko bachay ke toy switch ki tarah samjhein: trigger hota hai, action chalna chahiye. On/off, edit/delete aur logs zaroor check karein.",
+        tasks: [
+          {
+            title: "Create application-submitted automation",
+            links: [{ label: "Automation", url: "{{appBase}}/dashboard/settings/automation", type: "settings" }],
+            steps: [
+              "Open Automation Rules.",
+              "Create rule: when application submitted, send email or change stage if option exists.",
+              "Submit a new test candidate.",
+              "Check automation result/log."
+            ],
+            expected: "Rule runs once for the matching event and the configured action is visible."
+          },
+          {
+            title: "Edit, toggle, delete automation rule",
+            links: [{ label: "Automation", url: "{{appBase}}/dashboard/settings/automation", type: "settings" }],
+            steps: [
+              "Edit an existing test rule.",
+              "Turn it off and submit a matching event.",
+              "Turn it on and submit another event.",
+              "Delete the rule."
+            ],
+            expected: "Off rule does not run. On rule runs. Deleted rule disappears and no longer fires."
+          }
+        ]
+      },
+      {
+        id: "custom-domain",
+        title: "Custom Domain",
+        subtitle: "DNS, SSL, public routes",
+        colors: ["#15803d", "#86efac"],
+        intro: "Custom domain ka matlab company apni website jese careers.company.com use kar sakti hai. DNS aur SSL state ko clearly test karein.",
+        tasks: [
+          {
+            title: "Add domain and validate errors",
+            links: [{ label: "Custom Domain", url: "{{appBase}}/dashboard/settings/domain", type: "settings" }],
+            steps: [
+              "Open Custom Domain settings.",
+              "Try invalid domain like abc or hiringcat.com.",
+              "Add valid test domain from team.",
+              "Check DNS instructions appear."
+            ],
+            expected: "Invalid domains show errors. Valid domain shows CNAME/TXT/DNS instructions without exposing secrets."
+          },
+          {
+            title: "Verify DNS and SSL status",
+            links: [{ label: "Custom Domain", url: "{{appBase}}/dashboard/settings/domain", type: "settings" }],
+            steps: [
+              "After DNS is configured, click Verify Domain.",
+              "Check DNS pending/verified state.",
+              "Wait for SSL/route status if needed.",
+              "Open final domain."
+            ],
+            expected: "Status messages are accurate: DNS pending, SSL provisioning, or active. No false success."
+          },
+          {
+            title: "Custom domain public pages",
+            links: [{ label: "Custom Careers", url: "{{customDomain}}", type: "public" }, { label: "Custom Apply", url: "{{customApplyUrl}}", type: "public" }, { label: "Custom Schedule", url: "{{customScheduleUrl}}", type: "public" }],
+            steps: [
+              "Open custom domain root.",
+              "Open job apply path on custom domain.",
+              "Open schedule/interview/share links if real tokens exist.",
+              "Compare branding with standard HiringCat links."
+            ],
+            expected: "Custom domain routes load the same org/job data and do not redirect to wrong company."
+          },
+          {
+            title: "Remove custom domain",
+            links: [{ label: "Custom Domain", url: "{{appBase}}/dashboard/settings/domain", type: "settings" }],
+            steps: [
+              "Click remove/delete domain.",
+              "Confirm destructive prompt.",
+              "Refresh settings page.",
+              "Open old custom domain again."
+            ],
+            expected: "Domain is removed from organization. Old domain no longer serves the org as active custom domain."
+          }
+        ]
+      },
+      {
+        id: "integrations",
+        title: "Integrations Page",
+        subtitle: "Webhooks, cards, connected states",
+        colors: ["#7c2d12", "#fdba74"],
+        intro: "Integrations page mein external tools connect hoty hain. Webhooks aur connected/disconnected states visible hone chahiye.",
+        tasks: [
+          {
+            title: "Integrations page loads and empty state is correct",
+            links: [{ label: "Integrations", url: "{{appBase}}/dashboard/settings/integrations", type: "settings" }],
+            steps: [
+              "Open Integrations page.",
+              "Check integration/webhook cards.",
+              "Check empty state if no endpoints exist.",
+              "Refresh page."
+            ],
+            expected: "Page loads without crash and clearly shows connected, disconnected, empty, or failed state."
+          },
+          {
+            title: "Create and test webhook endpoint",
+            links: [{ label: "Webhooks", url: "{{appBase}}/dashboard/settings/integrations", type: "settings" }],
+            steps: [
+              "Add a test webhook URL from team.",
+              "Select events.",
+              "Save endpoint and copy secret only privately if needed.",
+              "Send test webhook and check delivery result."
+            ],
+            expected: "Webhook saves, test delivery status is visible, and recent event/delivery log updates."
+          },
+          {
+            title: "Webhook failure, retry, secret rotation",
+            links: [{ label: "Webhooks", url: "{{appBase}}/dashboard/settings/integrations", type: "settings" }],
+            steps: [
+              "Use a bad test webhook URL.",
+              "Send test event.",
+              "Check failure count/error.",
+              "Retry delivery and rotate secret."
+            ],
+            expected: "Failures are visible, retry does not crash, and secret rotation confirms new secret privately."
+          }
+        ]
+      },
+      {
+        id: "smtp",
+        title: "SMTP Settings",
+        subtitle: "Sender email, test email, bad config",
+        colors: ["#334155", "#94a3b8"],
+        intro: "SMTP ka matlab HiringCat company ke apne email se candidate ko email bhej sakta hai. Credentials public page par kabhi nahi likhne.",
+        tasks: [
+          {
+            title: "Save SMTP configuration",
+            links: [{ label: "SMTP Settings", url: "{{appBase}}/dashboard/settings/smtp", type: "settings" }],
+            steps: [
+              "Open SMTP settings.",
+              "Enter private SMTP host, port, username, password, sender name/email from team.",
+              "Save settings.",
+              "Refresh and confirm safe fields remain visible while password stays hidden."
+            ],
+            expected: "SMTP settings save securely and password is not exposed in plain text."
+          },
+          {
+            title: "Wrong SMTP details show error",
+            links: [{ label: "SMTP Settings", url: "{{appBase}}/dashboard/settings/smtp", type: "settings" }],
+            steps: [
+              "Enter intentionally wrong test SMTP host/port or username.",
+              "Try sending test email.",
+              "Read error message.",
+              "Restore correct test SMTP settings."
+            ],
+            expected: "Bad SMTP config shows understandable error and does not silently claim success."
+          },
+          {
+            title: "Send test email through SMTP",
+            links: [{ label: "SMTP Settings", url: "{{appBase}}/dashboard/settings/smtp", type: "settings" }],
+            steps: [
+              "Use correct private SMTP config.",
+              "Click Send Test Email.",
+              "Check inbox/spam/promotions for test email.",
+              "Confirm sender name/email are correct."
+            ],
+            expected: "Test email arrives from configured sender and dashboard shows success only after send succeeds."
+          }
+        ]
+      },
+      {
+        id: "tracking",
+        title: "Facebook Pixel / Tracking",
+        subtitle: "Meta Pixel, Google Ads, browser events",
+        colors: ["#1e40af", "#38bdf8"],
+        intro: "Facebook Pixel ka matlab ads aur tracking ke liye candidate actions track hoty hain, jese page open karna ya application submit karna.",
+        tasks: [
+          {
+            title: "Save Facebook Pixel settings",
+            links: [{ label: "Tracking & Ads", url: "{{appBase}}/dashboard/settings/pixel", type: "settings" }, { label: "Tracking", url: "{{appBase}}/dashboard/settings/tracking", type: "settings" }],
+            steps: [
+              "Open Tracking/Facebook Pixel settings.",
+              "Add test Pixel ID from team.",
+              "Choose standard/custom event mode if visible.",
+              "Save and refresh settings."
+            ],
+            expected: "Pixel ID and event mode save correctly without exposing private ad account data."
+          },
+          {
+            title: "Verify PageView, Lead, ViewContent, SubmitApplication events",
+            links: [{ label: "Careers Page", url: "{{careersUrl}}", type: "public" }, { label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Open browser devtools console/network or Meta Pixel Helper.",
+              "Open careers/apply page and check PageView/ViewContent.",
+              "Submit candidate info form and check Lead.",
+              "Finish application and check SubmitApplication."
+            ],
+            expected: "Configured tracking events fire once at the correct step and do not fire duplicate events."
+          },
+          {
+            title: "Google Ads conversion tracking",
+            links: [{ label: "Tracking & Ads", url: "{{appBase}}/dashboard/settings/tracking", type: "settings" }],
+            steps: [
+              "Add test conversion ID/label from team if available.",
+              "Open public apply flow.",
+              "Submit candidate info and final application.",
+              "Check network/Tag Assistant behavior."
+            ],
+            expected: "Google Ads tracking fires only for configured events and does not break apply page."
+          }
+        ]
+      },
+      {
+        id: "branding",
+        title: "Branding / Careers Settings",
+        subtitle: "Logo, favicon, colors, templates",
+        colors: ["#a21caf", "#e879f9"],
+        intro: "Branding se candidate ko company ka apna look feel milta hai. Public pages par changes reflect hone chahiye.",
+        tasks: [
+          {
+            title: "Logo, favicon, colors, font settings",
+            links: [{ label: "Branding", url: "{{appBase}}/dashboard/settings/branding", type: "settings" }],
+            steps: [
+              "Upload or change logo.",
+              "Change favicon if available.",
+              "Change brand color and button color.",
+              "Save and refresh dashboard/settings."
+            ],
+            expected: "Brand settings save and previews/public pages reflect updated identity."
+          },
+          {
+            title: "Careers page template/content settings",
+            links: [{ label: "Careers Settings", url: "{{appBase}}/dashboard/settings/careers", type: "settings" }, { label: "Careers Page", url: "{{careersUrl}}", type: "public" }],
+            steps: [
+              "Change careers page content/template.",
+              "Copy/open careers URL.",
+              "Check desktop layout.",
+              "Check mobile layout."
+            ],
+            expected: "Careers content and template save correctly with no text overlap on mobile."
+          }
+        ]
+      },
+      {
+        id: "team",
+        title: "Team & Permissions",
+        subtitle: "Invites, roles, restricted access",
+        colors: ["#475569", "#cbd5e1"],
+        intro: "Team roles se decide hota hai kis user ko kya permission hai. Restricted role ko extra access nahi milna chahiye.",
+        tasks: [
+          {
+            title: "Invite teammate and accept invite",
+            links: [{ label: "Team", url: "{{appBase}}/dashboard/team", type: "dashboard" }],
+            steps: [
+              "Invite a test teammate email.",
+              "Open invite link in another browser/account.",
+              "Accept invite.",
+              "Confirm teammate appears in same organization."
+            ],
+            expected: "Invite link works once, user joins correct org, and invite status updates."
+          },
+          {
+            title: "Role permission checks",
+            links: [{ label: "Team", url: "{{appBase}}/dashboard/team", type: "dashboard" }, { label: "Billing", url: "{{appBase}}/dashboard/billing", type: "settings" }],
+            steps: [
+              "Set user role to member/viewer if available.",
+              "Login as restricted user.",
+              "Try billing, settings, delete job, team management.",
+              "Try allowed pages like candidates/jobs if role permits."
+            ],
+            expected: "Restricted user cannot access protected actions. Allowed pages still work normally."
+          }
+        ]
+      },
+      {
+        id: "analytics",
+        title: "Analytics",
+        subtitle: "Metrics, funnel, counts",
+        colors: ["#0f172a", "#64748b"],
+        intro: "Analytics rehny do, kyun ke boss ne all important features kaha hai. Counts ko actual candidates/jobs se compare karein.",
+        tasks: [
+          {
+            title: "Dashboard overview metrics",
+            links: [{ label: "Dashboard", url: "{{appBase}}/dashboard", type: "dashboard" }],
+            steps: [
+              "Open dashboard overview.",
+              "Check jobs, candidates, shortlist, interviews, activity metrics.",
+              "Submit one new test candidate.",
+              "Refresh and compare count changes."
+            ],
+            expected: "Overview metrics update correctly and no cards show impossible negative/stale numbers."
+          },
+          {
+            title: "Analytics page funnel and reports",
+            links: [{ label: "Analytics", url: "{{appBase}}/dashboard/analytics", type: "dashboard" }],
+            steps: [
+              "Open Analytics page.",
+              "Change date range/filter if available.",
+              "Compare funnel counts with jobs/candidates pages.",
+              "Check empty state for no data."
+            ],
+            expected: "Charts/counts match data, empty states are clear, and page works on desktop/mobile."
+          }
+        ]
+      },
+      {
+        id: "billing-activity",
+        title: "Billing / Activity Logs / Notifications",
+        subtitle: "Plan, checkout, audit, alerts",
+        colors: ["#b45309", "#fbbf24"],
+        intro: "Billing aur logs business-critical hain. Real card details use na karein; sirf team-approved test checkout/license flow use karein.",
+        tasks: [
+          {
+            title: "Billing and checkout flow",
+            links: [{ label: "Billing", url: "{{appBase}}/dashboard/billing", type: "settings" }, { label: "Monthly Checkout", url: "{{appBase}}/checkout/monthly", type: "settings" }],
+            steps: [
+              "Open Billing page.",
+              "Check current plan and upgrade buttons.",
+              "Use only team-approved test checkout/coupon if available.",
+              "Return to billing success page."
+            ],
+            expected: "Billing page is clear, checkout does not expose real payment data in QA, and success state updates plan/licensing as expected."
+          },
+          {
+            title: "Activity logs and notifications",
+            links: [{ label: "Activity", url: "{{appBase}}/dashboard/activity", type: "settings" }, { label: "Dashboard", url: "{{appBase}}/dashboard", type: "dashboard" }],
+            steps: [
+              "Perform actions: create job, submit candidate, change stage, update settings.",
+              "Open Activity Logs.",
+              "Check notification bell or in-app notifications.",
+              "Confirm logs show correct user/action/time."
+            ],
+            expected: "Important actions are logged once with correct details, and notifications open correct destination."
+          }
+        ]
+      },
+      {
+        id: "mobile",
+        title: "Mobile Test",
+        subtitle: "Responsive layout and touch behavior",
+        colors: ["#0369a1", "#7dd3fc"],
+        intro: "Mobile test har important public aur dashboard page par zaroor karein. Text overlap, tiny buttons, horizontal scroll fail mark karein.",
+        tasks: [
+          {
+            title: "Mobile public pages",
+            links: [{ label: "Careers", url: "{{careersUrl}}", type: "public" }, { label: "Apply", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Open careers and apply pages in mobile viewport.",
+              "Scroll from top to bottom.",
+              "Fill form using mobile keyboard.",
+              "Try upload/record flow if supported by device."
+            ],
+            expected: "No horizontal scroll, no overlapping text/buttons, and candidate can complete main flow on mobile."
+          },
+          {
+            title: "Mobile dashboard basics",
+            links: [{ label: "Dashboard", url: "{{appBase}}/dashboard", type: "dashboard" }],
+            steps: [
+              "Open dashboard on mobile viewport.",
+              "Use navigation/sidebar/menu.",
+              "Open jobs, candidates, settings.",
+              "Try primary buttons."
+            ],
+            expected: "Navigation is usable, primary actions are tappable, and content fits screen."
+          }
+        ]
+      },
+      {
+        id: "support",
+        title: "Support / Contact",
+        subtitle: "Help pages and forms",
+        colors: ["#6b7280", "#d1d5db"],
+        intro: "Agar customer stuck ho, support/contact path kaam karna chahiye.",
+        tasks: [
+          {
+            title: "Support/contact links work",
+            links: [{ label: "Support", url: "{{appBase}}/support", type: "public" }, { label: "Contact", url: "{{appBase}}/contact", type: "public" }],
+            steps: [
+              "Open support/contact pages if available.",
+              "Submit only a test message with subject [QA-TEST].",
+              "Check success or clear fallback.",
+              "If page does not exist, mark Skip and write note."
+            ],
+            expected: "Support path is discoverable and forms either submit successfully or show clear unavailable state."
+          },
+          {
+            title: "404 and broken link handling",
+            links: [{ label: "Fake Page", url: "{{appBase}}/this-page-should-not-exist", type: "danger" }],
+            steps: [
+              "Open fake/broken URL.",
+              "Check 404 page.",
+              "Click button/link back to dashboard/home.",
+              "Open a few sidebar/footer links."
+            ],
+            expected: "404 page is friendly, navigation recovers, and no important link is broken."
+          }
+        ]
+      }
+    ];
+
+    const ALL_SECTIONS = SECTIONS.map((section) => section.id);
+
+    function normalizeBase(url) {
+      const value = String(url || "").trim();
+      return value ? value.replace(/\/+$/, "") : "https://hiringcat.com";
+    }
+
+    function normalizeOptionalBase(url) {
+      const value = String(url || "").trim();
+      return value ? value.replace(/\/+$/, "") : "";
+    }
+
+    function normalizePathPart(value, fallback) {
+      return encodeURIComponent(String(value || fallback || "").trim().replace(/^\/+|\/+$/g, ""));
+    }
+
+    function getConfig() {
+      const saved = JSON.parse(localStorage.getItem(configKey) || "{}");
+      const config = { ...DEFAULT_CONFIG, ...saved };
+      document.querySelectorAll("[data-config]").forEach((input) => {
+        const key = input.getAttribute("data-config");
+        if (key) config[key] = input.value.trim();
+      });
+      config.appBase = normalizeBase(config.appBase);
+      return config;
+    }
+
+    function derivedUrls() {
+      const config = getConfig();
+      const appBase = normalizeBase(config.appBase);
+      const orgSlug = normalizePathPart(config.orgSlug, "your-org");
+      const jobSlug = normalizePathPart(config.jobSlug, "test-job");
+      const customDomain = normalizeOptionalBase(config.customDomain);
+      return {
+        ...config,
+        appBase,
+        orgSlug,
+        jobSlug,
+        customDomain,
+        careersUrl: `${appBase}/careers/${orgSlug}`,
+        availabilityUrl: `${appBase}/availability/${orgSlug}`,
+        applyUrl: `${appBase}/apply/${orgSlug}/${jobSlug}`,
+        customApplyUrl: customDomain ? `${customDomain}/${jobSlug}` : `${appBase}/apply/${orgSlug}/${jobSlug}`,
+        customScheduleUrl: customDomain ? `${customDomain}/schedule/test-token` : `${appBase}/schedule/test-token`
+      };
+    }
+
+    function interpolate(template) {
+      const urls = derivedUrls();
+      return String(template || "").replace(/\{\{(\w+)\}\}/g, (_, key) => urls[key] || "");
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderSections() {
+      const root = document.getElementById("sectionsRoot");
+      root.innerHTML = SECTIONS.map((section, sectionIndex) => `
+        <section class="section" id="${section.id}">
+          <div class="section-header" onclick="toggle('${section.id}')" role="button" tabindex="0" aria-controls="${section.id}-body">
+            <div class="section-num" style="background:linear-gradient(135deg,${section.colors[0]},${section.colors[1]})">${sectionIndex + 1}</div>
+            <h2>${escapeHtml(section.title)}<small>${escapeHtml(section.subtitle)}</small></h2>
+            <span class="section-badge" id="badge-${section.id}">0/${section.tasks.length}</span>
+            <span class="section-chevron">&#9662;</span>
+          </div>
+          <div class="section-body" id="${section.id}-body">
+            <div class="intro-text">${escapeHtml(section.intro)}</div>
+            ${section.tasks.map((task, taskIndex) => {
+              const taskId = `${section.id}-${taskIndex}`;
+              return `
+                <div class="task-card" data-task-id="${taskId}" data-section="${section.id}">
+                  <div class="task">
+                    <input type="checkbox" class="task-check" aria-label="Mark ${escapeHtml(task.title)} as checked" onchange="updateProgress()">
+                    <div class="task-content">
+                      <div class="task-title">${escapeHtml(task.title)}</div>
+                      ${task.links && task.links.length ? `
+                        <div class="link-row">
+                          ${task.links.map((link) => `
+                            <a class="link-btn link-${link.type || "dashboard"}" href="${escapeHtml(interpolate(link.url))}" data-template="${escapeHtml(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>
+                          `).join("")}
+                        </div>
+                      ` : ""}
+                      <ul class="steps">
+                        ${task.steps.map((step, i) => `
+                          <li class="step"><span class="step-num">${i + 1}</span><span>${escapeHtml(step)}</span></li>
+                        `).join("")}
+                      </ul>
+                      <div class="expected"><strong>Expected result:</strong> ${escapeHtml(task.expected)}</div>
+                      <div class="verdict" role="group" aria-label="Test result for ${escapeHtml(task.title)}">
+                        <button class="v-pass" onclick="setVerdict(this,'pass')" type="button">Pass</button>
+                        <button class="v-fail" onclick="setVerdict(this,'fail')" type="button">Fail</button>
+                        <button class="v-skip" onclick="setVerdict(this,'skip')" type="button">Skip</button>
+                      </div>
+                      <div class="notes-wrap">
+                        <label for="notes-${taskId}">Notes / screenshot link / Loom timestamp</label>
+                        <textarea class="task-notes" id="notes-${taskId}" placeholder="Fail ho to exact issue, screenshot/video link, browser/device yahan likhein." oninput="saveState()"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </section>
+      `).join("");
+    }
+
+    function loadConfig() {
+      let config = { ...DEFAULT_CONFIG };
+      try {
+        config = { ...config, ...JSON.parse(localStorage.getItem(configKey) || "{}") };
+      } catch (e) {}
+      document.querySelectorAll("[data-config]").forEach((input) => {
+        const key = input.getAttribute("data-config");
+        if (!key) return;
+        input.value = config[key] || "";
+      });
+      updateHero();
+      updateDynamicLinks();
+    }
+
+    function saveConfig() {
+      const config = {};
+      document.querySelectorAll("[data-config]").forEach((input) => {
+        const key = input.getAttribute("data-config");
+        if (key) config[key] = input.value.trim();
+      });
+      localStorage.setItem(configKey, JSON.stringify(config));
+      updateHero();
+      updateDynamicLinks();
+    }
+
+    function updateHero() {
+      const config = getConfig();
+      const name = config.testerName || "QA Tester";
+      document.getElementById("heroTagline").textContent = `Hi ${name}! Daily testing checklist`;
+    }
+
+    function updateDynamicLinks() {
+      document.querySelectorAll("[data-template]").forEach((link) => {
+        const template = link.getAttribute("data-template") || "";
+        const href = interpolate(template);
+        link.setAttribute("href", href || "#");
+      });
+    }
+
+    function loadState() {
+      try {
+        const state = JSON.parse(localStorage.getItem(storageKey) || "{}");
+        const checks = state.checks || {};
+        const verdicts = state.verdicts || {};
+        const notes = state.notes || {};
+
+        document.querySelectorAll(".task-card").forEach((taskCard) => {
+          const taskId = taskCard.getAttribute("data-task-id");
+          const cb = taskCard.querySelector(".task-check");
+          const verdict = verdicts[taskId];
+          const textarea = taskCard.querySelector(".task-notes");
+          if (checks[taskId] && cb) cb.checked = true;
+          if (verdict) {
+            const btn = taskCard.querySelector(".v-" + verdict);
+            if (btn) btn.classList.add("active");
+          }
+          if (textarea && notes[taskId]) textarea.value = notes[taskId];
+        });
+      } catch(e) {}
+      updateProgress();
+    }
+
+    function saveState() {
+      const checks = {};
+      const verdicts = {};
+      const notes = {};
+
+      document.querySelectorAll(".task-card").forEach((taskCard) => {
+        const taskId = taskCard.getAttribute("data-task-id");
+        if (!taskId) return;
+        const cb = taskCard.querySelector(".task-check");
+        const textarea = taskCard.querySelector(".task-notes");
+        checks[taskId] = Boolean(cb && cb.checked);
+        if (taskCard.querySelector(".v-pass.active")) verdicts[taskId] = "pass";
+        else if (taskCard.querySelector(".v-fail.active")) verdicts[taskId] = "fail";
+        else if (taskCard.querySelector(".v-skip.active")) verdicts[taskId] = "skip";
+        else verdicts[taskId] = null;
+        notes[taskId] = textarea ? textarea.value.trim() : "";
+      });
+
+      localStorage.setItem(storageKey, JSON.stringify({ checks, verdicts, notes }));
+    }
+
+    function updateProgress() {
+      const all = document.querySelectorAll(".task-check");
+      const checked = document.querySelectorAll(".task-check:checked");
+      const pct = all.length ? Math.round((checked.length / all.length) * 100) : 0;
+      document.getElementById("progressFill").style.width = pct + "%";
+      document.getElementById("progressPct").textContent = pct + "%";
+
+      const passes = document.querySelectorAll(".v-pass.active").length;
+      const fails = document.querySelectorAll(".v-fail.active").length;
+      const skips = document.querySelectorAll(".v-skip.active").length;
+      const tested = passes + fails + skips;
+      document.getElementById("statTotal").textContent = all.length;
+      document.getElementById("statTested").textContent = tested;
+      document.getElementById("statPass").textContent = passes;
+      document.getElementById("statFail").textContent = fails;
+      document.getElementById("statSkip").textContent = skips;
+
+      ALL_SECTIONS.forEach((sec) => {
+        const sectionTasks = document.querySelectorAll(`#${sec} .task-check`);
+        const sectionDone = document.querySelectorAll(`#${sec} .task-check:checked`);
+        const badge = document.getElementById("badge-" + sec);
+        if (badge) {
+          badge.textContent = sectionDone.length + "/" + sectionTasks.length;
+          badge.classList.toggle("done", sectionDone.length === sectionTasks.length && sectionTasks.length > 0);
+        }
+      });
+
+      all.forEach((cb) => cb.closest(".task-card").classList.toggle("checked", cb.checked));
+      saveState();
+      updateResults();
+    }
+
+    function setVerdict(btn, type) {
+      const verdict = btn.closest(".verdict");
+      verdict.querySelectorAll("button").forEach((button) => button.classList.remove("active"));
+      btn.classList.add("active");
+      const cb = btn.closest(".task-card").querySelector(".task-check");
+      if (cb && !cb.checked) cb.checked = true;
+      updateProgress();
+    }
+
+    function toggle(id) {
+      const section = document.getElementById(id);
+      if (section) section.classList.toggle("collapsed");
+    }
+
+    function getFlatTasks() {
+      const tasks = [];
+      SECTIONS.forEach((section) => {
+        section.tasks.forEach((task, index) => {
+          tasks.push({ ...task, sectionId: section.id, sectionTitle: section.title, taskId: `${section.id}-${index}` });
+        });
+      });
+      return tasks;
+    }
+
+    function getTaskResults() {
+      return getFlatTasks().map((task) => {
+        const card = document.querySelector(`[data-task-id="${task.taskId}"]`);
+        let status = "NOT TESTED";
+        if (card) {
+          if (card.querySelector(".v-pass.active")) status = "PASS";
+          else if (card.querySelector(".v-fail.active")) status = "FAIL";
+          else if (card.querySelector(".v-skip.active")) status = "SKIP";
+        }
+        const notes = card?.querySelector(".task-notes")?.value.trim() || "";
+        return { title: task.title, sectionTitle: task.sectionTitle, status, notes };
+      });
+    }
+
+    function updateResults() {
+      const results = getTaskResults();
+      const tested = results.filter((r) => r.status !== "NOT TESTED");
+      const box = document.getElementById("resultsBox");
+      if (tested.length === 0) {
+        box.style.display = "none";
+        return;
+      }
+      box.style.display = "block";
+      document.getElementById("resultsList").innerHTML = results.map((result) => {
+        const cls = result.status === "PASS" ? "rs-pass" : result.status === "FAIL" ? "rs-fail" : result.status === "SKIP" ? "rs-skip" : "rs-none";
+        const notes = result.notes ? `<span>${escapeHtml(result.notes)}</span>` : "";
+        return `<div class="result-row"><div class="result-title"><strong>${escapeHtml(result.title)}</strong><span>${escapeHtml(result.sectionTitle)}</span>${notes}</div><span class="result-status ${cls}">${result.status}</span></div>`;
+      }).join("");
+    }
+
+    function reportText() {
+      const config = getConfig();
+      const results = getTaskResults();
+      const passes = results.filter((r) => r.status === "PASS").length;
+      const fails = results.filter((r) => r.status === "FAIL").length;
+      const skips = results.filter((r) => r.status === "SKIP").length;
+      const tested = passes + fails + skips;
+      const total = results.length;
+
+      let text = `HiringCat QA Report - ${dateStr}\n`;
+      text += "=".repeat(44) + "\n";
+      text += `Tester: ${config.testerName || "QA Tester"}\n`;
+      text += `App URL: ${normalizeBase(config.appBase)}\n`;
+      text += `Summary: ${tested}/${total} tested, ${passes} passed, ${fails} failed, ${skips} skipped\n\n`;
+
+      let currentSection = "";
+      results.forEach((result) => {
+        if (result.sectionTitle !== currentSection) {
+          currentSection = result.sectionTitle;
+          text += `\n${currentSection}\n` + "-".repeat(currentSection.length) + "\n";
+        }
+        const icon = result.status === "PASS" ? "+" : result.status === "FAIL" ? "X" : result.status === "SKIP" ? "-" : "?";
+        text += `[${icon}] ${result.title} - ${result.status}\n`;
+        if (result.notes) text += `    Notes: ${result.notes}\n`;
+      });
+
+      text += "\nFail rule: Har FAIL ke sath screenshot/video required hai.\n";
+      return text;
+    }
+
+    function copyResults() {
+      const text = reportText();
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector(".btn-copy");
+        if (!btn) return;
+        const orig = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => btn.textContent = orig, 2000);
+      }).catch(() => {
+        alert("Clipboard permission blocked. Please select the report manually from Today's Results.");
+      });
+    }
+
+    function drawWrappedText(doc, text, x, y, width, lineHeight) {
+      const lines = doc.splitTextToSize(text, width);
+      doc.text(lines, x, y);
+      return y + Math.max(lineHeight, lines.length * lineHeight);
+    }
+
+    function downloadPDF() {
+      if (!window.jspdf) {
+        alert("PDF library is still loading. Please wait a moment and try again.");
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const config = getConfig();
+      const results = getTaskResults();
+      const passes = results.filter((r) => r.status === "PASS").length;
+      const fails = results.filter((r) => r.status === "FAIL").length;
+      const skips = results.filter((r) => r.status === "SKIP").length;
+      const tested = passes + fails + skips;
+      const total = results.length;
+
+      doc.setFillColor(22, 163, 74);
+      doc.rect(0, 0, 210, 45, "F");
+      doc.setFillColor(74, 222, 128);
+      doc.circle(180, 10, 25, "F");
+      doc.setFillColor(37, 99, 235);
+      doc.circle(30, 40, 15, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(23);
+      doc.setFont("helvetica", "bold");
+      doc.text("HiringCat QA Report", 105, 20, { align: "center" });
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "normal");
+      doc.text(dateStr, 105, 31, { align: "center" });
+      doc.text(`Tester: ${config.testerName || "QA Tester"}`, 105, 39, { align: "center" });
+
+      let y = 55;
+      const boxW = 34;
+      const boxH = 22;
+      const startX = 14;
+      const gap = 3;
+      const boxes = [
+        { label: "TOTAL", value: total, fill: [236,253,245], color: [22,101,52] },
+        { label: "TESTED", value: tested, fill: [232,244,253], color: [29,78,216] },
+        { label: "PASSED", value: passes, fill: [230,249,240], color: [0,133,106] },
+        { label: "FAILED", value: fails, fill: [253,232,228], color: [196,64,37] },
+        { label: "SKIPPED", value: skips, fill: [240,240,245], color: [71,85,105] }
+      ];
+
+      boxes.forEach((box, i) => {
+        const x = startX + i * (boxW + gap);
+        doc.setFillColor(...box.fill);
+        doc.roundedRect(x, y, boxW, boxH, 3, 3, "F");
+        doc.setFontSize(15);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(...box.color);
+        doc.text(String(box.value), x + boxW / 2, y + 10, { align: "center" });
+        doc.setFontSize(7);
+        doc.setTextColor(100, 100, 100);
+        doc.text(box.label, x + boxW / 2, y + 17, { align: "center" });
+      });
+
+      y += boxH + 15;
+      doc.setDrawColor(220, 226, 235);
+      doc.line(14, y, 196, y);
+      y += 10;
+
+      SECTIONS.forEach((section) => {
+        const sectionResults = results.filter((result) => result.sectionTitle === section.title);
+        if (y > 260) { doc.addPage(); y = 20; }
+        const color = hexToRgb(section.colors[0]);
+        doc.setFillColor(color.r, color.g, color.b);
+        doc.roundedRect(14, y - 4, 3, 14, 1, 1, "F");
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(45, 55, 72);
+        doc.text(section.title, 22, y + 5);
+        y += 14;
+
+        sectionResults.forEach((result) => {
+          if (y > 274) { doc.addPage(); y = 20; }
+
+          let badgeColor = [240, 240, 245];
+          let textColor = [148, 163, 184];
+          if (result.status === "PASS") { badgeColor = [230, 249, 240]; textColor = [0, 133, 106]; }
+          else if (result.status === "FAIL") { badgeColor = [253, 232, 228]; textColor = [196, 64, 37]; }
+          else if (result.status === "SKIP") { badgeColor = [240, 240, 245]; textColor = [71, 85, 105]; }
+
+          doc.setFillColor(...badgeColor);
+          doc.roundedRect(22, y - 4, 24, 7, 2, 2, "F");
+          doc.setFontSize(7);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(...textColor);
+          doc.text(result.status, 34, y + 1, { align: "center" });
+
+          doc.setTextColor(60, 60, 60);
+          doc.setFontSize(9);
+          doc.setFont("helvetica", "normal");
+          y = drawWrappedText(doc, result.title, 50, y + 1, 135, 5);
+          if (result.notes) {
+            if (y > 274) { doc.addPage(); y = 20; }
+            doc.setFontSize(8);
+            doc.setTextColor(100, 116, 139);
+            y = drawWrappedText(doc, "Notes: " + result.notes, 50, y, 132, 4.5);
+          }
+          y += 3;
+        });
+        y += 3;
+      });
+
+      if (y > 265) { doc.addPage(); y = 20; }
+      y += 6;
+      doc.setDrawColor(220, 226, 235);
+      doc.line(14, y, 196, y);
+      y += 10;
+      doc.setFontSize(8);
+      doc.setTextColor(148, 163, 184);
+      doc.text("Generated from HiringCat QA Checklist - aamirmursleen.github.io/hiringcat-qa", 105, y, { align: "center" });
+      doc.save("HiringCat-QA-" + now.toISOString().slice(0, 10) + ".pdf");
+
+      const btn = document.querySelector(".btn-pdf");
+      if (btn) {
+        const orig = btn.textContent;
+        btn.textContent = "Downloaded!";
+        setTimeout(() => btn.textContent = orig, 2000);
+      }
+    }
+
+    function hexToRgb(hex) {
+      const clean = String(hex || "#16a34a").replace("#", "");
+      const bigint = parseInt(clean, 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
+    function resetAll() {
+      if (!confirm("Reset everything for a fresh start tomorrow?")) return;
+      localStorage.removeItem(storageKey);
+      document.querySelectorAll(".task-check").forEach((cb) => { cb.checked = false; });
+      document.querySelectorAll(".verdict button").forEach((button) => button.classList.remove("active"));
+      document.querySelectorAll(".task-notes").forEach((textarea) => { textarea.value = ""; });
+      document.querySelectorAll(".task-card").forEach((task) => task.classList.remove("checked"));
+      updateProgress();
+    }
+
+    document.querySelectorAll("[data-config]").forEach((input) => {
+      input.addEventListener("input", saveConfig);
+    });
+
+    renderSections();
+    loadConfig();
+    loadState();
+  </script>
+</body>
+</html>
