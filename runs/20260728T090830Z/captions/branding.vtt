@@ -1,0 +1,29 @@
+WEBVTT
+
+1
+00:00:01.056 --> 00:00:02.056
+HiringCat AI QA - Branding / Careers Settings
+
+2
+00:00:01.882 --> 00:00:02.882
+Running: Branding / Careers Settings
+
+3
+00:00:02.603 --> 00:00:05.529
+Using saved authenticated browser session.
+
+4
+00:00:05.529 --> 00:00:09.743
+Opening branding settings and verifying public branding object.
+
+5
+00:00:09.743 --> 00:00:11.014
+REQUEST: API GET /api/public/jobs/fhd/ai-qa-e2e-ms4fq16z-1 - {}
+
+6
+00:00:11.014 --> 00:00:12.260
+PASS: API response GET /api/public/jobs/fhd/ai-qa-e2e-ms4fq16z-1 - HTTP 200; {"org":{"name":"Fhdqewd","slug":"fhd","logoUrl":null},"job":{"id":"7bd8c7f7-f353-491c-8863-d8860121eb88","title":"AI QA E2E Job ms4fq16z-1","description":"<p>AI QA E2E Job ms4fq16z-1 created by HiringCat AI deep E2E...","department":"QA Automation","location":
+
+7
+00:00:12.260 --> 00:00:23.460
+Result: PASS - Branding settings loaded and public apply API returned branding data.

@@ -1,0 +1,9 @@
+WEBVTT
+
+1
+00:00:00.874 --> 00:00:01.874
+HiringCat AI QA - Real DNS / SSL Propagation
+
+2
+00:00:01.734 --> 00:00:03.708
+Result: SKIP - AI has no DNS provider access in this run. Human or DNS API access is required to verify propagation.

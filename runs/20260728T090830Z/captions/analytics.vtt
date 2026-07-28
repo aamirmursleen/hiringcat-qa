@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:01.058 --> 00:00:02.058
+HiringCat AI QA - Analytics
+
+2
+00:00:02.035 --> 00:00:03.035
+Running: Analytics
+
+3
+00:00:02.790 --> 00:00:05.499
+Using saved authenticated browser session.
+
+4
+00:00:05.499 --> 00:00:09.701
+Opening analytics after creating real job and candidate data.
+
+5
+00:00:09.701 --> 00:00:23.053
+Result: PASS - Analytics page loaded after real job/candidate E2E data was created.

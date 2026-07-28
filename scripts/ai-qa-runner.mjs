@@ -341,12 +341,12 @@ async function deepCreateJob(page, captionEvents, startedAt) {
     const slug = `ai-qa-e2e-${stamp}`;
     await caption(page, captionEvents, startedAt, `Step 1: Open New Job UI and type the unique job title.`);
     await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/jobs/new`, /Job|Title|Description|Create|Position/i);
-    await fillIfVisible(page, [
+    const typedJobTitle = await fillIfVisible(page, [
       'input[placeholder*="Senior"]',
       'input[name="title"]',
       'input[type="text"]',
     ], title);
-    await evidence(page, captionEvents, startedAt, "STEP", "Typed job data on screen", `title=${title}, slug=${slug}`);
+    await evidence(page, captionEvents, startedAt, typedJobTitle ? "STEP" : "REQUEST", typedJobTitle ? "Typed job data on visible form" : "Visible form field not detected; using verified API save", `title=${title}, slug=${slug}`);
     await caption(page, captionEvents, startedAt, `Step 2: Save/publish the active job with exact payload.`);
     const created = await authApi(page, "/jobs", {
       method: "POST",
@@ -433,8 +433,8 @@ async function deepCandidateApply(page, captionEvents, startedAt) {
   await caption(page, captionEvents, startedAt, "Step 1: Open public apply page as candidate.");
   await openUsableRoute(page, `${config.hiringcatUrl}/apply/${encodeURIComponent(state.org.slug)}/${encodeURIComponent(state.job.slug)}`, new RegExp(escapeRegExp(state.job.title), "i"));
   await caption(page, captionEvents, startedAt, "Step 2: Type candidate name/email on the visible apply form when fields are available.");
-  await prepareCandidateApplyUi(page, candidateName, candidateEmail);
-  await evidence(page, captionEvents, startedAt, "STEP", "Candidate data prepared", `name=${candidateName}, email=${candidateEmail}, CV=ai-qa-cv.pdf`);
+  const typedFields = await prepareCandidateApplyUi(page, candidateName, candidateEmail);
+  await evidence(page, captionEvents, startedAt, typedFields.name || typedFields.email ? "STEP" : "REQUEST", typedFields.name || typedFields.email ? "Candidate data typed/prepared on apply page" : "Candidate form field not detected; using verified public API submit", `name=${candidateName}, email=${candidateEmail}, CV=ai-qa-cv.pdf`);
   await caption(page, captionEvents, startedAt, `Step 3: Save candidate application draft via public apply API.`);
   const created = await publicApi(page, "/public/applications", {
     method: "POST",
@@ -934,6 +934,7 @@ async function ensureDeepApplication(page, captionEvents, startedAt) {
 
 async function authApi(page, apiPath, options = {}) {
   await page.goto(`${config.hiringcatUrl}/dashboard`, { waitUntil: "domcontentloaded", timeout: 45_000 }).catch(() => {});
+  await installCaptionOverlay(page).catch(() => {});
   const payload = {
     apiPath,
     method: options.method || "GET",
@@ -1129,6 +1130,7 @@ function buildDeepJobPayload({ title, slug }) {
 
 async function openUsableRoute(page, target, expectedText) {
   const response = await page.goto(target, { waitUntil: "domcontentloaded", timeout: 45_000 });
+  await installCaptionOverlay(page).catch(() => {});
   const statusCode = response?.status() ?? 0;
   if (statusCode >= 500 || statusCode === 0) throw new Error(`${target} returned HTTP ${statusCode || "unknown"}.`);
   const deadline = Date.now() + 25_000;
@@ -1231,22 +1233,23 @@ async function prepareCandidateApplyUi(page, candidateName, candidateEmail) {
     await start.click({ timeout: 5000 }).catch(() => {});
     await page.waitForTimeout(1200);
   }
-  await fillIfVisible(page, [
+  const name = await fillIfVisible(page, [
     'input[placeholder*="full name" i]',
     'input[name*="name" i]',
     'input[type="text"]',
   ], candidateName);
-  await fillIfVisible(page, [
+  const email = await fillIfVisible(page, [
     'input[type="email"]',
     'input[placeholder*="example" i]',
     'input[name*="email" i]',
   ], candidateEmail);
-  await fillIfVisible(page, [
+  const phone = await fillIfVisible(page, [
     'input[type="tel"]',
     'input[name*="phone" i]',
     'input[placeholder*="phone" i]',
   ], "+923001112233");
   await page.waitForTimeout(1200);
+  return { name, email, phone };
 }
 
 async function clickFirst(page, selectors) {
@@ -1270,6 +1273,8 @@ async function expectVisible(page, selector, expectedText) {
 }
 
 async function installCaptionOverlay(page) {
+  const alreadyInstalled = await page.evaluate(() => Boolean(document.getElementById("ai-qa-caption") && document.getElementById("ai-qa-proof-panel"))).catch(() => false);
+  if (alreadyInstalled) return;
   await page.addStyleTag({
     content: `
       #ai-qa-caption {
@@ -1388,6 +1393,7 @@ async function installCaptionOverlay(page) {
 
 async function caption(page, events, startedAt, text) {
   events.push({ at: Date.now() - startedAt, text });
+  await installCaptionOverlay(page).catch(() => {});
   await page.evaluate((value) => {
     const el = document.getElementById("ai-qa-caption");
     if (el) el.textContent = value;
@@ -1405,6 +1411,7 @@ async function safeCaption(page, events, startedAt, text) {
 async function evidence(page, events, startedAt, status, title, detail = "") {
   const text = `${title}${detail ? ` - ${detail}` : ""}`;
   events.push({ at: Date.now() - startedAt, text: `${status}: ${text}` });
+  await installCaptionOverlay(page).catch(() => {});
   await page.evaluate(({ status, text }) => {
     const el = document.getElementById("ai-qa-caption");
     if (el) el.textContent = text;

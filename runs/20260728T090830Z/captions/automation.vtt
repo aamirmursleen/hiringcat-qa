@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.970 --> 00:00:01.970
+HiringCat AI QA - Automation Rules
+
+2
+00:00:01.968 --> 00:00:02.968
+Running: Automation Rules
+
+3
+00:00:02.860 --> 00:00:07.808
+Using saved authenticated browser session.
+
+4
+00:00:07.808 --> 00:00:12.784
+Opening automation settings and checking automation rules surface.
+
+5
+00:00:12.784 --> 00:00:36.555
+Result: PASS - Automation rules settings loaded after real application E2E setup.

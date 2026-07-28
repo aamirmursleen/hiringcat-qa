@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "provider": "H Company",
+  "review": {
+    "visibleStepEvidence": true,
+    "actionBasedE2E": true,
+    "clearHumanSkips": true
+  }
+}

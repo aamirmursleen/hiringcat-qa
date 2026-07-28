@@ -1,0 +1,29 @@
+WEBVTT
+
+1
+00:00:01.347 --> 00:00:02.347
+HiringCat AI QA - CV Upload + Video/Text Screening
+
+2
+00:00:02.288 --> 00:00:03.288
+Running: CV Upload + Video/Text Screening
+
+3
+00:00:02.964 --> 00:00:07.789
+Using saved authenticated browser session.
+
+4
+00:00:07.789 --> 00:00:10.896
+Verifying CV URL and video/text/file/rating responses exist for submitted candidate.
+
+5
+00:00:10.896 --> 00:00:13.528
+REQUEST: API GET /api/applications/7bd8c7f7-f353-491c-8863-d8860121eb88/6bfadb7b-56f0-405d-9b63-3386e4d31ab1 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+6
+00:00:13.528 --> 00:00:18.128
+PASS: API response GET /api/applications/7bd8c7f7-f353-491c-8863-d8860121eb88/6bfadb7b-56f0-405d-9b63-3386e4d31ab1 - HTTP 200; {"id":"6bfadb7b-56f0-405d-9b63-3386e4d31ab1","jobId":"7bd8c7f7-f353-491c-8863-d8860121eb88","stageId":"196694c7-e5c5-46fd-aa1b-784d04362e37","candidateName":"AI QA Candidate 091206","candidateEmail":"ai-qa-candidate-1785229926703@example.com","candidatePhone":
+
+7
+00:00:18.128 --> 00:00:37.732
+Result: PASS - CV and video/text screening evidence were saved and visible in candidate detail.

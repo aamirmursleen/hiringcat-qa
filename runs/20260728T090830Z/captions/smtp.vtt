@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:01.415 --> 00:00:02.415
+HiringCat AI QA - SMTP Settings
+
+2
+00:00:02.366 --> 00:00:03.366
+Running: SMTP Settings
+
+3
+00:00:03.192 --> 00:00:08.227
+Using saved authenticated browser session.
+
+4
+00:00:08.227 --> 00:00:13.945
+Opening SMTP settings without saving private SMTP credentials.
+
+5
+00:00:13.945 --> 00:00:36.812
+Result: PASS - SMTP settings page loaded; real SMTP send requires private SMTP credentials.

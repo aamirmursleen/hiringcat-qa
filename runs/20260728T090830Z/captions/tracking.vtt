@@ -1,0 +1,33 @@
+WEBVTT
+
+1
+00:00:00.961 --> 00:00:01.961
+HiringCat AI QA - Facebook Pixel / Tracking
+
+2
+00:00:01.833 --> 00:00:02.833
+Running: Facebook Pixel / Tracking
+
+3
+00:00:02.560 --> 00:00:05.858
+Using saved authenticated browser session.
+
+4
+00:00:05.858 --> 00:00:10.189
+Opening tracking settings and verifying public apply route can load tracking config.
+
+5
+00:00:10.189 --> 00:00:13.589
+Using saved authenticated browser session.
+
+6
+00:00:13.589 --> 00:00:15.799
+REQUEST: API GET /api/public/jobs/fhd/ai-qa-e2e-ms4fq16z-1 - {}
+
+7
+00:00:15.799 --> 00:00:17.038
+PASS: API response GET /api/public/jobs/fhd/ai-qa-e2e-ms4fq16z-1 - HTTP 200; {"org":{"name":"Fhdqewd","slug":"fhd","logoUrl":null},"job":{"id":"7bd8c7f7-f353-491c-8863-d8860121eb88","title":"AI QA E2E Job ms4fq16z-1","description":"<p>AI QA E2E Job ms4fq16z-1 created by HiringCat AI deep E2E...","department":"QA Automation","location":
+
+8
+00:00:17.038 --> 00:00:40.011
+Result: PASS - Tracking settings loaded and public job API returned tracking config.
