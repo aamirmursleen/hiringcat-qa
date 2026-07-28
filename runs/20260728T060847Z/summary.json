@@ -1,0 +1,77 @@
+{
+  "runId": "20260728T060847Z",
+  "generatedAt": "2026-07-28T06:09:50.750Z",
+  "target": {
+    "hiringcatUrl": "https://hiringcat.com",
+    "qaUrl": "https://aamirmursleen.github.io/hiringcat-qa",
+    "orgSlug": null,
+    "jobSlug": null,
+    "customDomain": null
+  },
+  "summary": {
+    "total": 4,
+    "passed": 2,
+    "failed": 1,
+    "skipped": 1
+  },
+  "results": [
+    {
+      "id": "qa-form-smoke",
+      "title": "QA form infrastructure",
+      "status": "PASS",
+      "reason": "Checklist rendered 22 sections/56 tasks and Pass progress worked.",
+      "assertion": "QA checklist infrastructure works.",
+      "humanRequired": false,
+      "durationMs": 6629,
+      "errors": [],
+      "videoUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/videos/qa-form-smoke.webm",
+      "captionUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/captions/qa-form-smoke.vtt",
+      "screenshotUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/screenshots/qa-form-smoke.png",
+      "traceUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/traces/qa-form-smoke-trace.zip"
+    },
+    {
+      "id": "target-app-preflight",
+      "title": "Target App Local/Live Preflight",
+      "status": "PASS",
+      "reason": "Target app loaded with HTTP 200.",
+      "assertion": "HiringCat target app preflight passed.",
+      "humanRequired": false,
+      "durationMs": 13246,
+      "errors": [],
+      "videoUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/videos/target-app-preflight.webm",
+      "captionUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/captions/target-app-preflight.vtt",
+      "screenshotUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/screenshots/target-app-preflight.png",
+      "traceUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/traces/target-app-preflight-trace.zip"
+    },
+    {
+      "id": "login-signup",
+      "title": "Login / Signup",
+      "status": "FAIL",
+      "reason": "Login failed with an invalid credential or authorization error.",
+      "assertion": "",
+      "humanRequired": false,
+      "durationMs": 39431,
+      "errors": [
+        "Failed to load resource: the server responded with a status of 422 ()"
+      ],
+      "videoUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/videos/login-signup.webm",
+      "captionUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/captions/login-signup.vtt",
+      "screenshotUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/screenshots/login-signup.png",
+      "traceUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/traces/login-signup-trace.zip"
+    },
+    {
+      "id": "careers-page",
+      "title": "Public Careers Page",
+      "status": "SKIP",
+      "reason": "Organization slug and job slug are missing, so AI cannot verify this public candidate route.",
+      "assertion": "",
+      "humanRequired": false,
+      "durationMs": 4021,
+      "errors": [],
+      "videoUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/videos/careers-page.webm",
+      "captionUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/captions/careers-page.vtt",
+      "screenshotUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/screenshots/careers-page.png",
+      "traceUrl": "https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/traces/careers-page-trace.zip"
+    }
+  ]
+}

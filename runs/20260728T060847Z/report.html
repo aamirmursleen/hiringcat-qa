@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HiringCat AI QA Report 20260728T060847Z</title>
+  <style>
+    body{margin:0;background:#f8fafc;color:#172033;font:14px/1.55 Inter,Arial,sans-serif}
+    main{max-width:1080px;margin:0 auto;padding:28px 18px 46px}
+    .hero{background:linear-gradient(135deg,#16a34a,#2563eb);color:white;border-radius:18px;padding:26px 24px;margin-bottom:18px}
+    h1{margin:0;font-size:30px;letter-spacing:0} h2{margin:2px 0 0;font-size:18px}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+    .metric{background:white;border:1px solid #e8edf4;border-radius:14px;padding:14px;box-shadow:0 4px 18px rgba(15,23,42,.06)}
+    .metric b{display:block;font-size:28px}.metric span{color:#64748b;font-weight:700;font-size:12px;text-transform:uppercase}
+    .card{background:white;border:1px solid #e8edf4;border-left:6px solid #94a3b8;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 4px 18px rgba(15,23,42,.06);break-inside:avoid}
+    .card.pass{border-left-color:#00b894}.card.fail{border-left-color:#e17055}.card.skip{border-left-color:#94a3b8}
+    .row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.eyebrow{margin:0;color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase}
+    .status{font-weight:900;border-radius:999px;padding:5px 10px;background:#eef2f7}.pass .status{background:#dcfce7;color:#166534}.fail .status{background:#fee2e2;color:#991b1b}.skip .status{background:#f1f5f9;color:#475569}
+    .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.links a{background:#ecfdf5;color:#15803d;border:1px solid #bbf7d0;border-radius:10px;padding:7px 11px;font-weight:800;text-decoration:none}
+    .human{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:9px 11px;font-weight:700}.meta{color:#dbeafe;margin-top:8px}.target{color:#64748b;margin:0 0 16px}
+    @media print{body{background:white}.links a{color:#172033}}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>HiringCat AI QA Report</h1>
+      <div class="meta">Run 20260728T060847Z · 2026-07-28T06:09:50.750Z</div>
+    </section>
+    <p class="target">Target: https://hiringcat.com · QA page: https://aamirmursleen.github.io/hiringcat-qa</p>
+    <section class="summary">
+      <div class="metric"><b>4</b><span>Total</span></div>
+      <div class="metric"><b>2</b><span>Passed</span></div>
+      <div class="metric"><b>1</b><span>Failed</span></div>
+      <div class="metric"><b>1</b><span>Skipped</span></div>
+    </section>
+    
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">qa-form-smoke</p>
+          <h2>QA form infrastructure</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Checklist rendered 22 sections/56 tasks and Pass progress worked.</p>
+      <p><strong>Assertion:</strong> QA checklist infrastructure works.</p>
+      
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/videos/qa-form-smoke.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/captions/qa-form-smoke.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/screenshots/qa-form-smoke.png">Screenshot</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/traces/qa-form-smoke-trace.zip">Trace</a>
+      </div>
+    </article>
+  
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">target-app-preflight</p>
+          <h2>Target App Local/Live Preflight</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Target app loaded with HTTP 200.</p>
+      <p><strong>Assertion:</strong> HiringCat target app preflight passed.</p>
+      
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/videos/target-app-preflight.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/captions/target-app-preflight.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/screenshots/target-app-preflight.png">Screenshot</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/traces/target-app-preflight-trace.zip">Trace</a>
+      </div>
+    </article>
+  
+    <article class="card fail">
+      <div class="row">
+        <div>
+          <p class="eyebrow">login-signup</p>
+          <h2>Login / Signup</h2>
+        </div>
+        <span class="status">FAIL</span>
+      </div>
+      <p><strong>Reason:</strong> Login failed with an invalid credential or authorization error.</p>
+      
+      
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/videos/login-signup.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/captions/login-signup.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/screenshots/login-signup.png">Screenshot</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/traces/login-signup-trace.zip">Trace</a>
+      </div>
+    </article>
+  
+    <article class="card skip">
+      <div class="row">
+        <div>
+          <p class="eyebrow">careers-page</p>
+          <h2>Public Careers Page</h2>
+        </div>
+        <span class="status">SKIP</span>
+      </div>
+      <p><strong>Reason:</strong> Organization slug and job slug are missing, so AI cannot verify this public candidate route.</p>
+      
+      
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/videos/careers-page.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/captions/careers-page.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/screenshots/careers-page.png">Screenshot</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T060847Z/traces/careers-page-trace.zip">Trace</a>
+      </div>
+    </article>
+  
+  </main>
+</body>
+</html>

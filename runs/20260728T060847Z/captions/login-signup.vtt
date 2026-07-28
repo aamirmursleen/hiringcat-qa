@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.708 --> 00:00:01.708
+HiringCat AI QA - Login / Signup
+
+2
+00:00:01.559 --> 00:00:02.559
+Running: Login / Signup
+
+3
+00:00:02.206 --> 00:00:37.230
+Logging into HiringCat with private test credentials.
+
+4
+00:00:37.230 --> 00:00:39.430
+Result: FAIL - Login failed with an invalid credential or authorization error.

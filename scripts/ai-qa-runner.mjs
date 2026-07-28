@@ -307,6 +307,13 @@ async function testAuthenticatedRoute(page, section, captionEvents, startedAt) {
       assertion: "Private credentials should allow dashboard access.",
     };
   }
+  if (hasAuthFormOrError(bodyText)) {
+    return {
+      status: "FAIL",
+      reason: "Dashboard route shows sign-in UI or authentication error instead of a recruiter dashboard.",
+      assertion: "Private credentials should create an authenticated dashboard session.",
+    };
+  }
   if (!bodyText || hasBlockingAppError(bodyText)) {
     return {
       status: "FAIL",
@@ -333,16 +340,12 @@ async function login(page) {
     'input[type="email"]',
     'input[autocomplete="email"]',
   ], config.email);
-  await fillFirst(page, [
+  const passwordInput = await fillFirst(page, [
     'input[name="password"]',
     'input[type="password"]',
     'input[autocomplete="current-password"]',
   ], config.password);
-  await clickFirst(page, [
-    'button[type="submit"]',
-    'button:has-text("Sign in")',
-    'button:has-text("Continue")',
-  ]);
+  await passwordInput.press("Enter");
   await page.waitForLoadState("domcontentloaded").catch(() => {});
   await page.waitForTimeout(3500);
 
@@ -358,7 +361,7 @@ async function login(page) {
     return;
   }
 
-  if (/could not sign in|check your email and password|invalid|incorrect|unauthorized/i.test(bodyText)) {
+  if (hasAuthFormOrError(bodyText)) {
     throw new Error("Login failed with an invalid credential or authorization error.");
   }
 }
@@ -396,13 +399,17 @@ function hasBlockingAppError(text) {
   return /Application error|Internal Server Error|Something went wrong|Authentication is not configured|Set VITE_CLERK_PUBLISHABLE_KEY/i.test(text || "");
 }
 
+function hasAuthFormOrError(text) {
+  return /Sign in to HiringCat|WELCOME BACK|Couldn't find your account|Could not find your account|could not sign in|check your email and password|invalid|incorrect|unauthorized/i.test(text || "");
+}
+
 async function fillFirst(page, selectors, value) {
   for (const selector of selectors) {
     const locator = page.locator(selector).first();
-    if (await locator.count()) {
-      await locator.fill(value, { timeout: 5000 });
-      return;
-    }
+    await locator.waitFor({ state: "visible", timeout: 10_000 }).catch(() => {});
+    if (!(await locator.isVisible().catch(() => false))) continue;
+    await locator.fill(value, { timeout: 5000 });
+    return locator;
   }
   throw new Error(`Could not find input selector from: ${selectors.join(", ")}`);
 }
@@ -410,10 +417,10 @@ async function fillFirst(page, selectors, value) {
 async function clickFirst(page, selectors) {
   for (const selector of selectors) {
     const locator = page.locator(selector).first();
-    if (await locator.count()) {
-      await locator.click({ timeout: 5000 });
-      return;
-    }
+    await locator.waitFor({ state: "visible", timeout: 10_000 }).catch(() => {});
+    if (!(await locator.isVisible().catch(() => false))) continue;
+    await locator.click({ timeout: 5000 });
+    return;
   }
   throw new Error(`Could not find clickable selector from: ${selectors.join(", ")}`);
 }
