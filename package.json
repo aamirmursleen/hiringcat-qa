@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "qa:ai": "node scripts/ai-qa-runner.mjs",
+    "qa:ai:deep": "node scripts/ai-qa-runner.mjs --deep",
     "qa:ai:smoke": "node scripts/ai-qa-runner.mjs --smoke",
     "test": "node scripts/validate-ai-qa.mjs"
   },

@@ -1,0 +1,49 @@
+WEBVTT
+
+1
+00:00:00.574 --> 00:00:01.574
+HiringCat AI QA - Candidate Apply Flow
+
+2
+00:00:01.271 --> 00:00:02.271
+Running: Candidate Apply Flow
+
+3
+00:00:01.902 --> 00:00:05.325
+Using saved authenticated browser session.
+
+4
+00:00:05.325 --> 00:00:08.351
+Opening public apply page as a logged-out candidate.
+
+5
+00:00:08.351 --> 00:00:09.828
+Submitting candidate application for ai-qa-candidate-1785225194020@example.com.
+
+6
+00:00:09.828 --> 00:00:11.380
+Answering short_text question: Summarize your QA testing experience.
+
+7
+00:00:11.380 --> 00:00:12.546
+Answering video question: Record a short introduction video.
+
+8
+00:00:12.546 --> 00:00:13.546
+Answering file_upload question: Upload one supporting work sample.
+
+9
+00:00:13.497 --> 00:00:14.497
+Answering yes_no question: Are you available for a QA interview this week?
+
+10
+00:00:14.494 --> 00:00:15.701
+Answering rating question: Rate your confidence with E2E testing.
+
+11
+00:00:15.701 --> 00:00:16.971
+Final-submitting candidate application.
+
+12
+00:00:16.971 --> 00:00:32.325
+Result: PASS - Candidate ai-qa-candidate-1785225194020@example.com applied and final submit returned completion.

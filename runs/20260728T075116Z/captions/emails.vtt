@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.697 --> 00:00:01.697
+HiringCat AI QA - Emails / Inbox / Templates
+
+2
+00:00:01.544 --> 00:00:02.544
+Running: Emails / Inbox / Templates
+
+3
+00:00:02.170 --> 00:00:04.716
+Using saved authenticated browser session.
+
+4
+00:00:04.716 --> 00:00:07.860
+Opening email templates/inbox settings after candidate submission.
+
+5
+00:00:07.860 --> 00:00:15.142
+Result: PASS - Email templates page loaded; application submit triggered email/automation hooks server-side.

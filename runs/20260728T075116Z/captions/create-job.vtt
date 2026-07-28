@@ -1,0 +1,29 @@
+WEBVTT
+
+1
+00:00:01.174 --> 00:00:02.174
+HiringCat AI QA - Create Job
+
+2
+00:00:01.942 --> 00:00:02.942
+Running: Create Job
+
+3
+00:00:02.563 --> 00:00:05.211
+Using saved authenticated browser session.
+
+4
+00:00:05.211 --> 00:00:07.664
+Creating active job: AI QA E2E Job ms4cy7no-1
+
+5
+00:00:07.664 --> 00:00:11.004
+Opening created job detail page and verifying title is visible.
+
+6
+00:00:11.004 --> 00:00:12.505
+Verifying created job persisted as active through authenticated API.
+
+7
+00:00:12.505 --> 00:00:24.386
+Result: PASS - Created and verified active job "AI QA E2E Job ms4cy7no-1" (ai-qa-e2e-ms4cy7no-1).

@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:02.250 --> 00:00:03.250
+HiringCat AI QA - Candidate Dashboard / Pipeline
+
+2
+00:00:03.015 --> 00:00:04.015
+Running: Candidate Dashboard / Pipeline
+
+3
+00:00:03.649 --> 00:00:06.246
+Using saved authenticated browser session.
+
+4
+00:00:06.246 --> 00:00:11.661
+Opening HR dashboard candidate detail and verifying candidate can be managed.
+
+5
+00:00:11.661 --> 00:00:20.427
+Result: PASS - Submitted candidate opened in HR dashboard with correct job/application data.

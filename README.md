@@ -48,6 +48,29 @@ Fast smoke run:
 npm run qa:ai:smoke
 ```
 
+Functional human-style E2E run:
+
+```bash
+npm run qa:ai:deep
+```
+
+Deep mode creates real QA data in the configured HiringCat test workspace:
+
+- logs in and reuses the same browser session
+- creates a unique active job
+- verifies the job in dashboard and public careers/apply pages
+- submits a unique candidate application with CV URL and screening answers
+- submits video/file/text/yes-no/rating question responses through the public application API
+- opens the HR candidate detail page and verifies the submitted candidate appears
+- checks scheduling, emails, automation, integrations, SMTP, tracking, branding, team, analytics, billing/activity, and mobile public pages
+- marks only DNS/Gmail/payment/custom-domain items as `SKIP` when external access is missing
+
+To repeat the destructive core flow more than once in one run:
+
+```bash
+DEEP_TEST_REPEAT=2 npm run qa:ai:deep
+```
+
 Localhost dashboard E2E:
 
 ```bash
@@ -66,6 +89,11 @@ QA_HEADLESS=0 HIRINGCAT_LOGIN_INTERACTIVE=1 HIRINGCAT_URL=http://localhost:5173 
 
 The browser will stay open long enough for a human to enter the code, then the AI runner continues the dashboard checks.
 If the code is already available, pass it once with `HIRINGCAT_LOGIN_CODE=123456`; the runner saves the authenticated browser state for that run and reuses it across dashboard sections.
+To reuse a saved session from a previous run:
+
+```bash
+HIRINGCAT_AUTH_STATE_PATH=runs/<previous-run>/auth-state.json npm run qa:ai:deep
+```
 
 Run output is written to:
 

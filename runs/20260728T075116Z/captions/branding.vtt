@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.725 --> 00:00:01.725
+HiringCat AI QA - Branding / Careers Settings
+
+2
+00:00:01.561 --> 00:00:02.561
+Running: Branding / Careers Settings
+
+3
+00:00:02.199 --> 00:00:04.822
+Using saved authenticated browser session.
+
+4
+00:00:04.822 --> 00:00:08.344
+Opening branding settings and verifying public branding object.
+
+5
+00:00:08.344 --> 00:00:15.099
+Result: PASS - Branding settings loaded and public apply API returned branding data.

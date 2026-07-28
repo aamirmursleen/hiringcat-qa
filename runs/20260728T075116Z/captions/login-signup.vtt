@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.784 --> 00:00:01.784
+HiringCat AI QA - Login / Signup
+
+2
+00:00:01.538 --> 00:00:02.538
+Running: Login / Signup
+
+3
+00:00:02.178 --> 00:00:05.097
+Using saved authenticated browser session.
+
+4
+00:00:05.097 --> 00:00:07.795
+Verifying dashboard session is reusable and private dashboard is visible.
+
+5
+00:00:07.795 --> 00:00:14.855
+Result: PASS - Logged in and verified reusable authenticated dashboard session.

@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.617 --> 00:00:01.617
+HiringCat AI QA - Rounds / Questions
+
+2
+00:00:01.400 --> 00:00:02.400
+Running: Rounds / Questions
+
+3
+00:00:02.042 --> 00:00:05.144
+Using saved authenticated browser session.
+
+4
+00:00:05.144 --> 00:00:09.000
+Checking saved text, video, file, yes/no, and rating screening questions.
+
+5
+00:00:09.000 --> 00:00:15.256
+Result: PASS - Verified 5 saved screening questions/round items on the created job.

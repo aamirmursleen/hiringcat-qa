@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.978 --> 00:00:01.978
+HiringCat AI QA - Application Form Fields
+
+2
+00:00:01.652 --> 00:00:02.652
+Running: Application Form Fields
+
+3
+00:00:02.294 --> 00:00:05.966
+Using saved authenticated browser session.
+
+4
+00:00:05.966 --> 00:00:08.590
+Verifying application form configuration through public apply API.
+
+5
+00:00:08.590 --> 00:00:10.199
+Result: PASS - Application fields were saved and exposed on the public apply flow.

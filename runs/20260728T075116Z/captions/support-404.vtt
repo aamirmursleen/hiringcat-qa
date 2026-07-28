@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.886 --> 00:00:01.886
+HiringCat AI QA - Support / Contact / 404
+
+2
+00:00:01.697 --> 00:00:02.697
+Running: Support / Contact / 404
+
+3
+00:00:02.378 --> 00:00:04.665
+Opening public URL: https://hiringcat.com/this-page-should-not-exist
+
+4
+00:00:04.665 --> 00:00:06.563
+Result: PASS - Public route loaded with HTTP 200.

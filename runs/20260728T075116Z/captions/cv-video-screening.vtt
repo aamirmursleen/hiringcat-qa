@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.957 --> 00:00:01.957
+HiringCat AI QA - CV Upload + Video/Text Screening
+
+2
+00:00:01.757 --> 00:00:02.757
+Running: CV Upload + Video/Text Screening
+
+3
+00:00:02.383 --> 00:00:05.522
+Using saved authenticated browser session.
+
+4
+00:00:05.522 --> 00:00:10.396
+Verifying CV URL and video/text/file/rating responses exist for submitted candidate.
+
+5
+00:00:10.396 --> 00:00:17.973
+Result: PASS - CV and video/text screening evidence were saved and visible in candidate detail.
