@@ -1,0 +1,29 @@
+WEBVTT
+
+1
+00:00:00.922 --> 00:00:01.964
+HiringCat AI QA - Application Form Fields
+
+2
+00:00:01.964 --> 00:00:02.964
+Running: Application Form Fields
+
+3
+00:00:02.793 --> 00:00:06.126
+Using saved authenticated browser session.
+
+4
+00:00:06.126 --> 00:00:08.053
+Verifying application form configuration through public apply API.
+
+5
+00:00:08.053 --> 00:00:09.958
+REQUEST: API GET /api/public/jobs/fhd/ai-qa-e2e-ms4h3mam-1 - {}
+
+6
+00:00:09.958 --> 00:00:13.914
+PASS: API response GET /api/public/jobs/fhd/ai-qa-e2e-ms4h3mam-1 - HTTP 200; {"org":{"name":"Fhdqewd","slug":"fhd","logoUrl":null},"job":{"id":"f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd","title":"AI QA E2E Job ms4h3mam-1","description":"<p>AI QA E2E Job ms4h3mam-1 created by HiringCat AI deep E2E...","department":"QA Automation","location":
+
+7
+00:00:13.914 --> 00:00:17.191
+Result: PASS - Application fields were saved and exposed on the public apply flow.

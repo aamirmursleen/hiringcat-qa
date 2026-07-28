@@ -1,0 +1,161 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Branding / Careers Settings Storyboard</title>
+<style>
+body{margin:0;background:#f8fafc;color:#111827;font:14px/1.55 Inter,Arial,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 44px}
+h1{font-size:26px;margin:0 0 4px}.meta{color:#64748b;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.step{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 6px 22px rgba(15,23,42,.07)}
+.step img{display:block;width:100%;height:auto;background:#e5e7eb}
+.caption{border-top:5px solid #3b82f6;padding:12px}.step.pass .caption{border-top-color:#16a34a}.step.fail .caption{border-top-color:#dc2626}.step.request .caption{border-top-color:#7c3aed}.step.skip .caption{border-top-color:#64748b}
+.caption b{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.03em}.caption p{margin:6px 0 0;overflow-wrap:anywhere}
+</style></head><body><main>
+<h1>Branding / Careers Settings Step Storyboard</h1>
+<div class="meta">Run 20260728T094700Z · branding · 18 captured steps</div>
+<section class="grid">
+    <article class="step step">
+      <img src="../step-images/branding-01.jpg" alt="Step 1">
+      <div class="caption">
+        <b>1. STEP</b>
+        <p>HiringCat AI QA - Branding / Careers Settings</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/branding-02.jpg" alt="Step 2">
+      <div class="caption">
+        <b>2. STEP</b>
+        <p>Running: Branding / Careers Settings</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/branding-03.jpg" alt="Step 3">
+      <div class="caption">
+        <b>3. STEP</b>
+        <p>Using saved authenticated browser session.</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/branding-04.jpg" alt="Step 4">
+      <div class="caption">
+        <b>4. STEP</b>
+        <p>Opening branding settings, saving QA colors/careers text, verifying public page, then restoring.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/branding-05.jpg" alt="Step 5">
+      <div class="caption">
+        <b>5. REQUEST</b>
+        <p>API GET /api/orgs/branding - {&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/branding-06.jpg" alt="Step 6">
+      <div class="caption">
+        <b>6. PASS</b>
+        <p>API response GET /api/orgs/branding - HTTP 200; {&quot;success&quot;:true,&quot;data&quot;:null}</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/branding-07.jpg" alt="Step 7">
+      <div class="caption">
+        <b>7. REQUEST</b>
+        <p>API GET /api/orgs/career-page - {&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/branding-08.jpg" alt="Step 8">
+      <div class="caption">
+        <b>8. PASS</b>
+        <p>API response GET /api/orgs/career-page - HTTP 200; {&quot;success&quot;:true,&quot;data&quot;:null}</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/branding-09.jpg" alt="Step 9">
+      <div class="caption">
+        <b>9. REQUEST</b>
+        <p>API PUT /api/orgs/branding - {&quot;primaryColor&quot;:&quot;#16A34A&quot;,&quot;logoUrl&quot;:null,&quot;faviconUrl&quot;:null,&quot;fontFamily&quot;:&quot;Inter&quot;,&quot;customCss&quot;:null}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/branding-10.jpg" alt="Step 10">
+      <div class="caption">
+        <b>10. PASS</b>
+        <p>API response PUT /api/orgs/branding - HTTP 200; {&quot;id&quot;:&quot;3e6d3cdd-09b7-44ab-afc9-a2ec78fe37b1&quot;,&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;,&quot;primaryColor&quot;:&quot;#16A34A&quot;,&quot;logoUrl&quot;:null,&quot;faviconUrl&quot;:null,&quot;fontFamily&quot;:&quot;Inter&quot;,&quot;customCss&quot;:null,&quot;updatedAt&quot;:&quot;2026-07-28T09:59:52.987Z&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/branding-11.jpg" alt="Step 11">
+      <div class="caption">
+        <b>11. REQUEST</b>
+        <p>API PUT /api/orgs/career-page - {&quot;content&quot;:{&quot;heroTitle&quot;:&quot;AI QA Careers Proof 1785232790369&quot;,&quot;heroSubtitle&quot;:&quot;AI QA verifies careers page content save and public reflection.&quot;}}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/branding-12.jpg" alt="Step 12">
+      <div class="caption">
+        <b>12. PASS</b>
+        <p>API response PUT /api/orgs/career-page - HTTP 200; {&quot;success&quot;:true}</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/branding-13.jpg" alt="Step 13">
+      <div class="caption">
+        <b>13. REQUEST</b>
+        <p>API GET /api/public/jobs/fhd/ai-qa-e2e-ms4h3mam-1 - {}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/branding-14.jpg" alt="Step 14">
+      <div class="caption">
+        <b>14. PASS</b>
+        <p>API response GET /api/public/jobs/fhd/ai-qa-e2e-ms4h3mam-1 - HTTP 200; {&quot;org&quot;:{&quot;name&quot;:&quot;Fhdqewd&quot;,&quot;slug&quot;:&quot;fhd&quot;,&quot;logoUrl&quot;:null},&quot;job&quot;:{&quot;id&quot;:&quot;f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd&quot;,&quot;title&quot;:&quot;AI QA E2E Job ms4h3mam-1&quot;,&quot;description&quot;:&quot;&lt;p&gt;AI QA E2E Job ms4h3mam-1 created by HiringCat AI deep E2E...&quot;,&quot;department&quot;:&quot;QA Automation&quot;,&quot;location&quot;:</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/branding-15.jpg" alt="Step 15">
+      <div class="caption">
+        <b>15. REQUEST</b>
+        <p>API PUT /api/orgs/branding - {&quot;primaryColor&quot;:&quot;#2563EB&quot;,&quot;logoUrl&quot;:null,&quot;faviconUrl&quot;:null,&quot;fontFamily&quot;:null,&quot;customCss&quot;:null}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/branding-16.jpg" alt="Step 16">
+      <div class="caption">
+        <b>16. PASS</b>
+        <p>API response PUT /api/orgs/branding - HTTP 200; {&quot;id&quot;:&quot;3e6d3cdd-09b7-44ab-afc9-a2ec78fe37b1&quot;,&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;,&quot;primaryColor&quot;:&quot;#2563EB&quot;,&quot;logoUrl&quot;:null,&quot;faviconUrl&quot;:null,&quot;fontFamily&quot;:null,&quot;customCss&quot;:null,&quot;updatedAt&quot;:&quot;2026-07-28T10:00:08.535Z&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/branding-17.jpg" alt="Step 17">
+      <div class="caption">
+        <b>17. REQUEST</b>
+        <p>API PUT /api/orgs/career-page - {}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/branding-18.jpg" alt="Step 18">
+      <div class="caption">
+        <b>18. PASS</b>
+        <p>API response PUT /api/orgs/career-page - HTTP 200; {&quot;success&quot;:true}</p>
+      </div>
+    </article>
+  </section>
+</main></body></html>

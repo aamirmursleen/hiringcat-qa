@@ -1,0 +1,77 @@
+WEBVTT
+
+1
+00:00:01.276 --> 00:00:02.678
+HiringCat AI QA - Branding / Careers Settings
+
+2
+00:00:02.678 --> 00:00:03.839
+Running: Branding / Careers Settings
+
+3
+00:00:03.839 --> 00:00:09.068
+Using saved authenticated browser session.
+
+4
+00:00:09.068 --> 00:00:16.596
+Opening branding settings, saving QA colors/careers text, verifying public page, then restoring.
+
+5
+00:00:16.596 --> 00:00:19.864
+REQUEST: API GET /api/orgs/branding - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+6
+00:00:19.864 --> 00:00:22.198
+PASS: API response GET /api/orgs/branding - HTTP 200; {"success":true,"data":null}
+
+7
+00:00:22.198 --> 00:00:25.194
+REQUEST: API GET /api/orgs/career-page - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+8
+00:00:25.194 --> 00:00:27.493
+PASS: API response GET /api/orgs/career-page - HTTP 200; {"success":true,"data":null}
+
+9
+00:00:27.493 --> 00:00:29.969
+REQUEST: API PUT /api/orgs/branding - {"primaryColor":"#16A34A","logoUrl":null,"faviconUrl":null,"fontFamily":"Inter","customCss":null}
+
+10
+00:00:29.969 --> 00:00:31.902
+PASS: API response PUT /api/orgs/branding - HTTP 200; {"id":"3e6d3cdd-09b7-44ab-afc9-a2ec78fe37b1","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","primaryColor":"#16A34A","logoUrl":null,"faviconUrl":null,"fontFamily":"Inter","customCss":null,"updatedAt":"2026-07-28T09:59:52.987Z"}
+
+11
+00:00:31.902 --> 00:00:35.508
+REQUEST: API PUT /api/orgs/career-page - {"content":{"heroTitle":"AI QA Careers Proof 1785232790369","heroSubtitle":"AI QA verifies careers page content save and public reflection."}}
+
+12
+00:00:35.508 --> 00:00:37.497
+PASS: API response PUT /api/orgs/career-page - HTTP 200; {"success":true}
+
+13
+00:00:37.497 --> 00:00:40.282
+REQUEST: API GET /api/public/jobs/fhd/ai-qa-e2e-ms4h3mam-1 - {}
+
+14
+00:00:40.282 --> 00:00:43.486
+PASS: API response GET /api/public/jobs/fhd/ai-qa-e2e-ms4h3mam-1 - HTTP 200; {"org":{"name":"Fhdqewd","slug":"fhd","logoUrl":null},"job":{"id":"f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd","title":"AI QA E2E Job ms4h3mam-1","description":"<p>AI QA E2E Job ms4h3mam-1 created by HiringCat AI deep E2E...","department":"QA Automation","location":
+
+15
+00:00:43.486 --> 00:00:45.505
+REQUEST: API PUT /api/orgs/branding - {"primaryColor":"#2563EB","logoUrl":null,"faviconUrl":null,"fontFamily":null,"customCss":null}
+
+16
+00:00:45.505 --> 00:00:50.630
+PASS: API response PUT /api/orgs/branding - HTTP 200; {"id":"3e6d3cdd-09b7-44ab-afc9-a2ec78fe37b1","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","primaryColor":"#2563EB","logoUrl":null,"faviconUrl":null,"fontFamily":null,"customCss":null,"updatedAt":"2026-07-28T10:00:08.535Z"}
+
+17
+00:00:50.630 --> 00:00:53.443
+REQUEST: API PUT /api/orgs/career-page - {}
+
+18
+00:00:53.443 --> 00:00:55.331
+PASS: API response PUT /api/orgs/career-page - HTTP 200; {"success":true}
+
+19
+00:00:55.331 --> 00:02:05.580
+Result: PASS - Branding/careers settings were saved, verified via public API, and restored.

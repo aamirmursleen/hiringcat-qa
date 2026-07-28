@@ -1,0 +1,61 @@
+WEBVTT
+
+1
+00:00:01.129 --> 00:00:02.287
+HiringCat AI QA - Integrations / Webhooks
+
+2
+00:00:02.287 --> 00:00:03.287
+Running: Integrations / Webhooks
+
+3
+00:00:03.164 --> 00:00:06.379
+Using saved authenticated browser session.
+
+4
+00:00:06.379 --> 00:00:10.696
+Opening integrations and creating/testing/deleting a real QA webhook.
+
+5
+00:00:10.696 --> 00:00:12.941
+REQUEST: API POST /api/webhooks - {"url":"https://example.com/hiringcat-ai-qa-webhook-1785232594524","events":["application.submitted"]}
+
+6
+00:00:12.941 --> 00:00:14.880
+PASS: API response POST /api/webhooks - HTTP 201; {"id":"f3f3ed5e-879b-4d90-82be-d2910cc1904d","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","url":"https://example.com/hiringcat-ai-qa-webhook-1785232594524","events":["application.submitted"],"isActive":true,"failureCount":0,"createdAt":"2026-07-28T09:56:37.2
+
+7
+00:00:14.880 --> 00:00:17.304
+REQUEST: API GET /api/webhooks - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+8
+00:00:17.304 --> 00:00:19.449
+PASS: API response GET /api/webhooks - HTTP 200; [{"id":"f3f3ed5e-879b-4d90-82be-d2910cc1904d","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","url":"https://example.com/hiringcat-ai-qa-webhook-1785232594524","events":["application.submitted"],"isActive":true,"failureCount":0,"createdAt":"2026-07-28T09:56:37.
+
+9
+00:00:19.449 --> 00:00:21.882
+REQUEST: API PATCH /api/webhooks/f3f3ed5e-879b-4d90-82be-d2910cc1904d - {"isActive":false}
+
+10
+00:00:21.882 --> 00:00:24.184
+PASS: API response PATCH /api/webhooks/f3f3ed5e-879b-4d90-82be-d2910cc1904d - HTTP 200; {"id":"f3f3ed5e-879b-4d90-82be-d2910cc1904d","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","url":"https://example.com/hiringcat-ai-qa-webhook-1785232594524","events":["application.submitted"],"isActive":false,"failureCount":0,"createdAt":"2026-07-28T09:56:37.
+
+11
+00:00:24.184 --> 00:00:26.517
+REQUEST: API POST /api/webhooks/f3f3ed5e-879b-4d90-82be-d2910cc1904d/test - {"event":"application.submitted"}
+
+12
+00:00:26.517 --> 00:00:29.159
+PASS: API response POST /api/webhooks/f3f3ed5e-879b-4d90-82be-d2910cc1904d/test - HTTP 200; {"event":{"id":"debe8588-93c2-4660-b614-6e7516548125","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","event":"application.submitted","payload":{"test":true,"message":"This is a test webhook from HiringCat.","webhookId":"f3f3ed5e-879b-4d90-82be-d2910cc1904d"},"
+
+13
+00:00:29.159 --> 00:00:32.026
+REQUEST: API DELETE /api/webhooks/f3f3ed5e-879b-4d90-82be-d2910cc1904d - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+14
+00:00:32.026 --> 00:00:33.994
+PASS: API response DELETE /api/webhooks/f3f3ed5e-879b-4d90-82be-d2910cc1904d - HTTP 200; {"success":true}
+
+15
+00:00:33.994 --> 00:01:03.406
+Result: PASS - Webhook integration was created, listed, toggled inactive, test-called, and deleted.

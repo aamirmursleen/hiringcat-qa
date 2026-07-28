@@ -23,7 +23,7 @@ flowchart TD
   I -->|Matched| J[PASS]
   I -->|Mismatch| K[FAIL + reason + screenshot]
   I -->|Needs human/external access| L[SKIP + reason]
-  J --> M[Save video, screenshot, trace, captions]
+  J --> M[Save video, screenshots, captions, storyboard]
   K --> M
   L --> M
   M --> N[Generate HTML report + PDF report]
@@ -58,6 +58,7 @@ Deep mode creates real QA data in the configured HiringCat test workspace:
 
 - logs in and reuses the same browser session
 - shows a visible proof panel in every video with the current step, request, response, and assertion
+- captures step-by-step screenshots and merges them into a storyboard page for each QA section
 - creates a unique active job
 - verifies the job in dashboard and public careers/apply pages
 - submits a unique candidate application with CV URL and screening answers
@@ -113,9 +114,12 @@ runs/<timestamp>/
   summary.json
   videos/*.webm
   screenshots/*.png
-  traces/*.zip
   captions/*.vtt
+  step-images/*.jpg
+  storyboards/*.html
 ```
+
+Playwright trace zips are optional because they are large. Use `QA_SAVE_TRACES=1` only when trace debugging is needed.
 
 ## WhatsApp Delivery
 

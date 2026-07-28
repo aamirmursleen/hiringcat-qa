@@ -1,0 +1,37 @@
+WEBVTT
+
+1
+00:00:00.800 --> 00:00:01.809
+HiringCat AI QA - Analytics
+
+2
+00:00:01.809 --> 00:00:02.809
+Running: Analytics
+
+3
+00:00:02.744 --> 00:00:06.326
+Using saved authenticated browser session.
+
+4
+00:00:06.326 --> 00:00:10.975
+Opening analytics and verifying counts against the real job/candidate created in this run.
+
+5
+00:00:10.975 --> 00:00:13.164
+REQUEST: API GET /api/analytics/overview - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+6
+00:00:13.164 --> 00:00:15.613
+PASS: API response GET /api/analytics/overview - HTTP 200; {"jobs":[{"id":"f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","title":"AI QA E2E Job ms4h3mam-1","slug":"ai-qa-e2e-ms4h3mam-1","description":"<p>AI QA E2E Job ms4h3mam-1 created by HiringCat AI deep E2E...","department":"
+
+7
+00:00:15.613 --> 00:00:18.350
+REQUEST: API GET /api/analytics/f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd?range=30d - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+8
+00:00:18.350 --> 00:00:20.436
+PASS: API response GET /api/analytics/f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd?range=30d - HTTP 200; {"totalApplications":1,"submittedApplications":1,"completionRate":100,"avgAiScore":null,"dropoffCount":0,"avgTimeToSubmitHours":0,"byStage":[{"stageName":"New","stageSlug":"new","count":1,"percentage":100,"color":"#6B7280","status":"watch"}],"funnel":[{"key":"
+
+9
+00:00:20.436 --> 00:00:47.108
+Result: PASS - Analytics page loaded and API counts matched the real submitted candidate/job from this run.

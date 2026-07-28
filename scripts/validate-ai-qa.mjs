@@ -38,6 +38,8 @@ assert(runner.includes("submitQuestionResponses"), "deep E2E mode must submit ca
 assert(runner.includes("HIRINGCAT_AUTH_STATE_PATH"), "runner must support auth state reuse");
 assert(runner.includes("Visible Step Evidence"), "runner must render a visible step evidence panel in videos");
 assert(runner.includes("HAI_API_KEY"), "runner must support optional H Company evidence review through env only");
+assert(runner.includes("writeStepStoryboard"), "runner must generate step screenshot storyboards");
+assert(runner.includes("captureStepScreenshot"), "runner must capture per-step screenshots");
 
 const scenarioCount = [...runner.matchAll(/id: "/g)].length;
 assert(scenarioCount >= 24, `expected at least 24 scenario entries, found ${scenarioCount}`);

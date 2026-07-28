@@ -1,0 +1,53 @@
+WEBVTT
+
+1
+00:00:01.208 --> 00:00:02.512
+HiringCat AI QA - Automation Rules
+
+2
+00:00:02.512 --> 00:00:03.553
+Running: Automation Rules
+
+3
+00:00:03.553 --> 00:00:08.732
+Using saved authenticated browser session.
+
+4
+00:00:08.732 --> 00:00:14.168
+Opening automation settings, then creating/toggling/deleting a real QA rule.
+
+5
+00:00:14.168 --> 00:00:17.322
+REQUEST: API POST /api/automation/rules - {"jobId":"f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd","trigger":"application_submitted","action":"notify_team","conditions":{"source":"ai_qa_deep_e2e"},"actionConfig":{"message":"AI QA automation rule test for {{candidateName}}"},"isActive":true,"priority":99}
+
+6
+00:00:17.322 --> 00:00:19.402
+PASS: API response POST /api/automation/rules - HTTP 200; {"id":"436fb62c-0500-4e93-8e43-8356e83ec076","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","jobId":"f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd","trigger":"application_submitted","conditions":{"source":"ai_qa_deep_e2e"},"action":"notify_team","actionConfig":{"messag
+
+7
+00:00:19.402 --> 00:00:22.579
+REQUEST: API PATCH /api/automation/rules/436fb62c-0500-4e93-8e43-8356e83ec076/toggle - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+8
+00:00:22.579 --> 00:00:25.351
+PASS: API response PATCH /api/automation/rules/436fb62c-0500-4e93-8e43-8356e83ec076/toggle - HTTP 200; {"isActive":false}
+
+9
+00:00:25.351 --> 00:00:27.590
+REQUEST: API GET /api/automation/rules/f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+10
+00:00:27.590 --> 00:00:30.106
+PASS: API response GET /api/automation/rules/f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd - HTTP 200; {"jobRules":[{"id":"436fb62c-0500-4e93-8e43-8356e83ec076","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","jobId":"f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd","trigger":"application_submitted","conditions":{"source":"ai_qa_deep_e2e"},"action":"notify_team","actionCon
+
+11
+00:00:30.106 --> 00:00:32.468
+REQUEST: API DELETE /api/automation/rules/436fb62c-0500-4e93-8e43-8356e83ec076 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+12
+00:00:32.468 --> 00:00:34.248
+PASS: API response DELETE /api/automation/rules/436fb62c-0500-4e93-8e43-8356e83ec076 - HTTP 200; {"success":true}
+
+13
+00:00:34.248 --> 00:01:10.687
+Result: PASS - Automation rule was created, toggled off, listed, and deleted successfully.

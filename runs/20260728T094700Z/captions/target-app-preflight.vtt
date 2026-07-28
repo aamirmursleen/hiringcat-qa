@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.762 --> 00:00:01.762
+HiringCat AI QA - Target App Local/Live Preflight
+
+2
+00:00:01.740 --> 00:00:02.740
+Running: Target App Local/Live Preflight
+
+3
+00:00:02.564 --> 00:00:05.742
+Opening HiringCat target app: https://hiringcat.com
+
+4
+00:00:05.742 --> 00:00:14.467
+Result: PASS - Target app loaded with HTTP 200.

@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:01.094 --> 00:00:02.375
+HiringCat AI QA - Custom Domain
+
+2
+00:00:02.375 --> 00:00:03.513
+Running: Custom Domain
+
+3
+00:00:03.513 --> 00:00:07.184
+Using saved authenticated browser session.
+
+4
+00:00:07.184 --> 00:00:11.399
+Testing custom-domain settings UI without changing real DNS.
+
+5
+00:00:11.399 --> 00:00:21.586
+Result: SKIP - Custom domain settings page loaded, but real domain/DNS verification needs a configured test domain.

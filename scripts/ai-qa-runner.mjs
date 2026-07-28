@@ -38,6 +38,7 @@ const config = {
   deepRepeat: Math.max(1, Number(process.env.DEEP_TEST_REPEAT || 1)),
   haiApiKey: process.env.HAI_API_KEY || "",
   haiReviewEvidence: process.env.HAI_REVIEW_EVIDENCE === "1",
+  saveTraces: process.env.QA_SAVE_TRACES === "1",
 };
 
 const runId = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
@@ -47,12 +48,16 @@ const videosDir = path.join(runDir, "videos");
 const screenshotsDir = path.join(runDir, "screenshots");
 const tracesDir = path.join(runDir, "traces");
 const captionsDir = path.join(runDir, "captions");
+const stepImagesDir = path.join(runDir, "step-images");
+const storyboardsDir = path.join(runDir, "storyboards");
 const rawVideoDir = path.join(runDir, "raw-videos");
 const authStatePath = path.join(runDir, "auth-state.json");
 await fs.mkdir(videosDir, { recursive: true });
 await fs.mkdir(screenshotsDir, { recursive: true });
-await fs.mkdir(tracesDir, { recursive: true });
+if (config.saveTraces) await fs.mkdir(tracesDir, { recursive: true });
 await fs.mkdir(captionsDir, { recursive: true });
+await fs.mkdir(stepImagesDir, { recursive: true });
+await fs.mkdir(storyboardsDir, { recursive: true });
 await fs.mkdir(rawVideoDir, { recursive: true });
 
 if (config.authStateSeed) {
@@ -71,7 +76,9 @@ const state = {
   publicJob: null,
   application: null,
   questions: [],
+  cleanup: [],
 };
+const stepStateByPage = new WeakMap();
 
 const browser = await chromium.launch({ headless: config.headless });
 const results = [];
@@ -142,8 +149,11 @@ async function runSection(browserInstance, section) {
     contextOptions.storageState = authStatePath;
   }
   const context = await browserInstance.newContext(contextOptions);
-  await context.tracing.start({ screenshots: true, snapshots: true, sources: false });
+  if (config.saveTraces) {
+    await context.tracing.start({ screenshots: true, snapshots: true, sources: false });
+  }
   const page = await context.newPage();
+  stepStateByPage.set(page, { sectionId: section.id, index: 0, images: [] });
   const captionEvents = [];
   const errors = [];
   page.on("pageerror", (err) => errors.push(err.message));
@@ -158,6 +168,7 @@ async function runSection(browserInstance, section) {
   let tracePath = "";
   let videoPath = "";
   let vttPath = "";
+  let storyboardPath = "";
 
   try {
     await showChecklistContext(page, section, captionEvents, startedAt);
@@ -184,10 +195,12 @@ async function runSection(browserInstance, section) {
       await page.screenshot({ path: screenshotPath, fullPage: false });
     } catch {}
 
-    tracePath = path.join(tracesDir, `${section.id}-trace.zip`);
-    try {
-      await context.tracing.stop({ path: tracePath });
-    } catch {}
+    if (config.saveTraces) {
+      tracePath = path.join(tracesDir, `${section.id}-trace.zip`);
+      try {
+        await context.tracing.stop({ path: tracePath });
+      } catch {}
+    }
 
     const video = page.video();
     await page.close().catch(() => {});
@@ -199,9 +212,11 @@ async function runSection(browserInstance, section) {
     }
     vttPath = path.join(captionsDir, `${section.id}.vtt`);
     await fs.writeFile(vttPath, toVtt(captionEvents, Date.now() - startedAt));
+    storyboardPath = path.join(storyboardsDir, `${section.id}.html`);
+    await writeStepStoryboard(page, section, storyboardPath).catch(() => {});
   }
 
-  const uploaded = await uploadArtifacts({ section, videoPath, screenshotPath, tracePath, vttPath });
+  const uploaded = await uploadArtifacts({ section, videoPath, screenshotPath, tracePath, vttPath, storyboardPath });
   return {
     id: section.id,
     title: section.title,
@@ -213,6 +228,7 @@ async function runSection(browserInstance, section) {
     errors: errors.slice(0, 10),
     videoUrl: uploaded.videoUrl,
     captionUrl: uploaded.captionUrl,
+    storyboardUrl: uploaded.storyboardUrl,
     screenshotUrl: uploaded.screenshotUrl,
     traceUrl: uploaded.traceUrl,
   };
@@ -269,7 +285,7 @@ async function executeDeepSection(page, section, captionEvents, startedAt) {
     case "custom-domain":
       return deepCustomDomain(page, captionEvents, startedAt);
     case "integrations":
-      return deepRouteOnly(page, section, captionEvents, startedAt, "/dashboard/settings/integrations", /Integration|Webhook|Connect|Disconnect|Slack/i);
+      return deepIntegrations(page, section, captionEvents, startedAt);
     case "smtp":
       return deepSmtp(page, captionEvents, startedAt);
     case "tracking":
@@ -522,12 +538,48 @@ async function deepEmails(page, section, captionEvents, startedAt) {
 
 async function deepAutomation(page, section, captionEvents, startedAt) {
   await ensureOrg(page, captionEvents, startedAt);
-  await caption(page, captionEvents, startedAt, "Opening automation settings and checking automation rules surface.");
+  await caption(page, captionEvents, startedAt, "Opening automation settings, then creating/toggling/deleting a real QA rule.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/automation`, /Automation|Rules|Trigger|Action/i);
+  const create = unwrapData(await authApi(page, "/automation/rules", {
+    method: "POST",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: {
+      jobId: state.job?.id || null,
+      trigger: "application_submitted",
+      action: "notify_team",
+      conditions: { source: "ai_qa_deep_e2e" },
+      actionConfig: { message: "AI QA automation rule test for {{candidateName}}" },
+      isActive: true,
+      priority: 99,
+    },
+  }), "automation rule create");
+  if (!create.id || create.trigger !== "application_submitted") throw new Error("Automation rule create did not return expected rule.");
+  const toggled = unwrapData(await authApi(page, `/automation/rules/${create.id}/toggle`, {
+    method: "PATCH",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+  }), "automation rule toggle");
+  if (toggled.isActive !== false) throw new Error("Automation toggle did not turn the rule off.");
+  const listed = unwrapData(await authApi(page, state.job?.id ? `/automation/rules/${state.job.id}` : "/automation/rules", {
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+  }), "automation rule list");
+  const listText = JSON.stringify(listed);
+  if (!listText.includes(create.id)) throw new Error("Automation rule was not returned by list endpoint after create.");
+  await authApi(page, `/automation/rules/${create.id}`, {
+    method: "DELETE",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+  });
   return {
     status: "PASS",
-    reason: "Automation rules settings loaded after real application E2E setup.",
-    assertion: "Automation configuration area is reachable for application/stage triggers.",
+    reason: "Automation rule was created, toggled off, listed, and deleted successfully.",
+    assertion: "Automation CRUD behavior works for application_submitted notify_team rules.",
   };
 }
 
@@ -550,41 +602,194 @@ async function deepCustomDomain(page, captionEvents, startedAt) {
   };
 }
 
-async function deepSmtp(page, captionEvents, startedAt) {
+async function deepIntegrations(page, section, captionEvents, startedAt) {
   await ensureOrg(page, captionEvents, startedAt);
-  await caption(page, captionEvents, startedAt, "Opening SMTP settings without saving private SMTP credentials.");
-  await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/smtp`, /SMTP|Host|Port|Sender|Test/i);
+  await caption(page, captionEvents, startedAt, "Opening integrations and creating/testing/deleting a real QA webhook.");
+  await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/integrations`, /Integration|Webhook|Connect|Disconnect|Slack/i);
+  const unique = Date.now();
+  const created = unwrapData(await authApi(page, "/webhooks", {
+    method: "POST",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: {
+      url: `https://example.com/hiringcat-ai-qa-webhook-${unique}`,
+      events: ["application.submitted"],
+    },
+  }), "webhook create");
+  if (!created.id || !created.secret || !created.events?.includes("application.submitted")) {
+    throw new Error("Webhook create did not return id/secret/application.submitted event.");
+  }
+  const list = unwrapData(await authApi(page, "/webhooks", { orgId: state.org.id, captionEvents, startedAt }), "webhook list");
+  if (!Array.isArray(list) || !list.some((hook) => hook.id === created.id)) {
+    throw new Error("Created webhook did not appear in webhook list.");
+  }
+  const updated = unwrapData(await authApi(page, `/webhooks/${created.id}`, {
+    method: "PATCH",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: { isActive: false },
+  }), "webhook update");
+  if (updated.isActive !== false) throw new Error("Webhook update did not set isActive=false.");
+  const test = unwrapData(await authApi(page, `/webhooks/${created.id}/test`, {
+    method: "POST",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: { event: "application.submitted" },
+    allowFailure: true,
+  }), "webhook test");
+  if (!test || typeof test !== "object") throw new Error("Webhook test did not return a result object.");
+  await authApi(page, `/webhooks/${created.id}`, {
+    method: "DELETE",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+  });
   return {
     status: "PASS",
-    reason: "SMTP settings page loaded; real SMTP send requires private SMTP credentials.",
-    assertion: "SMTP UI is accessible and ready for credential validation.",
+    reason: "Webhook integration was created, listed, toggled inactive, test-called, and deleted.",
+    assertion: "Webhook CRUD and test endpoint are functional for application.submitted.",
+  };
+}
+
+async function deepSmtp(page, captionEvents, startedAt) {
+  await ensureOrg(page, captionEvents, startedAt);
+  await caption(page, captionEvents, startedAt, "Opening SMTP settings and checking invalid SMTP validation without saving credentials.");
+  await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/smtp`, /SMTP|Host|Port|Sender|Test/i);
+  const current = await authApi(page, "/orgs/smtp", { orgId: state.org.id, captionEvents, startedAt });
+  const invalid = await authApi(page, "/orgs/smtp", {
+    method: "PUT",
+    orgId: state.org.id,
+    allowFailure: true,
+    captionEvents,
+    startedAt,
+    body: {
+      host: "invalid.smtp.hiringcat-ai-qa.local",
+      port: 587,
+      secure: false,
+      user: "ai-qa@example.com",
+      pass: "invalid-test-password",
+      fromEmail: "ai-qa@example.com",
+      fromName: "AI QA",
+      enabled: true,
+    },
+  });
+  if (invalid.success !== false || !/SMTP connection failed|ENOTFOUND|getaddrinfo|query/i.test(invalid.error || "")) {
+    throw new Error(`Invalid SMTP details did not return expected validation error. Response: ${JSON.stringify(invalid).slice(0, 300)}`);
+  }
+  return {
+    status: "PASS",
+    reason: "SMTP page loaded and invalid SMTP config returned a connection validation error without saving.",
+    assertion: `Previous SMTP config ${current.data ? "was present/masked" : "was empty"}; invalid config was blocked.`,
   };
 }
 
 async function deepTracking(page, captionEvents, startedAt) {
   await ensureOrg(page, captionEvents, startedAt);
-  await caption(page, captionEvents, startedAt, "Opening tracking settings and verifying public apply route can load tracking config.");
+  await caption(page, captionEvents, startedAt, "Opening tracking settings, saving test Pixel config, verifying public API, then restoring.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/tracking`, /Pixel|Tracking|Facebook|Google|Event/i);
   await ensureDeepJob(page, captionEvents, startedAt);
+  const previous = await authApi(page, "/orgs/pixel", { orgId: state.org.id, captionEvents, startedAt });
+  if (previous.data?.pixelId) {
+    const data = await fetchPublicJob(page, state.job.slug, captionEvents, startedAt);
+    if (!("pixelConfig" in data)) throw new Error("Public job API did not return existing pixel/tracking config object.");
+    return {
+      status: "PASS",
+      reason: "Existing Facebook Pixel config was protected and verified through public apply API.",
+      assertion: "Tracking config read/public exposure path is functional; mutation skipped to avoid overwriting real token.",
+    };
+  }
+  const saved = unwrapData(await authApi(page, "/orgs/pixel", {
+    method: "PUT",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: {
+      pixelId: "123456789012345",
+      accessToken: "EAABsbCS1iHgBOQAIAIQATESTTOKEN",
+      testEventCode: "TESTAIQA",
+      enabled: true,
+      eventMode: "standard",
+      events: { pageView: true, lead: true, viewContent: true, submitApplication: true, purchase: false },
+    },
+  }), "pixel save");
+  if (saved.pixelId !== "123456789012345" || saved.accessToken !== "••••••••") throw new Error("Pixel save did not return masked saved config.");
   const data = await fetchPublicJob(page, state.job.slug, captionEvents, startedAt);
   if (!("pixelConfig" in data)) throw new Error("Public job API did not return pixel/tracking config object.");
+  if (data.pixelConfig?.pixelId !== "123456789012345") throw new Error("Public job API did not expose saved test Pixel ID.");
+  await authApi(page, "/orgs/pixel", { method: "DELETE", orgId: state.org.id, captionEvents, startedAt });
   return {
     status: "PASS",
-    reason: "Tracking settings loaded and public job API returned tracking config.",
-    assertion: "Facebook Pixel/Tracking config path is wired to public apply pages.",
+    reason: "Facebook Pixel config was saved, exposed on public apply API, and then removed/restored.",
+    assertion: "Tracking config persistence and public PageView/Lead/SubmitApplication wiring path is functional.",
   };
 }
 
 async function deepBranding(page, captionEvents, startedAt) {
   await ensureDeepJob(page, captionEvents, startedAt);
-  await caption(page, captionEvents, startedAt, "Opening branding settings and verifying public branding object.");
+  await caption(page, captionEvents, startedAt, "Opening branding settings, saving QA colors/careers text, verifying public page, then restoring.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/branding`, /Brand|Logo|Color|Career|Theme/i);
+  const previousBranding = await authApi(page, "/orgs/branding", { orgId: state.org.id, captionEvents, startedAt });
+  const previousCareer = await authApi(page, "/orgs/career-page", { orgId: state.org.id, captionEvents, startedAt });
+  const testHero = `AI QA Careers Proof ${Date.now()}`;
+  const branding = unwrapData(await authApi(page, "/orgs/branding", {
+    method: "PUT",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: {
+      primaryColor: "#16A34A",
+      logoUrl: previousBranding.data?.logoUrl || null,
+      faviconUrl: previousBranding.data?.faviconUrl || null,
+      fontFamily: "Inter",
+      customCss: previousBranding.data?.customCss || null,
+    },
+  }), "branding save");
+  if (branding.primaryColor !== "#16A34A") throw new Error("Branding color save did not persist.");
+  await authApi(page, "/orgs/career-page", {
+    method: "PUT",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: {
+      ...(previousCareer.data || {}),
+      content: {
+        ...(previousCareer.data?.content || {}),
+        heroTitle: testHero,
+        heroSubtitle: "AI QA verifies careers page content save and public reflection.",
+      },
+    },
+  });
   const data = await fetchPublicJob(page, state.job.slug, captionEvents, startedAt);
   if (!data.branding) throw new Error("Public job API did not return branding data.");
+  const publicText = JSON.stringify(data);
+  if (!publicText.includes("#16A34A") && data.branding?.primaryColor !== "#16A34A") throw new Error("Public apply API did not expose saved branding color.");
+  await authApi(page, "/orgs/branding", {
+    method: "PUT",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: {
+      primaryColor: previousBranding.data?.primaryColor || "#2563EB",
+      logoUrl: previousBranding.data?.logoUrl || null,
+      faviconUrl: previousBranding.data?.faviconUrl || null,
+      fontFamily: previousBranding.data?.fontFamily || null,
+      customCss: previousBranding.data?.customCss || null,
+    },
+  });
+  await authApi(page, "/orgs/career-page", {
+    method: "PUT",
+    orgId: state.org.id,
+    captionEvents,
+    startedAt,
+    body: previousCareer.data || {},
+  });
   return {
     status: "PASS",
-    reason: "Branding settings loaded and public apply API returned branding data.",
-    assertion: "Careers/apply branding path is active.",
+    reason: "Branding/careers settings were saved, verified via public API, and restored.",
+    assertion: "Branding persistence and public careers/apply reflection is functional.",
   };
 }
 
@@ -601,12 +806,21 @@ async function deepTeamPermissions(page, captionEvents, startedAt) {
 
 async function deepAnalytics(page, captionEvents, startedAt) {
   await ensureDeepApplication(page, captionEvents, startedAt);
-  await caption(page, captionEvents, startedAt, "Opening analytics after creating real job and candidate data.");
+  await caption(page, captionEvents, startedAt, "Opening analytics and verifying counts against the real job/candidate created in this run.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/analytics`, /Analytics|Funnel|Candidate|Job|Metric/i);
+  const overview = unwrapData(await authApi(page, "/analytics/overview", { orgId: state.org.id, captionEvents, startedAt }), "analytics overview");
+  const jobAnalytics = unwrapData(await authApi(page, `/analytics/${state.job.id}?range=30d`, { orgId: state.org.id, captionEvents, startedAt }), "job analytics");
+  const overviewText = JSON.stringify(overview);
+  if (!overviewText.includes(state.application.candidateEmail) && Number(overview.totalApplications || 0) < 1) {
+    throw new Error("Analytics overview did not include created candidate or non-zero application count.");
+  }
+  if (Number(jobAnalytics.totalApplications || 0) < 1 || Number(jobAnalytics.submittedApplications || 0) < 1) {
+    throw new Error(`Job analytics count mismatch: ${JSON.stringify({ totalApplications: jobAnalytics.totalApplications, submittedApplications: jobAnalytics.submittedApplications })}`);
+  }
   return {
     status: "PASS",
-    reason: "Analytics page loaded after real job/candidate E2E data was created.",
-    assertion: "Analytics dashboard is accessible with fresh test data in the workspace.",
+    reason: "Analytics page loaded and API counts matched the real submitted candidate/job from this run.",
+    assertion: `Job analytics total=${jobAnalytics.totalApplications}, submitted=${jobAnalytics.submittedApplications}.`,
   };
 }
 
@@ -962,7 +1176,7 @@ async function authApi(page, apiPath, options = {}) {
   if (options.captionEvents && options.startedAt) {
     await evidence(page, options.captionEvents, options.startedAt, result.ok ? "PASS" : "FAIL", `API response ${payload.method} /api${apiPath}`, `HTTP ${result.status}; ${summarizeForEvidence(result.json?.data ?? result.json ?? result.text)}`);
   }
-  if (!result.ok) {
+  if (!result.ok && !options.allowFailure) {
     const message = result.json?.error || result.text || `HTTP ${result.status}`;
     throw new Error(`API ${payload.method} /api${apiPath} failed: ${message}`);
   }
@@ -987,7 +1201,7 @@ async function publicApi(page, apiPath, options = {}) {
   if (options.captionEvents && options.startedAt) {
     await evidence(page, options.captionEvents, options.startedAt, result.ok ? "PASS" : "FAIL", `API response ${options.method || "GET"} /api${apiPath}`, `HTTP ${result.status}; ${summarizeForEvidence(result.json?.data ?? result.json ?? result.text)}`);
   }
-  if (!result.ok) {
+  if (!result.ok && !options.allowFailure) {
     const message = result.json?.error || result.text || `HTTP ${result.status}`;
     throw new Error(`API ${options.method || "GET"} /api${apiPath} failed: ${message}`);
   }
@@ -1400,6 +1614,7 @@ async function caption(page, events, startedAt, text) {
     window.__aiQaProofPush?.({ status: "STEP", text: value });
   }, text);
   await page.waitForTimeout(600);
+  await captureStepScreenshot(page, "STEP", text).catch(() => {});
 }
 
 async function safeCaption(page, events, startedAt, text) {
@@ -1418,6 +1633,53 @@ async function evidence(page, events, startedAt, status, title, detail = "") {
     window.__aiQaProofPush?.({ status, text });
   }, { status, text });
   await page.waitForTimeout(900);
+  await captureStepScreenshot(page, status, text).catch(() => {});
+}
+
+async function captureStepScreenshot(page, status, text) {
+  const stepState = stepStateByPage.get(page);
+  if (!stepState || stepState.images.length >= 18) return;
+  stepState.index += 1;
+  const filename = `${stepState.sectionId}-${String(stepState.index).padStart(2, "0")}.jpg`;
+  const imagePath = path.join(stepImagesDir, filename);
+  await page.screenshot({ path: imagePath, fullPage: false, type: "jpeg", quality: 72, timeout: 5000 });
+  stepState.images.push({
+    status,
+    text,
+    file: path.relative(runDir, imagePath).replaceAll(path.sep, "/"),
+  });
+}
+
+async function writeStepStoryboard(page, section, outputPath) {
+  const stepState = stepStateByPage.get(page);
+  const images = stepState?.images || [];
+  const cards = images.map((item, index) => `
+    <article class="step ${escapeHtml(String(item.status || "step").toLowerCase())}">
+      <img src="../${escapeHtml(item.file)}" alt="Step ${index + 1}">
+      <div class="caption">
+        <b>${index + 1}. ${escapeHtml(item.status || "STEP")}</b>
+        <p>${escapeHtml(item.text)}</p>
+      </div>
+    </article>
+  `).join("");
+  const html = `<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(section.title)} Storyboard</title>
+<style>
+body{margin:0;background:#f8fafc;color:#111827;font:14px/1.55 Inter,Arial,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 44px}
+h1{font-size:26px;margin:0 0 4px}.meta{color:#64748b;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.step{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 6px 22px rgba(15,23,42,.07)}
+.step img{display:block;width:100%;height:auto;background:#e5e7eb}
+.caption{border-top:5px solid #3b82f6;padding:12px}.step.pass .caption{border-top-color:#16a34a}.step.fail .caption{border-top-color:#dc2626}.step.request .caption{border-top-color:#7c3aed}.step.skip .caption{border-top-color:#64748b}
+.caption b{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.03em}.caption p{margin:6px 0 0;overflow-wrap:anywhere}
+</style></head><body><main>
+<h1>${escapeHtml(section.title)} Step Storyboard</h1>
+<div class="meta">Run ${escapeHtml(runId)} · ${escapeHtml(section.id)} · ${images.length} captured steps</div>
+<section class="grid">${cards || "<p>No storyboard steps were captured.</p>"}</section>
+</main></body></html>`;
+  await fs.writeFile(outputPath, cleanHtml(html));
 }
 
 function summarizeForEvidence(value) {
@@ -1468,12 +1730,13 @@ function formatVttTime(ms) {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}.${String(milli).padStart(3, "0")}`;
 }
 
-async function uploadArtifacts({ section, videoPath, screenshotPath, tracePath, vttPath }) {
+async function uploadArtifacts({ section, videoPath, screenshotPath, tracePath, vttPath, storyboardPath }) {
   const files = {
     videoUrl: videoPath,
     screenshotUrl: screenshotPath,
     traceUrl: tracePath,
     captionUrl: vttPath,
+    storyboardUrl: storyboardPath,
   };
   if (config.uploadProvider === "moonpush") {
     return {
@@ -1481,6 +1744,7 @@ async function uploadArtifacts({ section, videoPath, screenshotPath, tracePath, 
       screenshotUrl: screenshotPath ? await uploadMoonPush(screenshotPath) : "",
       traceUrl: tracePath ? await uploadMoonPush(tracePath) : "",
       captionUrl: vttPath ? await uploadMoonPush(vttPath) : "",
+      storyboardUrl: storyboardPath ? await uploadMoonPush(storyboardPath) : "",
     };
   }
   return Object.fromEntries(Object.entries(files).map(([key, value]) => [key, value ? publicUrl(path.relative(runDir, value).replaceAll(path.sep, "/")) : ""]));
@@ -1502,7 +1766,7 @@ function publicUrl(file = "") {
 
 async function writeReportHtml(report) {
   const html = renderReportHtml(report);
-  await fs.writeFile(path.join(runDir, "report.html"), html);
+  await fs.writeFile(path.join(runDir, "report.html"), cleanHtml(html));
 }
 
 async function writeReportPdf() {
@@ -1577,6 +1841,7 @@ function renderReportHtml(report) {
       ${result.humanRequired ? `<p class="human">Human verification required for this item.</p>` : ""}
       <div class="links">
         ${result.videoUrl ? `<a href="${escapeHtml(result.videoUrl)}">Video</a>` : ""}
+        ${result.storyboardUrl ? `<a href="${escapeHtml(result.storyboardUrl)}">Storyboard</a>` : ""}
         ${result.captionUrl ? `<a href="${escapeHtml(result.captionUrl)}">Captions</a>` : ""}
         ${result.screenshotUrl ? `<a href="${escapeHtml(result.screenshotUrl)}">Screenshot</a>` : ""}
         ${result.traceUrl ? `<a href="${escapeHtml(result.traceUrl)}">Trace</a>` : ""}
@@ -1637,6 +1902,10 @@ function renderReportHtml(report) {
   </main>
 </body>
 </html>`;
+}
+
+function cleanHtml(html) {
+  return `${html.replace(/[ \t]+$/gm, "").trimEnd()}\n`;
 }
 
 async function sendWhatsAppReport(report) {

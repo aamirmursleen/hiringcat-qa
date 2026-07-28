@@ -1,0 +1,53 @@
+WEBVTT
+
+1
+00:00:01.155 --> 00:00:02.388
+HiringCat AI QA - Create Job
+
+2
+00:00:02.388 --> 00:00:03.388
+Running: Create Job
+
+3
+00:00:03.237 --> 00:00:08.158
+Using saved authenticated browser session.
+
+4
+00:00:08.158 --> 00:00:12.712
+Step 1: Open New Job UI and type the unique job title.
+
+5
+00:00:12.712 --> 00:00:14.689
+STEP: Typed job data on visible form - title=AI QA E2E Job ms4h3mam-1, slug=ai-qa-e2e-ms4h3mam-1
+
+6
+00:00:14.689 --> 00:00:16.503
+Step 2: Save/publish the active job with exact payload.
+
+7
+00:00:16.503 --> 00:00:20.039
+REQUEST: API POST /api/jobs - {"title":"AI QA E2E Job ms4h3mam-1","slug":"ai-qa-e2e-ms4h3mam-1","department":"QA Automation","location":"Remote","employmentType":"full_time","status":"active","description":"<p>AI QA E2E Job ms4h3mam-1 created by HiringCat AI deep E2E...","thankYouMessage":
+
+8
+00:00:20.039 --> 00:00:21.922
+PASS: API response POST /api/jobs - HTTP 201; {"id":"f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","title":"AI QA E2E Job ms4h3mam-1","slug":"ai-qa-e2e-ms4h3mam-1","description":"<p>AI QA E2E Job ms4h3mam-1 created by HiringCat AI deep E2E...","department":"QA Automa
+
+9
+00:00:21.922 --> 00:00:27.810
+Opening created job detail page and verifying title is visible.
+
+10
+00:00:27.810 --> 00:00:30.841
+Verifying created job persisted as active through authenticated API.
+
+11
+00:00:30.841 --> 00:00:33.203
+REQUEST: API GET /api/jobs/f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+12
+00:00:33.203 --> 00:00:34.750
+PASS: API response GET /api/jobs/f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd - HTTP 200; {"id":"f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","title":"AI QA E2E Job ms4h3mam-1","slug":"ai-qa-e2e-ms4h3mam-1","description":"<p>AI QA E2E Job ms4h3mam-1 created by HiringCat AI deep E2E...","department":"QA Automa
+
+13
+00:00:34.750 --> 00:01:07.950
+Result: PASS - Created and verified active job "AI QA E2E Job ms4h3mam-1" (ai-qa-e2e-ms4h3mam-1).

@@ -1,0 +1,161 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Candidate Apply Flow Storyboard</title>
+<style>
+body{margin:0;background:#f8fafc;color:#111827;font:14px/1.55 Inter,Arial,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 44px}
+h1{font-size:26px;margin:0 0 4px}.meta{color:#64748b;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.step{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 6px 22px rgba(15,23,42,.07)}
+.step img{display:block;width:100%;height:auto;background:#e5e7eb}
+.caption{border-top:5px solid #3b82f6;padding:12px}.step.pass .caption{border-top-color:#16a34a}.step.fail .caption{border-top-color:#dc2626}.step.request .caption{border-top-color:#7c3aed}.step.skip .caption{border-top-color:#64748b}
+.caption b{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.03em}.caption p{margin:6px 0 0;overflow-wrap:anywhere}
+</style></head><body><main>
+<h1>Candidate Apply Flow Step Storyboard</h1>
+<div class="meta">Run 20260728T094700Z · candidate-apply · 18 captured steps</div>
+<section class="grid">
+    <article class="step step">
+      <img src="../step-images/candidate-apply-01.jpg" alt="Step 1">
+      <div class="caption">
+        <b>1. STEP</b>
+        <p>HiringCat AI QA - Candidate Apply Flow</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-02.jpg" alt="Step 2">
+      <div class="caption">
+        <b>2. STEP</b>
+        <p>Running: Candidate Apply Flow</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-03.jpg" alt="Step 3">
+      <div class="caption">
+        <b>3. STEP</b>
+        <p>Using saved authenticated browser session.</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-04.jpg" alt="Step 4">
+      <div class="caption">
+        <b>4. STEP</b>
+        <p>Step 1: Open public apply page as candidate.</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-05.jpg" alt="Step 5">
+      <div class="caption">
+        <b>5. STEP</b>
+        <p>Step 2: Type candidate name/email on the visible apply form when fields are available.</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-06.jpg" alt="Step 6">
+      <div class="caption">
+        <b>6. STEP</b>
+        <p>Candidate data typed/prepared on apply page - name=AI QA Candidate 095037, email=ai-qa-candidate-1785232237708@example.com, CV=ai-qa-cv.pdf</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-07.jpg" alt="Step 7">
+      <div class="caption">
+        <b>7. STEP</b>
+        <p>Step 3: Save candidate application draft via public apply API.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/candidate-apply-08.jpg" alt="Step 8">
+      <div class="caption">
+        <b>8. REQUEST</b>
+        <p>API POST /api/public/applications - {&quot;jobId&quot;:&quot;f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd&quot;,&quot;candidateName&quot;:&quot;AI QA Candidate 095037&quot;,&quot;candidateEmail&quot;:&quot;ai-qa-candidate-1785232237708@example.com&quot;,&quot;candidatePhone&quot;:&quot;+923001112233&quot;,&quot;candidateResumeUrl&quot;:&quot;https://aamirmursleen.github.io/hiringcat-qa/assets/ai-</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/candidate-apply-09.jpg" alt="Step 9">
+      <div class="caption">
+        <b>9. PASS</b>
+        <p>API response POST /api/public/applications - HTTP 201; {&quot;applicationId&quot;:&quot;39faff5f-93fb-43c9-83c7-cee2b914be18&quot;,&quot;token&quot;:&quot;[redacted]&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/candidate-apply-10.jpg" alt="Step 10">
+      <div class="caption">
+        <b>10. REQUEST</b>
+        <p>API GET /api/jobs/f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd - {&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/candidate-apply-11.jpg" alt="Step 11">
+      <div class="caption">
+        <b>11. PASS</b>
+        <p>API response GET /api/jobs/f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd - HTTP 200; {&quot;id&quot;:&quot;f50f1b76-1f0d-41ce-8bef-2edb0f7f90dd&quot;,&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;,&quot;title&quot;:&quot;AI QA E2E Job ms4h3mam-1&quot;,&quot;slug&quot;:&quot;ai-qa-e2e-ms4h3mam-1&quot;,&quot;description&quot;:&quot;&lt;p&gt;AI QA E2E Job ms4h3mam-1 created by HiringCat AI deep E2E...&quot;,&quot;department&quot;:&quot;QA Automa</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-12.jpg" alt="Step 12">
+      <div class="caption">
+        <b>12. STEP</b>
+        <p>Step 4: Submit screening answers one by one - 5 questions found</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-13.jpg" alt="Step 13">
+      <div class="caption">
+        <b>13. STEP</b>
+        <p>Answering short_text question: Summarize your QA testing experience.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/candidate-apply-14.jpg" alt="Step 14">
+      <div class="caption">
+        <b>14. REQUEST</b>
+        <p>API POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzlmYWZmNWYtOTNmYi00M2M5LTgzYzctY2VlMmI5MTRiZTE4Iiwiam9iSWQiOiJmNTBmMWI3Ni0xZjBkLTQxY2UtOGJlZi0yZWRiMGY3ZjkwZGQiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjMyMjY2LCJleHAiOjE3ODUzMTg2NjZ9.RLJiDGHxUIW_Am-gObnFPsd0Njk6cwqQ7VZnDuk8wS0/responses - {&quot;questionId&quot;:&quot;2ee8f16e-08c6-451a-9803-936e2a174aef&quot;,&quot;type&quot;:&quot;short_text&quot;,&quot;durationSecs&quot;:12,&quot;textValue&quot;:&quot;AI QA E2E answer: I can test forms, validations, CV screenin...&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/candidate-apply-15.jpg" alt="Step 15">
+      <div class="caption">
+        <b>15. PASS</b>
+        <p>API response POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzlmYWZmNWYtOTNmYi00M2M5LTgzYzctY2VlMmI5MTRiZTE4Iiwiam9iSWQiOiJmNTBmMWI3Ni0xZjBkLTQxY2UtOGJlZi0yZWRiMGY3ZjkwZGQiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjMyMjY2LCJleHAiOjE3ODUzMTg2NjZ9.RLJiDGHxUIW_Am-gObnFPsd0Njk6cwqQ7VZnDuk8wS0/responses - HTTP 200; {&quot;id&quot;:&quot;abf0d40c-c60b-435b-b785-7c21ff1c4d75&quot;,&quot;applicationId&quot;:&quot;39faff5f-93fb-43c9-83c7-cee2b914be18&quot;,&quot;questionId&quot;:&quot;2ee8f16e-08c6-451a-9803-936e2a174aef&quot;,&quot;type&quot;:&quot;short_text&quot;,&quot;videoUrl&quot;:null,&quot;audioUrl&quot;:null,&quot;fileUrl&quot;:null,&quot;textValue&quot;:&quot;AI QA E2E answer: I can test</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/candidate-apply-16.jpg" alt="Step 16">
+      <div class="caption">
+        <b>16. STEP</b>
+        <p>Answering video question: Record a short introduction video.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/candidate-apply-17.jpg" alt="Step 17">
+      <div class="caption">
+        <b>17. REQUEST</b>
+        <p>API POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzlmYWZmNWYtOTNmYi00M2M5LTgzYzctY2VlMmI5MTRiZTE4Iiwiam9iSWQiOiJmNTBmMWI3Ni0xZjBkLTQxY2UtOGJlZi0yZWRiMGY3ZjkwZGQiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjMyMjY2LCJleHAiOjE3ODUzMTg2NjZ9.RLJiDGHxUIW_Am-gObnFPsd0Njk6cwqQ7VZnDuk8wS0/responses - {&quot;questionId&quot;:&quot;ff3aebcc-17cd-49e1-99de-a62084597dbc&quot;,&quot;type&quot;:&quot;video&quot;,&quot;durationSecs&quot;:12,&quot;videoUrl&quot;:&quot;https://aamirmursleen.github.io/hiringcat-qa/assets/ai-qa-video.webm&quot;,&quot;fileSizeBytes&quot;:1024}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/candidate-apply-18.jpg" alt="Step 18">
+      <div class="caption">
+        <b>18. PASS</b>
+        <p>API response POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzlmYWZmNWYtOTNmYi00M2M5LTgzYzctY2VlMmI5MTRiZTE4Iiwiam9iSWQiOiJmNTBmMWI3Ni0xZjBkLTQxY2UtOGJlZi0yZWRiMGY3ZjkwZGQiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjMyMjY2LCJleHAiOjE3ODUzMTg2NjZ9.RLJiDGHxUIW_Am-gObnFPsd0Njk6cwqQ7VZnDuk8wS0/responses - HTTP 200; {&quot;id&quot;:&quot;bee4f9fa-29ca-4b2b-ab39-7deffd1ce67f&quot;,&quot;applicationId&quot;:&quot;39faff5f-93fb-43c9-83c7-cee2b914be18&quot;,&quot;questionId&quot;:&quot;ff3aebcc-17cd-49e1-99de-a62084597dbc&quot;,&quot;type&quot;:&quot;video&quot;,&quot;videoUrl&quot;:&quot;https://aamirmursleen.github.io/hiringcat-qa/assets/ai-qa-video.webm&quot;,&quot;audioUrl&quot;:</p>
+      </div>
+    </article>
+  </section>
+</main></body></html>
