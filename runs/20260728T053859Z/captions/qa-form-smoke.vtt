@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.889 --> 00:00:01.889
+HiringCat AI QA - QA form infrastructure
+
+2
+00:00:01.722 --> 00:00:02.722
+Running: QA form infrastructure
+
+3
+00:00:02.413 --> 00:00:03.618
+Checking QA checklist page, task count, progress, and report buttons.
+
+4
+00:00:03.618 --> 00:00:04.618
+Verified 22 sections and 56 task cards.
+
+5
+00:00:04.302 --> 00:00:05.905
+Result: PASS - Checklist rendered 22 sections/56 tasks and Pass progress worked.

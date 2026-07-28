@@ -1,0 +1,18 @@
+{
+  "name": "hiringcat-qa",
+  "version": "1.0.0",
+  "description": "Static GitHub Pages QA checklist for HiringCat.",
+  "type": "module",
+  "scripts": {
+    "qa:ai": "node scripts/ai-qa-runner.mjs",
+    "qa:ai:smoke": "node scripts/ai-qa-runner.mjs --smoke",
+    "test": "node scripts/validate-ai-qa.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "@playwright/test": "^1.62.0"
+  }
+}
