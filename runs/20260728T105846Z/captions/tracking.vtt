@@ -1,0 +1,41 @@
+WEBVTT
+
+1
+00:00:00.813 --> 00:00:01.813
+HiringCat AI QA - Facebook Pixel / Tracking
+
+2
+00:00:01.618 --> 00:00:02.618
+Running: Facebook Pixel / Tracking
+
+3
+00:00:02.321 --> 00:00:04.510
+Using saved authenticated browser session.
+
+4
+00:00:04.510 --> 00:00:07.361
+Opening tracking settings, saving test Pixel config, verifying public API, then restoring.
+
+5
+00:00:07.361 --> 00:00:09.824
+Using saved authenticated browser session.
+
+6
+00:00:09.824 --> 00:00:11.750
+REQUEST: API GET /api/orgs/pixel - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+7
+00:00:11.750 --> 00:00:13.210
+PASS: API response GET /api/orgs/pixel - HTTP 200; {"events":{"lead":true,"pageView":true,"purchase":false,"viewContent":true,"initiateCheckout":true,"submitApplication":true,"completeRegistration":true},"enabled":true,"pixelId":"1588915578866490","eventMode":"standard","accessToken":"[redacted]","testEventCod
+
+8
+00:00:13.210 --> 00:00:14.622
+REQUEST: API GET /api/public/jobs/fhd/ai-qa-human-ui-job-ms4jn1ty-1 - {}
+
+9
+00:00:14.622 --> 00:00:16.047
+PASS: API response GET /api/public/jobs/fhd/ai-qa-human-ui-job-ms4jn1ty-1 - HTTP 200; {"org":{"name":"Fhdqewd","slug":"fhd","logoUrl":null},"job":{"id":"6bf875b2-655a-41b8-ad7f-4c8051587495","title":"AI QA Human UI Job ms4jn1ty-1","description":"This is a human-style UI E2E job created by the HiringCat AI...","department":"QA Automation","locat
+
+10
+00:00:16.047 --> 00:00:18.759
+Result: PASS - Existing Facebook Pixel config was protected and verified through public apply API.

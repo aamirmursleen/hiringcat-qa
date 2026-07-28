@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.554 --> 00:00:01.554
+HiringCat AI QA - Billing / Activity / Notifications
+
+2
+00:00:01.405 --> 00:00:02.405
+Running: Billing / Activity / Notifications
+
+3
+00:00:02.148 --> 00:00:04.335
+Using saved authenticated browser session.
+
+4
+00:00:04.335 --> 00:00:08.561
+Opening billing page and activity log surface.
+
+5
+00:00:08.561 --> 00:00:11.386
+Result: PASS - Billing route loaded; activity route checked when role allowed it.

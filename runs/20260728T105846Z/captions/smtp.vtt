@@ -1,0 +1,49 @@
+WEBVTT
+
+1
+00:00:00.458 --> 00:00:01.458
+HiringCat AI QA - SMTP Settings
+
+2
+00:00:01.271 --> 00:00:02.271
+Running: SMTP Settings
+
+3
+00:00:01.964 --> 00:00:04.397
+Using saved authenticated browser session.
+
+4
+00:00:04.397 --> 00:00:07.400
+Opening SMTP settings and checking invalid SMTP validation without saving credentials.
+
+5
+00:00:07.400 --> 00:00:09.011
+REQUEST: API GET /api/orgs/smtp - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+6
+00:00:09.011 --> 00:00:11.520
+PASS: API response GET /api/orgs/smtp - HTTP 200; {"success":true,"data":null}
+
+7
+00:00:11.520 --> 00:00:13.960
+UI Step 1: Type invalid SMTP details into visible SMTP form.
+
+8
+00:00:13.960 --> 00:00:18.912
+UI STEP: Invalid SMTP form values typed - host=invalid.smtp.hiringcat-ai-qa.local, port=587, sender=ai-qa@example.com
+
+9
+00:00:18.912 --> 00:00:20.163
+UI STEP: SMTP Save & Verify clicked - UI attempted validation; backend assertion confirms invalid config was rejected.
+
+10
+00:00:20.163 --> 00:00:22.368
+REQUEST: API PUT /api/orgs/smtp - {"host":"invalid.smtp.hiringcat-ai-qa.local","port":587,"secure":false,"user":"ai-qa@example.com","pass":"invalid-test-password","fromEmail":"ai-qa@example.com","fromName":"AI QA","enabled":true}
+
+11
+00:00:22.368 --> 00:00:23.598
+FAIL: API response PUT /api/orgs/smtp - HTTP 400; {"success":false,"error":"SMTP connection failed: getaddrinfo ENOTFOUND invalid.smtp.hiringcat-ai-qa.local"}
+
+12
+00:00:23.598 --> 00:00:26.897
+Result: PASS - SMTP page loaded and invalid SMTP config returned a connection validation error without saving.

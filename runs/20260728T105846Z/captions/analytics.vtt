@@ -1,0 +1,45 @@
+WEBVTT
+
+1
+00:00:00.475 --> 00:00:01.475
+HiringCat AI QA - Analytics
+
+2
+00:00:01.286 --> 00:00:02.286
+Running: Analytics
+
+3
+00:00:01.977 --> 00:00:04.343
+Using saved authenticated browser session.
+
+4
+00:00:04.343 --> 00:00:08.068
+Opening analytics and verifying counts against the real job/candidate created in this run.
+
+5
+00:00:08.068 --> 00:00:11.866
+UI Step 1: Use analytics filters and refresh/export controls.
+
+6
+00:00:11.866 --> 00:00:13.374
+UI STEP: Analytics filters used in visible dashboard - range=Last 30 days, job=AI QA Human UI Job ms4jn1ty-1
+
+7
+00:00:13.374 --> 00:00:15.302
+REQUEST: API GET /api/analytics/overview - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+8
+00:00:15.302 --> 00:00:16.844
+PASS: API response GET /api/analytics/overview - HTTP 200; {"jobs":[{"id":"6bf875b2-655a-41b8-ad7f-4c8051587495","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","title":"AI QA Human UI Job ms4jn1ty-1","slug":"ai-qa-human-ui-job-ms4jn1ty-1","description":"This is a human-style UI E2E job created by the HiringCat AI...",
+
+9
+00:00:16.844 --> 00:00:18.468
+REQUEST: API GET /api/analytics/6bf875b2-655a-41b8-ad7f-4c8051587495?range=30d - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+10
+00:00:18.468 --> 00:00:19.556
+PASS: API response GET /api/analytics/6bf875b2-655a-41b8-ad7f-4c8051587495?range=30d - HTTP 200; {"totalApplications":1,"submittedApplications":1,"completionRate":100,"avgAiScore":null,"dropoffCount":0,"avgTimeToSubmitHours":0,"byStage":[{"stageName":"New","stageSlug":"new","count":1,"percentage":100,"color":"#6B7280","status":"watch"}],"funnel":[{"key":"
+
+11
+00:00:19.556 --> 00:00:21.651
+Result: PASS - Analytics page loaded and API counts matched the real submitted candidate/job from this run.

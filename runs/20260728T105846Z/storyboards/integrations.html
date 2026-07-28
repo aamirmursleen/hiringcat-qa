@@ -1,0 +1,161 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Integrations / Webhooks Storyboard</title>
+<style>
+body{margin:0;background:#f8fafc;color:#111827;font:14px/1.55 Inter,Arial,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 44px}
+h1{font-size:26px;margin:0 0 4px}.meta{color:#64748b;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.step{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 6px 22px rgba(15,23,42,.07)}
+.step img{display:block;width:100%;height:auto;background:#e5e7eb}
+.caption{border-top:5px solid #3b82f6;padding:12px}.step.pass .caption{border-top-color:#16a34a}.step.fail .caption{border-top-color:#dc2626}.step.request .caption{border-top-color:#7c3aed}.step.skip .caption{border-top-color:#64748b}
+.caption b{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.03em}.caption p{margin:6px 0 0;overflow-wrap:anywhere}
+</style></head><body><main>
+<h1>Integrations / Webhooks Step Storyboard</h1>
+<div class="meta">Run 20260728T105846Z · integrations · 18 captured steps</div>
+<section class="grid">
+    <article class="step step">
+      <img src="../step-images/integrations-01.jpg" alt="Step 1">
+      <div class="caption">
+        <b>1. STEP</b>
+        <p>HiringCat AI QA - Integrations / Webhooks</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/integrations-02.jpg" alt="Step 2">
+      <div class="caption">
+        <b>2. STEP</b>
+        <p>Running: Integrations / Webhooks</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/integrations-03.jpg" alt="Step 3">
+      <div class="caption">
+        <b>3. STEP</b>
+        <p>Using saved authenticated browser session.</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/integrations-04.jpg" alt="Step 4">
+      <div class="caption">
+        <b>4. STEP</b>
+        <p>Opening integrations and creating/testing/deleting a real QA webhook.</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/integrations-05.jpg" alt="Step 5">
+      <div class="caption">
+        <b>5. STEP</b>
+        <p>UI Step 1: Fill webhook endpoint URL in visible integrations form.</p>
+      </div>
+    </article>
+
+    <article class="step ui step">
+      <img src="../step-images/integrations-06.jpg" alt="Step 6">
+      <div class="caption">
+        <b>6. UI STEP</b>
+        <p>Webhook endpoint form filled - url=https://example.com/hiringcat-ai-qa-ui-webhook-1785236612155</p>
+      </div>
+    </article>
+
+    <article class="step ui step">
+      <img src="../step-images/integrations-07.jpg" alt="Step 7">
+      <div class="caption">
+        <b>7. UI STEP</b>
+        <p>Create endpoint clicked and endpoint state refreshed - Visible webhook UI accepted the create action.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/integrations-08.jpg" alt="Step 8">
+      <div class="caption">
+        <b>8. REQUEST</b>
+        <p>API POST /api/webhooks - {&quot;url&quot;:&quot;https://example.com/hiringcat-ai-qa-webhook-1785236612155&quot;,&quot;events&quot;:[&quot;application.submitted&quot;]}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/integrations-09.jpg" alt="Step 9">
+      <div class="caption">
+        <b>9. PASS</b>
+        <p>API response POST /api/webhooks - HTTP 201; {&quot;id&quot;:&quot;4c32d5c3-e98a-4ba7-8e8f-ac101943b92f&quot;,&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;,&quot;url&quot;:&quot;https://example.com/hiringcat-ai-qa-webhook-1785236612155&quot;,&quot;events&quot;:[&quot;application.submitted&quot;],&quot;isActive&quot;:true,&quot;failureCount&quot;:0,&quot;createdAt&quot;:&quot;2026-07-28T11:03:41.4</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/integrations-10.jpg" alt="Step 10">
+      <div class="caption">
+        <b>10. REQUEST</b>
+        <p>API GET /api/webhooks - {&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/integrations-11.jpg" alt="Step 11">
+      <div class="caption">
+        <b>11. PASS</b>
+        <p>API response GET /api/webhooks - HTTP 200; [{&quot;id&quot;:&quot;4c32d5c3-e98a-4ba7-8e8f-ac101943b92f&quot;,&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;,&quot;url&quot;:&quot;https://example.com/hiringcat-ai-qa-webhook-1785236612155&quot;,&quot;events&quot;:[&quot;application.submitted&quot;],&quot;isActive&quot;:true,&quot;failureCount&quot;:0,&quot;createdAt&quot;:&quot;2026-07-28T11:03:41.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/integrations-12.jpg" alt="Step 12">
+      <div class="caption">
+        <b>12. REQUEST</b>
+        <p>API PATCH /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f - {&quot;isActive&quot;:false}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/integrations-13.jpg" alt="Step 13">
+      <div class="caption">
+        <b>13. PASS</b>
+        <p>API response PATCH /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f - HTTP 200; {&quot;id&quot;:&quot;4c32d5c3-e98a-4ba7-8e8f-ac101943b92f&quot;,&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;,&quot;url&quot;:&quot;https://example.com/hiringcat-ai-qa-webhook-1785236612155&quot;,&quot;events&quot;:[&quot;application.submitted&quot;],&quot;isActive&quot;:false,&quot;failureCount&quot;:0,&quot;createdAt&quot;:&quot;2026-07-28T11:03:41.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/integrations-14.jpg" alt="Step 14">
+      <div class="caption">
+        <b>14. REQUEST</b>
+        <p>API POST /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f/test - {&quot;event&quot;:&quot;application.submitted&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/integrations-15.jpg" alt="Step 15">
+      <div class="caption">
+        <b>15. PASS</b>
+        <p>API response POST /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f/test - HTTP 200; {&quot;event&quot;:{&quot;id&quot;:&quot;29c79bea-5525-4c8f-86e4-50407d78ac86&quot;,&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;,&quot;event&quot;:&quot;application.submitted&quot;,&quot;payload&quot;:{&quot;test&quot;:true,&quot;message&quot;:&quot;This is a test webhook from HiringCat.&quot;,&quot;webhookId&quot;:&quot;4c32d5c3-e98a-4ba7-8e8f-ac101943b92f&quot;},&quot;</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/integrations-16.jpg" alt="Step 16">
+      <div class="caption">
+        <b>16. REQUEST</b>
+        <p>API DELETE /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f - {&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/integrations-17.jpg" alt="Step 17">
+      <div class="caption">
+        <b>17. PASS</b>
+        <p>API response DELETE /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f - HTTP 200; {&quot;success&quot;:true}</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/integrations-18.jpg" alt="Step 18">
+      <div class="caption">
+        <b>18. STEP</b>
+        <p>Result: PASS - Webhook integration was created, listed, toggled inactive, test-called, and deleted.</p>
+      </div>
+    </article>
+  </section>
+</main></body></html>

@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.480 --> 00:00:01.480
+HiringCat AI QA - Public Careers Page
+
+2
+00:00:01.262 --> 00:00:02.262
+Running: Public Careers Page
+
+3
+00:00:01.994 --> 00:00:04.519
+Using saved authenticated browser session.
+
+4
+00:00:04.519 --> 00:00:07.302
+Opening public careers page and checking the newly created active job is visible.
+
+5
+00:00:07.302 --> 00:00:08.802
+Result: PASS - Created active job is visible on /careers/fhd.

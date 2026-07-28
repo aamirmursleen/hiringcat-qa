@@ -1,0 +1,65 @@
+WEBVTT
+
+1
+00:00:00.406 --> 00:00:01.406
+HiringCat AI QA - Automation Rules
+
+2
+00:00:01.345 --> 00:00:02.345
+Running: Automation Rules
+
+3
+00:00:02.023 --> 00:00:04.115
+Using saved authenticated browser session.
+
+4
+00:00:04.115 --> 00:00:06.477
+Opening automation settings, then creating/toggling/deleting a real QA rule.
+
+5
+00:00:06.477 --> 00:00:09.108
+UI Step 1: Click + Add Rule and configure visible automation fields.
+
+6
+00:00:09.108 --> 00:00:20.934
+UI STEP: Automation rule modal configured - trigger=Application Submitted, action=Notify Team, priority=99
+
+7
+00:00:20.934 --> 00:00:22.404
+UI STEP: Create rule button clicked and rule list updated - Automation rule appeared in visible list.
+
+8
+00:00:22.404 --> 00:00:24.669
+REQUEST: API POST /api/automation/rules - {"jobId":"6bf875b2-655a-41b8-ad7f-4c8051587495","trigger":"application_submitted","action":"notify_team","conditions":{"source":"ai_qa_deep_e2e"},"actionConfig":{"message":"AI QA automation rule test for {{candidateName}}"},"isActive":true,"priority":99}
+
+9
+00:00:24.669 --> 00:00:26.168
+PASS: API response POST /api/automation/rules - HTTP 200; {"id":"3dd2729e-b883-4167-ba81-5a1231ca1756","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","jobId":"6bf875b2-655a-41b8-ad7f-4c8051587495","trigger":"application_submitted","conditions":{"source":"ai_qa_deep_e2e"},"action":"notify_team","actionConfig":{"messag
+
+10
+00:00:26.168 --> 00:00:27.834
+REQUEST: API PATCH /api/automation/rules/3dd2729e-b883-4167-ba81-5a1231ca1756/toggle - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+11
+00:00:27.834 --> 00:00:29.650
+PASS: API response PATCH /api/automation/rules/3dd2729e-b883-4167-ba81-5a1231ca1756/toggle - HTTP 200; {"isActive":false}
+
+12
+00:00:29.650 --> 00:00:31.566
+REQUEST: API GET /api/automation/rules/6bf875b2-655a-41b8-ad7f-4c8051587495 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+13
+00:00:31.566 --> 00:00:32.976
+PASS: API response GET /api/automation/rules/6bf875b2-655a-41b8-ad7f-4c8051587495 - HTTP 200; {"jobRules":[{"id":"3dd2729e-b883-4167-ba81-5a1231ca1756","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","jobId":"6bf875b2-655a-41b8-ad7f-4c8051587495","trigger":"application_submitted","conditions":{"source":"ai_qa_deep_e2e"},"action":"notify_team","actionCon
+
+14
+00:00:32.976 --> 00:00:34.804
+REQUEST: API DELETE /api/automation/rules/3dd2729e-b883-4167-ba81-5a1231ca1756 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+15
+00:00:34.804 --> 00:00:36.154
+PASS: API response DELETE /api/automation/rules/3dd2729e-b883-4167-ba81-5a1231ca1756 - HTTP 200; {"success":true}
+
+16
+00:00:36.154 --> 00:00:39.145
+Result: PASS - Automation rule was created, toggled off, listed, and deleted successfully.

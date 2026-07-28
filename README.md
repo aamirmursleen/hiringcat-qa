@@ -59,13 +59,15 @@ Deep mode creates real QA data in the configured HiringCat test workspace:
 - logs in and reuses the same browser session
 - shows a visible proof panel in every video with the current step, request, response, and assertion
 - captures step-by-step screenshots and merges them into a storyboard page for each QA section
-- creates a unique active job
+- creates a unique active job through the visible job wizard when `QA_HUMAN_UI=1`
 - verifies the job in dashboard and public careers/apply pages
-- submits a unique candidate application with CV URL and screening answers
-- submits video/file/text/yes-no/rating question responses through the public application API
+- submits a unique candidate application through the visible public form with CV upload and consent
+- answers screening questions through the visible candidate UI when the product exposes them; if the UI skips configured questions, the screening section fails with the exact reason
 - opens the HR candidate detail page and verifies the submitted candidate appears
 - checks scheduling, emails, automation, integrations, SMTP, tracking, branding, team, analytics, billing/activity, and mobile public pages
 - marks only DNS/Gmail/payment/custom-domain items as `SKIP` when external access is missing
+
+Set `QA_HUMAN_UI=0` only when you intentionally want the older API-heavy fallback mode.
 
 To repeat the destructive core flow more than once in one run:
 

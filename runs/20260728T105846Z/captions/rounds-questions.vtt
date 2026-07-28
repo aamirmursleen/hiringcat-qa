@@ -1,0 +1,29 @@
+WEBVTT
+
+1
+00:00:00.445 --> 00:00:01.445
+HiringCat AI QA - Rounds / Questions
+
+2
+00:00:01.364 --> 00:00:02.364
+Running: Rounds / Questions
+
+3
+00:00:02.044 --> 00:00:08.179
+Using saved authenticated browser session.
+
+4
+00:00:08.179 --> 00:00:09.463
+Checking saved text, video, file, yes/no, and rating screening questions.
+
+5
+00:00:09.463 --> 00:00:11.136
+REQUEST: API GET /api/jobs/6bf875b2-655a-41b8-ad7f-4c8051587495 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+6
+00:00:11.136 --> 00:00:14.326
+PASS: API response GET /api/jobs/6bf875b2-655a-41b8-ad7f-4c8051587495 - HTTP 200; {"id":"6bf875b2-655a-41b8-ad7f-4c8051587495","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","title":"AI QA Human UI Job ms4jn1ty-1","slug":"ai-qa-human-ui-job-ms4jn1ty-1","description":"This is a human-style UI E2E job created by the HiringCat AI...","departme
+
+7
+00:00:14.326 --> 00:00:20.691
+Result: PASS - Verified 3 saved screening questions/round items on the created job.

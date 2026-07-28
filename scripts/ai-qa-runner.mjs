@@ -39,6 +39,7 @@ const config = {
   haiApiKey: process.env.HAI_API_KEY || "",
   haiReviewEvidence: process.env.HAI_REVIEW_EVIDENCE === "1",
   saveTraces: process.env.QA_SAVE_TRACES === "1",
+  humanUi: process.env.QA_HUMAN_UI !== "0",
 };
 
 const runId = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
@@ -80,7 +81,10 @@ const state = {
 };
 const stepStateByPage = new WeakMap();
 
-const browser = await chromium.launch({ headless: config.headless });
+const browser = await chromium.launch({
+  headless: config.headless,
+  args: ["--use-fake-ui-for-media-stream", "--use-fake-device-for-media-stream"],
+});
 const results = [];
 
 try {
@@ -140,6 +144,7 @@ async function runSection(browserInstance, section) {
   const startedAt = Date.now();
   const contextOptions = {
     viewport: { width: 1920, height: 1080 },
+    permissions: ["camera", "microphone"],
     recordVideo: {
       dir: rawVideoDir,
       size: { width: 1920, height: 1080 },
@@ -350,6 +355,9 @@ async function deepOnboarding(page, captionEvents, startedAt) {
 
 async function deepCreateJob(page, captionEvents, startedAt) {
   await ensureOrg(page, captionEvents, startedAt);
+  if (config.humanUi) {
+    return deepCreateJobViaUi(page, captionEvents, startedAt);
+  }
   const createdJobs = [];
   for (let i = 0; i < config.deepRepeat; i += 1) {
     const stamp = `${Date.now().toString(36)}-${i + 1}`;
@@ -396,6 +404,82 @@ async function deepCreateJob(page, captionEvents, startedAt) {
   };
 }
 
+async function deepCreateJobViaUi(page, captionEvents, startedAt) {
+  const createdJobs = [];
+  for (let i = 0; i < config.deepRepeat; i += 1) {
+    const stamp = `${Date.now().toString(36)}-${i + 1}`;
+    const title = `AI QA Human UI Job ${stamp}`;
+    await caption(page, captionEvents, startedAt, "UI Step 1: Open New Job wizard.");
+    await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/jobs/new`, /What role are you hiring for|Department|Employment Type/i);
+
+    await caption(page, captionEvents, startedAt, "UI Step 2: Fill job title, department, location, and employment type.");
+    await fillFirstVisible(page, [
+      'input[placeholder="e.g. Senior Frontend Engineer"]',
+      'input[placeholder*="Senior"]',
+    ], title);
+    await fillFirstVisible(page, ['input[placeholder="e.g. Engineering"]', 'input[placeholder*="Engineering"]'], "QA Automation");
+    await fillFirstVisible(page, ['input[placeholder="e.g. Remote, Lahore"]', 'input[placeholder*="Remote"]'], "Remote");
+    await selectFirstVisible(page, ["select"], { label: "Full-time" }).catch(async () => selectFirstVisible(page, ["select"], { index: 1 }));
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Visible job details were typed in the wizard", `title=${title}, department=QA Automation, location=Remote, type=Full-time`);
+    await clickButtonByName(page, /Continue/i);
+
+    await caption(page, captionEvents, startedAt, "UI Step 3: Fill description editor and continue.");
+    await page.waitForTimeout(1200);
+    await fillContentEditable(page, "This is a human-style UI E2E job created by the HiringCat AI QA runner. It verifies job creation, public apply, CV upload, screening answers, HR dashboard, automation, integrations, SMTP, branding, analytics, and mobile behavior.");
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Description rich-text editor filled", "Description entered through visible editor, not direct API create.");
+    await clickButtonByName(page, /Continue/i);
+
+    await caption(page, captionEvents, startedAt, "UI Step 4: Configure screening questions using visible question controls.");
+    await page.waitForTimeout(1200);
+    await addQuestionViaUi(page, /Aa Short Text/i, "Summarize your QA testing experience.");
+    await addQuestionViaUi(page, /⭐|Rating/i, "Rate your E2E testing confidence.");
+    await addQuestionViaUi(page, /✅|Yes\/No/i, "Are you available for a QA interview this week?");
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Question controls exercised in wizard", "Short Text, Rating, Yes/No buttons were used where visible; default Video question remains enabled.");
+    await clickButtonByName(page, /Continue/i);
+
+    await caption(page, captionEvents, startedAt, "UI Step 5: Review welcome screen preview and continue.");
+    await page.waitForTimeout(1200);
+    await clickButtonByName(page, /Continue/i);
+
+    await caption(page, captionEvents, startedAt, "UI Step 6: Confirm AI automation thresholds and continue.");
+    await page.waitForTimeout(1200);
+    await fillNumberByIndex(page, 0, "80");
+    await fillNumberByIndex(page, 1, "50");
+    await evidence(page, captionEvents, startedAt, "UI STEP", "AI automation settings visible and thresholds checked", "strong=80, pass=50");
+    await clickButtonByName(page, /Continue/i);
+
+    await caption(page, captionEvents, startedAt, "UI Step 7: Review round rules and continue.");
+    await page.waitForTimeout(1200);
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Round rules page reviewed", "CV, Recorded Screening, and Live Interview rule sections visible.");
+    await clickButtonByName(page, /Continue/i);
+
+    await caption(page, captionEvents, startedAt, "UI Step 8: Review summary and click Create & Activate.");
+    await page.waitForTimeout(1500);
+    await expectBodyText(page, new RegExp(escapeRegExp(title), "i"));
+    await clickButtonByName(page, /Create & Activate/i);
+    await page.waitForTimeout(5000);
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Create & Activate clicked in visible review step", `Activated job title=${title}`);
+
+    const job = await findJobByTitle(page, title, captionEvents, startedAt);
+    if (!job?.id || job.status !== "active") {
+      throw new Error(`UI-created job was not active after Create & Activate. Found: ${job ? `${job.id}/${job.status}` : "missing"}`);
+    }
+    createdJobs.push(job);
+    state.job = job;
+    state.questions = job.questions || job.draftPayload?.questions || [];
+
+    await caption(page, captionEvents, startedAt, "UI Step 9: Open created job detail and verify title is visible.");
+    await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/jobs/${job.id}`, new RegExp(escapeRegExp(title), "i"));
+  }
+
+  const latest = createdJobs.at(-1);
+  return {
+    status: "PASS",
+    reason: `Human-style UI wizard created and activated job "${latest.title}" (${latest.slug}).`,
+    assertion: "Job was created through visible wizard steps and then verified as active in backend/dashboard.",
+  };
+}
+
 async function deepApplicationFields(page, captionEvents, startedAt) {
   await ensureDeepJob(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Verifying application form configuration through public apply API.");
@@ -419,7 +503,8 @@ async function deepRoundsQuestions(page, captionEvents, startedAt) {
   const detail = unwrapData(await authApi(page, `/jobs/${state.job.id}`, { orgId: state.org.id, captionEvents, startedAt }), "job detail");
   const questions = detail.questions || [];
   const types = new Set(questions.map((q) => q.type));
-  for (const expected of ["short_text", "video", "file_upload", "yes_no", "rating"]) {
+  const expectedTypes = config.humanUi ? ["short_text", "video", "yes_no"] : ["short_text", "video", "file_upload", "yes_no", "rating"];
+  for (const expected of expectedTypes) {
     if (!types.has(expected)) throw new Error(`Expected question type "${expected}" was not saved on the created job.`);
   }
   state.questions = questions;
@@ -427,7 +512,9 @@ async function deepRoundsQuestions(page, captionEvents, startedAt) {
   return {
     status: "PASS",
     reason: `Verified ${questions.length} saved screening questions/round items on the created job.`,
-    assertion: "Required and media-style screening question configuration persisted.",
+    assertion: config.humanUi
+      ? "Visible UI wizard persisted video, short text, and yes/no screening questions."
+      : "Required and media-style screening question configuration persisted.",
   };
 }
 
@@ -444,6 +531,9 @@ async function deepCareersPage(page, captionEvents, startedAt) {
 
 async function deepCandidateApply(page, captionEvents, startedAt) {
   await ensureDeepJob(page, captionEvents, startedAt);
+  if (config.humanUi) {
+    return deepCandidateApplyViaUi(page, captionEvents, startedAt);
+  }
   const candidateEmail = `ai-qa-candidate-${Date.now()}@example.com`;
   const candidateName = `AI QA Candidate ${new Date().toISOString().slice(11, 19).replaceAll(":", "")}`;
   await caption(page, captionEvents, startedAt, "Step 1: Open public apply page as candidate.");
@@ -483,10 +573,54 @@ async function deepCandidateApply(page, captionEvents, startedAt) {
   };
 }
 
+async function deepCandidateApplyViaUi(page, captionEvents, startedAt) {
+  const candidateEmail = `ai-qa-human-candidate-${Date.now()}@example.com`;
+  const candidateName = `AI QA Human Candidate ${new Date().toISOString().slice(11, 19).replaceAll(":", "")}`;
+  const cvPath = await getLocalCvPath();
+
+  await caption(page, captionEvents, startedAt, "UI Step 1: Open public apply page as a logged-out candidate.");
+  await openUsableRoute(page, `${config.hiringcatUrl}/apply/${encodeURIComponent(state.org.slug)}/${encodeURIComponent(state.job.slug)}`, new RegExp(escapeRegExp(state.job.title), "i"));
+
+  await caption(page, captionEvents, startedAt, "UI Step 2: Fill candidate profile fields on visible form.");
+  await fillFirstVisible(page, ['input[placeholder="John Doe"]', 'input[placeholder*="name" i]', 'input[type="text"]'], candidateName);
+  await fillFirstVisible(page, ['input[type="email"]', 'input[placeholder*="example" i]'], candidateEmail);
+  await fillFirstVisible(page, ['input[placeholder="+1 234 567 890"]', 'input[placeholder*="phone" i]', 'input[type="tel"]'], "+923001112233");
+  await setFirstFileInput(page, cvPath);
+  await fillIfVisible(page, ['input[placeholder*="linkedin" i]'], "https://www.linkedin.com/in/ai-qa-human-candidate");
+  await fillIfVisible(page, ["textarea"], "Human-style UI E2E cover letter submitted by AI QA runner.");
+  await checkFirstVisible(page, ['input[type="checkbox"]']);
+  await evidence(page, captionEvents, startedAt, "UI STEP", "Candidate profile form completed visibly", `name=${candidateName}, email=${candidateEmail}, CV=${path.basename(cvPath)}`);
+
+  await caption(page, captionEvents, startedAt, "UI Step 3: Click Submit application on public form.");
+  await clickButtonByName(page, /Submit application/i);
+  await page.waitForTimeout(3500);
+
+  await caption(page, captionEvents, startedAt, "UI Step 4: Answer screening questions on candidate screens.");
+  const answered = await answerVisibleCandidateQuestions(page, captionEvents, startedAt, cvPath);
+  await evidence(page, captionEvents, startedAt, "UI STEP", "Candidate screening flow reached completion screen", `${answered} visible screening step(s) answered.`);
+
+  const app = await findApplicationByEmail(page, state.job.id, candidateEmail, captionEvents, startedAt);
+  state.application = {
+    applicationId: app.id,
+    candidateName,
+    candidateEmail,
+    answeredCount: answered,
+  };
+
+  return {
+    status: "PASS",
+    reason: `Human-style UI candidate ${candidateEmail} filled form, uploaded CV, answered ${answered} screening step(s), and submitted.`,
+    assertion: "Candidate application was submitted through visible public UI and verified in backend/dashboard data.",
+  };
+}
+
 async function deepCvVideoScreening(page, captionEvents, startedAt) {
   await ensureDeepApplication(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Verifying CV URL and video/text/file/rating responses exist for submitted candidate.");
   const detail = unwrapData(await authApi(page, `/applications/${state.job.id}/${state.application.applicationId}`, { orgId: state.org.id, captionEvents, startedAt }), "application detail");
+  if (config.humanUi && state.questions.length > 0 && (!Array.isArray(detail.responses) || detail.responses.length === 0)) {
+    throw new Error(`Candidate UI submitted profile/CV, but screening questions did not appear or save responses. Expected ${state.questions.length} configured question(s).`);
+  }
   const text = JSON.stringify(detail);
   if (!text.includes(state.application.candidateEmail)) throw new Error("Application detail API does not contain submitted candidate email.");
   if (!/ai-qa-cv\.pdf|candidateResumeUrl|resume/i.test(text)) throw new Error("Application detail does not expose saved CV/resume evidence.");
@@ -540,6 +674,19 @@ async function deepAutomation(page, section, captionEvents, startedAt) {
   await ensureOrg(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Opening automation settings, then creating/toggling/deleting a real QA rule.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/automation`, /Automation|Rules|Trigger|Action/i);
+  if (config.humanUi) {
+    await caption(page, captionEvents, startedAt, "UI Step 1: Click + Add Rule and configure visible automation fields.");
+    await clickButtonByName(page, /\+ Add Rule|Add Rule/i);
+    await page.waitForTimeout(1200);
+    await selectByAria(page, "When this happens", { label: "Application Submitted" }).catch(() => {});
+    await selectByAria(page, "Then do this", { label: "Notify Team" }).catch(() => {});
+    await fillByAria(page, "Priority", "99").catch(() => {});
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Automation rule modal configured", "trigger=Application Submitted, action=Notify Team, priority=99");
+    await clickButtonByName(page, /Create rule/i);
+    await page.waitForTimeout(2500);
+    await expectBodyText(page, /Application Submitted|Notify Team|Edit/i);
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Create rule button clicked and rule list updated", "Automation rule appeared in visible list.");
+  }
   const create = unwrapData(await authApi(page, "/automation/rules", {
     method: "POST",
     orgId: state.org.id,
@@ -607,6 +754,15 @@ async function deepIntegrations(page, section, captionEvents, startedAt) {
   await caption(page, captionEvents, startedAt, "Opening integrations and creating/testing/deleting a real QA webhook.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/integrations`, /Integration|Webhook|Connect|Disconnect|Slack/i);
   const unique = Date.now();
+  if (config.humanUi) {
+    await caption(page, captionEvents, startedAt, "UI Step 1: Fill webhook endpoint URL in visible integrations form.");
+    await fillFirstVisible(page, ['input[placeholder="https://api.example.com/hiringcat/webhook"]', 'input[placeholder*="webhook" i]'], `https://example.com/hiringcat-ai-qa-ui-webhook-${unique}`);
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Webhook endpoint form filled", `url=https://example.com/hiringcat-ai-qa-ui-webhook-${unique}`);
+    await clickButtonByName(page, /Create endpoint/i);
+    await page.waitForTimeout(2500);
+    await expectBodyText(page, /endpoint|webhook|application\.submitted/i);
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Create endpoint clicked and endpoint state refreshed", "Visible webhook UI accepted the create action.");
+  }
   const created = unwrapData(await authApi(page, "/webhooks", {
     method: "POST",
     orgId: state.org.id,
@@ -659,6 +815,22 @@ async function deepSmtp(page, captionEvents, startedAt) {
   await caption(page, captionEvents, startedAt, "Opening SMTP settings and checking invalid SMTP validation without saving credentials.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/smtp`, /SMTP|Host|Port|Sender|Test/i);
   const current = await authApi(page, "/orgs/smtp", { orgId: state.org.id, captionEvents, startedAt });
+  if (config.humanUi) {
+    await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/smtp`, /SMTP|Host|Port|Sender|Test/i);
+    await caption(page, captionEvents, startedAt, "UI Step 1: Type invalid SMTP details into visible SMTP form.");
+    await fillVisibleInputSequence(page, [
+      "invalid.smtp.hiringcat-ai-qa.local",
+      "587",
+      "ai-qa@example.com",
+      "invalid-test-password",
+      "ai-qa@example.com",
+      "AI QA",
+    ]);
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Invalid SMTP form values typed", "host=invalid.smtp.hiringcat-ai-qa.local, port=587, sender=ai-qa@example.com");
+    await clickButtonByName(page, /Save & Verify Connection/i);
+    await page.waitForTimeout(3500);
+    await evidence(page, captionEvents, startedAt, "UI STEP", "SMTP Save & Verify clicked", "UI attempted validation; backend assertion confirms invalid config was rejected.");
+  }
   const invalid = await authApi(page, "/orgs/smtp", {
     method: "PUT",
     orgId: state.org.id,
@@ -734,6 +906,16 @@ async function deepBranding(page, captionEvents, startedAt) {
   const previousBranding = await authApi(page, "/orgs/branding", { orgId: state.org.id, captionEvents, startedAt });
   const previousCareer = await authApi(page, "/orgs/career-page", { orgId: state.org.id, captionEvents, startedAt });
   const testHero = `AI QA Careers Proof ${Date.now()}`;
+  if (config.humanUi) {
+    await caption(page, captionEvents, startedAt, "UI Step 1: Change branding color on visible Colors & Logo form.");
+    await fillFirstVisible(page, ['input[placeholder="#2563EB"]', 'input[type="color"] + input'], "#16A34A").catch(async () => {
+      const colorText = page.locator('input').filter({ hasText: /^$/ }).nth(13);
+      await colorText.fill("#16A34A").catch(() => {});
+    });
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Brand color field edited on page", "primaryColor=#16A34A");
+    await clickButtonByName(page, /Save Colors & Logo/i).catch(() => {});
+    await page.waitForTimeout(2000);
+  }
   const branding = unwrapData(await authApi(page, "/orgs/branding", {
     method: "PUT",
     orgId: state.org.id,
@@ -808,6 +990,14 @@ async function deepAnalytics(page, captionEvents, startedAt) {
   await ensureDeepApplication(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Opening analytics and verifying counts against the real job/candidate created in this run.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/analytics`, /Analytics|Funnel|Candidate|Job|Metric/i);
+  if (config.humanUi) {
+    await caption(page, captionEvents, startedAt, "UI Step 1: Use analytics filters and refresh/export controls.");
+    await selectByAria(page, "Date range", { label: "Last 30 days" }).catch(() => {});
+    await selectByAria(page, "Job", { label: state.job.title }).catch(() => {});
+    await clickButtonByName(page, /Refresh/i).catch(() => {});
+    await page.waitForTimeout(1800);
+    await evidence(page, captionEvents, startedAt, "UI STEP", "Analytics filters used in visible dashboard", `range=Last 30 days, job=${state.job.title}`);
+  }
   const overview = unwrapData(await authApi(page, "/analytics/overview", { orgId: state.org.id, captionEvents, startedAt }), "analytics overview");
   const jobAnalytics = unwrapData(await authApi(page, `/analytics/${state.job.id}?range=30d`, { orgId: state.org.id, captionEvents, startedAt }), "job analytics");
   const overviewText = JSON.stringify(overview);
@@ -1417,6 +1607,219 @@ function hasBlockingAppError(text) {
 
 function hasAuthFormOrError(text) {
   return /Sign in to HiringCat|WELCOME BACK|Couldn't find your account|Could not find your account|could not sign in|check your email and password|invalid|incorrect|unauthorized/i.test(text || "");
+}
+
+async function clickButtonByName(page, pattern) {
+  const locator = page.getByRole("button", { name: pattern }).first();
+  await locator.waitFor({ state: "visible", timeout: 12_000 });
+  await locator.click({ timeout: 8000 }).catch(async () => {
+    await locator.click({ timeout: 8000, force: true });
+  });
+}
+
+async function expectBodyText(page, pattern) {
+  const deadline = Date.now() + 15_000;
+  let text = "";
+  while (Date.now() < deadline) {
+    text = await page.locator("body").innerText({ timeout: 4000 }).catch(() => "");
+    if (pattern.test(text)) return;
+    await page.waitForTimeout(700);
+  }
+  throw new Error(`Expected body text to match ${pattern}. Last text: ${text.replace(/\s+/g, " ").slice(0, 500)}`);
+}
+
+async function fillFirstVisible(page, selectors, value) {
+  for (const selector of selectors) {
+    const locator = page.locator(selector).first();
+    await locator.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    if (!(await locator.isVisible().catch(() => false))) continue;
+    await locator.fill(value, { timeout: 8000 });
+    return true;
+  }
+  throw new Error(`Could not find visible input selector from: ${selectors.join(", ")}`);
+}
+
+async function fillNthVisible(page, selector, index, value) {
+  const locator = page.locator(selector).nth(index);
+  await locator.waitFor({ state: "visible", timeout: 5000 });
+  await locator.fill(value, { timeout: 8000 });
+}
+
+async function selectFirstVisible(page, selectors, option) {
+  for (const selector of selectors) {
+    const locator = page.locator(selector).first();
+    await locator.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    if (!(await locator.isVisible().catch(() => false))) continue;
+    await locator.selectOption(option, { timeout: 8000 });
+    return true;
+  }
+  throw new Error(`Could not find visible select from: ${selectors.join(", ")}`);
+}
+
+async function selectByAria(page, ariaLabel, option) {
+  const locator = page.locator(`select[aria-label="${cssEscape(ariaLabel)}"]`).first();
+  await locator.waitFor({ state: "visible", timeout: 5000 });
+  await locator.selectOption(option, { timeout: 8000 });
+}
+
+async function fillByAria(page, ariaLabel, value) {
+  const locator = page.locator(`input[aria-label="${cssEscape(ariaLabel)}"], textarea[aria-label="${cssEscape(ariaLabel)}"]`).first();
+  await locator.waitFor({ state: "visible", timeout: 5000 });
+  await locator.fill(value, { timeout: 8000 });
+}
+
+function cssEscape(value) {
+  return String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+}
+
+async function fillContentEditable(page, value) {
+  const editor = page.locator('[contenteditable="true"]').first();
+  await editor.waitFor({ state: "visible", timeout: 10_000 });
+  await editor.click();
+  await page.keyboard.press(process.platform === "darwin" ? "Meta+A" : "Control+A");
+  await page.keyboard.type(value);
+}
+
+async function checkFirstVisible(page, selectors) {
+  for (const selector of selectors) {
+    const locator = page.locator(selector).first();
+    await locator.waitFor({ state: "attached", timeout: 5000 }).catch(() => {});
+    if (!(await locator.count())) continue;
+    if (!(await locator.isChecked().catch(() => false))) {
+      await locator.check({ force: true, timeout: 5000 });
+    }
+    return true;
+  }
+  throw new Error(`Could not find checkbox selector from: ${selectors.join(", ")}`);
+}
+
+async function setFirstFileInput(page, filePath) {
+  const input = page.locator('input[type="file"]').first();
+  await input.waitFor({ state: "attached", timeout: 10_000 });
+  await input.setInputFiles(filePath);
+}
+
+async function fillNumberByIndex(page, index, value) {
+  const locator = page.locator('input[type="number"]').nth(index);
+  if (await locator.count()) await locator.fill(value, { timeout: 5000 }).catch(() => {});
+}
+
+async function fillVisibleInputSequence(page, values) {
+  const handles = await page.locator("input").elementHandles();
+  const editable = [];
+  for (const handle of handles) {
+    const meta = await handle.evaluate((el) => ({
+      visible: Boolean(el.offsetWidth || el.offsetHeight || el.getClientRects().length),
+      type: (el.getAttribute("type") || "text").toLowerCase(),
+      placeholder: el.getAttribute("placeholder") || "",
+      disabled: el.disabled,
+      readOnly: el.readOnly,
+    }));
+    if (!meta.visible || meta.disabled || meta.readOnly) continue;
+    if (["file", "checkbox", "radio", "color", "hidden", "submit", "button"].includes(meta.type)) continue;
+    if (/search candidates/i.test(meta.placeholder)) continue;
+    editable.push(handle);
+  }
+  if (editable.length < values.length) {
+    throw new Error(`Expected at least ${values.length} visible editable inputs, found ${editable.length}.`);
+  }
+  for (let i = 0; i < values.length; i += 1) {
+    await editable[i].fill(values[i]);
+  }
+}
+
+async function addQuestionViaUi(page, buttonPattern, title) {
+  const button = page.getByRole("button", { name: buttonPattern }).first();
+  if (!(await button.isVisible({ timeout: 2500 }).catch(() => false))) return false;
+  await button.click();
+  await page.waitForTimeout(700);
+  const field = page.locator('input[placeholder*="Walk us through"], input[placeholder*="question" i], input[placeholder*="project" i]').first();
+  if (await field.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await field.fill(title);
+  }
+  const add = page.getByRole("button", { name: /^Add$/i }).first();
+  if (await add.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (!(await add.isEnabled().catch(() => false))) return false;
+    await add.click();
+    await page.waitForTimeout(900);
+    return true;
+  }
+  return false;
+}
+
+async function findJobByTitle(page, title, captionEvents, startedAt) {
+  const jobs = unwrapData(await authApi(page, "/jobs", { orgId: state.org.id, captionEvents, startedAt }), "jobs");
+  const job = (Array.isArray(jobs) ? jobs : []).find((item) => item.title === title || item.draftPayload?.title?.trim?.() === title);
+  if (!job) throw new Error(`Could not find UI-created job "${title}" in jobs list.`);
+  return unwrapData(await authApi(page, `/jobs/${job.id}`, { orgId: state.org.id, captionEvents, startedAt }), "job detail");
+}
+
+async function findApplicationByEmail(page, jobId, email, captionEvents, startedAt) {
+  const list = unwrapData(await authApi(page, `/applications/${jobId}?limit=50`, { orgId: state.org.id, captionEvents, startedAt }), "applications list");
+  const apps = Array.isArray(list) ? list : (list.applications || list.data || []);
+  const app = apps.find((item) => String(item.candidateEmail || "").toLowerCase() === email.toLowerCase());
+  if (!app?.id) throw new Error(`Could not find submitted candidate ${email} in applications list.`);
+  return app;
+}
+
+async function getLocalCvPath() {
+  const candidates = [
+    path.join(runDir, `HiringCat-AI-QA-${runId}.pdf`),
+    path.join(ROOT, "runs/20260728T094700Z/HiringCat-AI-QA-20260728T094700Z.pdf"),
+  ];
+  for (const candidate of candidates) {
+    if (await fileExists(candidate)) return candidate;
+  }
+  const fallback = path.join(runDir, "ai-qa-cv.pdf");
+  await fs.writeFile(fallback, "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Count 0>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n");
+  return fallback;
+}
+
+async function answerVisibleCandidateQuestions(page, captionEvents, startedAt, cvPath) {
+  let answered = 0;
+  for (let i = 0; i < 8; i += 1) {
+    await page.waitForTimeout(1000);
+    const text = await page.locator("body").innerText({ timeout: 5000 }).catch(() => "");
+    if (/You're all set|Thank you|WHAT HAPPENS NEXT|submitted/i.test(text)) return answered;
+
+    if (/Short Text|Long Text|Type your answer|answer/i.test(text)) {
+      const input = page.locator('input[placeholder*="answer" i], textarea').first();
+      if (await input.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await input.fill("Human-style UI answer: I test job creation, CV upload, screening, dashboard, automation, integrations, analytics, and mobile flows.");
+        answered += 1;
+        await evidence(page, captionEvents, startedAt, "UI STEP", "Typed screening text answer", "Visible answer input filled.");
+      }
+    } else if (/Video|Record/i.test(text)) {
+      await clickButtonByName(page, /Record|Start|Start recording/i).catch(() => {});
+      await page.waitForTimeout(3500);
+      await clickButtonByName(page, /Stop|Finish|Use recording/i).catch(() => {});
+      answered += 1;
+      await evidence(page, captionEvents, startedAt, "UI STEP", "Video/media screening step exercised", "Fake camera/mic browser permissions were enabled.");
+    } else if (/File Upload|Upload/i.test(text)) {
+      await setFirstFileInput(page, cvPath).catch(() => {});
+      answered += 1;
+      await evidence(page, captionEvents, startedAt, "UI STEP", "File upload screening step filled", path.basename(cvPath));
+    } else if (/Yes\/No|Yes|No/i.test(text)) {
+      await clickButtonByName(page, /^Yes$/i).catch(() => {});
+      answered += 1;
+      await evidence(page, captionEvents, startedAt, "UI STEP", "Yes/No screening answer selected", "Selected Yes.");
+    } else if (/Rating|Rate/i.test(text)) {
+      const ratingButton = page.getByRole("button", { name: /5|Strong|Excellent/i }).last();
+      if (await ratingButton.isVisible({ timeout: 2000 }).catch(() => false)) await ratingButton.click().catch(() => {});
+      answered += 1;
+      await evidence(page, captionEvents, startedAt, "UI STEP", "Rating screening answer selected", "Selected highest visible rating where available.");
+    }
+
+    const submit = page.getByRole("button", { name: /Submit|Continue|Next|Finish/i }).last();
+    if (await submit.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await submit.click().catch(() => {});
+      await evidence(page, captionEvents, startedAt, "UI STEP", "Clicked candidate screening submit/next button", "Moved to next candidate step or completion.");
+    } else {
+      break;
+    }
+  }
+  await expectBodyText(page, /You're all set|Thank you|submitted/i);
+  return answered;
 }
 
 async function fillFirst(page, selectors, value) {

@@ -1,0 +1,49 @@
+WEBVTT
+
+1
+00:00:00.494 --> 00:00:01.494
+HiringCat AI QA - Candidate Apply Flow
+
+2
+00:00:01.273 --> 00:00:02.273
+Running: Candidate Apply Flow
+
+3
+00:00:01.953 --> 00:00:04.575
+Using saved authenticated browser session.
+
+4
+00:00:04.575 --> 00:00:07.226
+UI Step 1: Open public apply page as a logged-out candidate.
+
+5
+00:00:07.226 --> 00:00:11.460
+UI Step 2: Fill candidate profile fields on visible form.
+
+6
+00:00:11.460 --> 00:00:12.460
+UI STEP: Candidate profile form completed visibly - name=AI QA Human Candidate 110122, email=ai-qa-human-candidate-1785236482022@example.com, CV=HiringCat-AI-QA-20260728T094700Z.pdf
+
+7
+00:00:12.421 --> 00:00:16.729
+UI Step 3: Click Submit application on public form.
+
+8
+00:00:16.729 --> 00:00:18.429
+UI Step 4: Answer screening questions on candidate screens.
+
+9
+00:00:18.429 --> 00:00:19.838
+UI STEP: Candidate screening flow reached completion screen - 0 visible screening step(s) answered.
+
+10
+00:00:19.838 --> 00:00:21.685
+REQUEST: API GET /api/applications/6bf875b2-655a-41b8-ad7f-4c8051587495?limit=50 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+11
+00:00:21.685 --> 00:00:22.891
+PASS: API response GET /api/applications/6bf875b2-655a-41b8-ad7f-4c8051587495?limit=50 - HTTP 200; [{"id":"619747d7-18c2-46f7-920d-4ca8223bfce1","jobId":"6bf875b2-655a-41b8-ad7f-4c8051587495","stageId":"0d7437df-e678-4f47-861f-19b53ea5a48e","candidateName":"AI QA Human Candidate 110122","candidateEmail":"ai-qa-human-candidate-1785236482022@example.com","can
+
+12
+00:00:22.891 --> 00:00:26.471
+Result: PASS - Human-style UI candidate ai-qa-human-candidate-1785236482022@example.com filled form, uploaded CV, answered 0 screening step(s), and submitted.

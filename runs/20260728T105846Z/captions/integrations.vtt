@@ -1,0 +1,73 @@
+WEBVTT
+
+1
+00:00:00.525 --> 00:00:01.525
+HiringCat AI QA - Integrations / Webhooks
+
+2
+00:00:01.273 --> 00:00:02.273
+Running: Integrations / Webhooks
+
+3
+00:00:01.985 --> 00:00:05.179
+Using saved authenticated browser session.
+
+4
+00:00:05.179 --> 00:00:07.910
+Opening integrations and creating/testing/deleting a real QA webhook.
+
+5
+00:00:07.910 --> 00:00:09.430
+UI Step 1: Fill webhook endpoint URL in visible integrations form.
+
+6
+00:00:09.430 --> 00:00:13.690
+UI STEP: Webhook endpoint form filled - url=https://example.com/hiringcat-ai-qa-ui-webhook-1785236612155
+
+7
+00:00:13.690 --> 00:00:15.702
+UI STEP: Create endpoint clicked and endpoint state refreshed - Visible webhook UI accepted the create action.
+
+8
+00:00:15.702 --> 00:00:17.294
+REQUEST: API POST /api/webhooks - {"url":"https://example.com/hiringcat-ai-qa-webhook-1785236612155","events":["application.submitted"]}
+
+9
+00:00:17.294 --> 00:00:18.909
+PASS: API response POST /api/webhooks - HTTP 201; {"id":"4c32d5c3-e98a-4ba7-8e8f-ac101943b92f","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","url":"https://example.com/hiringcat-ai-qa-webhook-1785236612155","events":["application.submitted"],"isActive":true,"failureCount":0,"createdAt":"2026-07-28T11:03:41.4
+
+10
+00:00:18.909 --> 00:00:21.123
+REQUEST: API GET /api/webhooks - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+11
+00:00:21.123 --> 00:00:22.783
+PASS: API response GET /api/webhooks - HTTP 200; [{"id":"4c32d5c3-e98a-4ba7-8e8f-ac101943b92f","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","url":"https://example.com/hiringcat-ai-qa-webhook-1785236612155","events":["application.submitted"],"isActive":true,"failureCount":0,"createdAt":"2026-07-28T11:03:41.
+
+12
+00:00:22.783 --> 00:00:24.615
+REQUEST: API PATCH /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f - {"isActive":false}
+
+13
+00:00:24.615 --> 00:00:26.362
+PASS: API response PATCH /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f - HTTP 200; {"id":"4c32d5c3-e98a-4ba7-8e8f-ac101943b92f","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","url":"https://example.com/hiringcat-ai-qa-webhook-1785236612155","events":["application.submitted"],"isActive":false,"failureCount":0,"createdAt":"2026-07-28T11:03:41.
+
+14
+00:00:26.362 --> 00:00:28.788
+REQUEST: API POST /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f/test - {"event":"application.submitted"}
+
+15
+00:00:28.788 --> 00:00:30.562
+PASS: API response POST /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f/test - HTTP 200; {"event":{"id":"29c79bea-5525-4c8f-86e4-50407d78ac86","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","event":"application.submitted","payload":{"test":true,"message":"This is a test webhook from HiringCat.","webhookId":"4c32d5c3-e98a-4ba7-8e8f-ac101943b92f"},"
+
+16
+00:00:30.562 --> 00:00:31.996
+REQUEST: API DELETE /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+17
+00:00:31.996 --> 00:00:33.391
+PASS: API response DELETE /api/webhooks/4c32d5c3-e98a-4ba7-8e8f-ac101943b92f - HTTP 200; {"success":true}
+
+18
+00:00:33.391 --> 00:00:38.413
+Result: PASS - Webhook integration was created, listed, toggled inactive, test-called, and deleted.

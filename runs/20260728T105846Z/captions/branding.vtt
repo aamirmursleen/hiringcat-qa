@@ -1,0 +1,85 @@
+WEBVTT
+
+1
+00:00:00.455 --> 00:00:01.455
+HiringCat AI QA - Branding / Careers Settings
+
+2
+00:00:01.223 --> 00:00:02.223
+Running: Branding / Careers Settings
+
+3
+00:00:01.912 --> 00:00:04.298
+Using saved authenticated browser session.
+
+4
+00:00:04.298 --> 00:00:07.556
+Opening branding settings, saving QA colors/careers text, verifying public page, then restoring.
+
+5
+00:00:07.556 --> 00:00:09.177
+REQUEST: API GET /api/orgs/branding - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+6
+00:00:09.177 --> 00:00:11.166
+PASS: API response GET /api/orgs/branding - HTTP 200; {"id":"3e6d3cdd-09b7-44ab-afc9-a2ec78fe37b1","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","primaryColor":"#2563EB","logoUrl":null,"faviconUrl":null,"fontFamily":null,"customCss":null,"updatedAt":"2026-07-28T10:57:09.298Z"}
+
+7
+00:00:11.166 --> 00:00:12.620
+REQUEST: API GET /api/orgs/career-page - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+8
+00:00:12.620 --> 00:00:14.457
+PASS: API response GET /api/orgs/career-page - HTTP 200; {}
+
+9
+00:00:14.457 --> 00:00:55.813
+UI Step 1: Change branding color on visible Colors & Logo form.
+
+10
+00:00:55.813 --> 00:01:11.662
+UI STEP: Brand color field edited on page - primaryColor=#16A34A
+
+11
+00:01:11.662 --> 00:01:13.627
+REQUEST: API PUT /api/orgs/branding - {"primaryColor":"#16A34A","logoUrl":null,"faviconUrl":null,"fontFamily":"Inter","customCss":null}
+
+12
+00:01:13.627 --> 00:01:15.286
+PASS: API response PUT /api/orgs/branding - HTTP 200; {"id":"3e6d3cdd-09b7-44ab-afc9-a2ec78fe37b1","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","primaryColor":"#16A34A","logoUrl":null,"faviconUrl":null,"fontFamily":"Inter","customCss":null,"updatedAt":"2026-07-28T11:06:01.847Z"}
+
+13
+00:01:15.286 --> 00:01:16.934
+REQUEST: API PUT /api/orgs/career-page - {"content":{"heroTitle":"AI QA Careers Proof 1785236702782","heroSubtitle":"AI QA verifies careers page content save and public reflection."}}
+
+14
+00:01:16.934 --> 00:01:18.196
+PASS: API response PUT /api/orgs/career-page - HTTP 200; {"success":true}
+
+15
+00:01:18.196 --> 00:01:19.654
+REQUEST: API GET /api/public/jobs/fhd/ai-qa-human-ui-job-ms4jn1ty-1 - {}
+
+16
+00:01:19.654 --> 00:01:21.082
+PASS: API response GET /api/public/jobs/fhd/ai-qa-human-ui-job-ms4jn1ty-1 - HTTP 200; {"org":{"name":"Fhdqewd","slug":"fhd","logoUrl":null},"job":{"id":"6bf875b2-655a-41b8-ad7f-4c8051587495","title":"AI QA Human UI Job ms4jn1ty-1","description":"This is a human-style UI E2E job created by the HiringCat AI...","department":"QA Automation","locat
+
+17
+00:01:21.082 --> 00:01:23.370
+REQUEST: API PUT /api/orgs/branding - {"primaryColor":"#2563EB","logoUrl":null,"faviconUrl":null,"fontFamily":null,"customCss":null}
+
+18
+00:01:23.370 --> 00:01:25.002
+PASS: API response PUT /api/orgs/branding - HTTP 200; {"id":"3e6d3cdd-09b7-44ab-afc9-a2ec78fe37b1","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","primaryColor":"#2563EB","logoUrl":null,"faviconUrl":null,"fontFamily":null,"customCss":null,"updatedAt":"2026-07-28T11:06:11.607Z"}
+
+19
+00:01:25.002 --> 00:01:26.335
+REQUEST: API PUT /api/orgs/career-page - {}
+
+20
+00:01:26.335 --> 00:01:27.335
+PASS: API response PUT /api/orgs/career-page - HTTP 200; {"success":true}
+
+21
+00:01:27.295 --> 00:01:29.929
+Result: PASS - Branding/careers settings were saved, verified via public API, and restored.

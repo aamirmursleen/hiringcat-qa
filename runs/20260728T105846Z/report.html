@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HiringCat AI QA Report 20260728T105846Z</title>
+  <style>
+    body{margin:0;background:#f8fafc;color:#172033;font:14px/1.55 Inter,Arial,sans-serif}
+    main{max-width:1080px;margin:0 auto;padding:28px 18px 46px}
+    .hero{background:linear-gradient(135deg,#16a34a,#2563eb);color:white;border-radius:18px;padding:26px 24px;margin-bottom:18px}
+    h1{margin:0;font-size:30px;letter-spacing:0} h2{margin:2px 0 0;font-size:18px}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+    .metric{background:white;border:1px solid #e8edf4;border-radius:14px;padding:14px;box-shadow:0 4px 18px rgba(15,23,42,.06)}
+    .metric b{display:block;font-size:28px}.metric span{color:#64748b;font-weight:700;font-size:12px;text-transform:uppercase}
+    .card{background:white;border:1px solid #e8edf4;border-left:6px solid #94a3b8;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 4px 18px rgba(15,23,42,.06);break-inside:avoid}
+    .card.pass{border-left-color:#00b894}.card.fail{border-left-color:#e17055}.card.skip{border-left-color:#94a3b8}
+    .row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.eyebrow{margin:0;color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase}
+    .status{font-weight:900;border-radius:999px;padding:5px 10px;background:#eef2f7}.pass .status{background:#dcfce7;color:#166534}.fail .status{background:#fee2e2;color:#991b1b}.skip .status{background:#f1f5f9;color:#475569}
+    .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.links a{background:#ecfdf5;color:#15803d;border:1px solid #bbf7d0;border-radius:10px;padding:7px 11px;font-weight:800;text-decoration:none}
+    .human{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:9px 11px;font-weight:700}.meta{color:#dbeafe;margin-top:8px}.target{color:#64748b;margin:0 0 16px}
+    pre{white-space:pre-wrap;background:#0f172a;color:#e5e7eb;border-radius:12px;padding:12px;overflow:auto;font-size:12px}
+    @media print{body{background:white}.links a{color:#172033}}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <h1>HiringCat AI QA Report</h1>
+      <div class="meta">Run 20260728T105846Z · 2026-07-28T11:07:25.809Z</div>
+    </section>
+    <p class="target">Target: https://hiringcat.com · QA page: https://aamirmursleen.github.io/hiringcat-qa</p>
+    <section class="summary">
+      <div class="metric"><b>28</b><span>Total</span></div>
+      <div class="metric"><b>22</b><span>Passed</span></div>
+      <div class="metric"><b>1</b><span>Failed</span></div>
+      <div class="metric"><b>5</b><span>Skipped</span></div>
+    </section>
+
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">qa-form-smoke</p>
+          <h2>QA form infrastructure</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Checklist rendered 22 sections/56 tasks and Pass progress worked.</p>
+      <p><strong>Assertion:</strong> QA checklist infrastructure works.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/qa-form-smoke.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/qa-form-smoke.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/qa-form-smoke.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/qa-form-smoke.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">target-app-preflight</p>
+          <h2>Target App Local/Live Preflight</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Target app loaded with HTTP 200.</p>
+      <p><strong>Assertion:</strong> HiringCat target app preflight passed.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/target-app-preflight.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/target-app-preflight.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/target-app-preflight.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/target-app-preflight.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">login-signup</p>
+          <h2>Login / Signup</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Logged in and verified reusable authenticated dashboard session.</p>
+      <p><strong>Assertion:</strong> Login reaches dashboard and auth state is saved for later E2E sections.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/login-signup.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/login-signup.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/login-signup.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/login-signup.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">onboarding</p>
+          <h2>Onboarding / Organization Setup</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Organization context loaded: fhd.</p>
+      <p><strong>Assertion:</strong> Authenticated user has an active organization/workspace for E2E testing.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/onboarding.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/onboarding.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/onboarding.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/onboarding.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">create-job</p>
+          <h2>Create Job</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Human-style UI wizard created and activated job &quot;AI QA Human UI Job ms4jn1ty-1&quot; (ai-qa-human-ui-job-ms4jn1ty-1).</p>
+      <p><strong>Assertion:</strong> Job was created through visible wizard steps and then verified as active in backend/dashboard.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/create-job.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/create-job.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/create-job.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/create-job.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">application-fields</p>
+          <h2>Application Form Fields</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Application fields were saved and exposed on the public apply flow.</p>
+      <p><strong>Assertion:</strong> Name/email/phone/CV/LinkedIn/cover letter field config is present for the created job.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/application-fields.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/application-fields.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/application-fields.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/application-fields.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">rounds-questions</p>
+          <h2>Rounds / Questions</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Verified 3 saved screening questions/round items on the created job.</p>
+      <p><strong>Assertion:</strong> Visible UI wizard persisted video, short text, and yes/no screening questions.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/rounds-questions.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/rounds-questions.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/rounds-questions.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/rounds-questions.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">careers-page</p>
+          <h2>Public Careers Page</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Created active job is visible on /careers/fhd.</p>
+      <p><strong>Assertion:</strong> Public careers page lists active jobs from the organization.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/careers-page.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/careers-page.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/careers-page.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/careers-page.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">candidate-apply</p>
+          <h2>Candidate Apply Flow</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Human-style UI candidate ai-qa-human-candidate-1785236482022@example.com filled form, uploaded CV, answered 0 screening step(s), and submitted.</p>
+      <p><strong>Assertion:</strong> Candidate application was submitted through visible public UI and verified in backend/dashboard data.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/candidate-apply.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/candidate-apply.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/candidate-apply.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/candidate-apply.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card fail">
+      <div class="row">
+        <div>
+          <p class="eyebrow">cv-video-screening</p>
+          <h2>CV Upload + Video/Text Screening</h2>
+        </div>
+        <span class="status">FAIL</span>
+      </div>
+      <p><strong>Reason:</strong> Candidate UI submitted profile/CV, but screening questions did not appear or save responses. Expected 3 configured question(s).</p>
+
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/cv-video-screening.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/cv-video-screening.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/cv-video-screening.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/cv-video-screening.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">candidate-dashboard</p>
+          <h2>Candidate Dashboard / Pipeline</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Submitted candidate opened in HR dashboard with correct job/application data.</p>
+      <p><strong>Assertion:</strong> HR dashboard can access the candidate created from the public apply flow.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/candidate-dashboard.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/candidate-dashboard.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/candidate-dashboard.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/candidate-dashboard.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">scheduling</p>
+          <h2>Scheduling</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Scheduling surface loaded after real candidate E2E data was created.</p>
+      <p><strong>Assertion:</strong> Scheduling dashboard is accessible for interview management; booking delivery still requires calendar/email setup.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/scheduling.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/scheduling.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/scheduling.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/scheduling.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">emails</p>
+          <h2>Emails / Inbox / Templates</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Email templates page loaded; application submit triggered email/automation hooks server-side.</p>
+      <p><strong>Assertion:</strong> Template UI is accessible. Real inbox receipt remains separate Gmail/API verification.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/emails.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/emails.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/emails.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/emails.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">automation</p>
+          <h2>Automation Rules</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Automation rule was created, toggled off, listed, and deleted successfully.</p>
+      <p><strong>Assertion:</strong> Automation CRUD behavior works for application_submitted notify_team rules.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/automation.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/automation.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/automation.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/automation.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card skip">
+      <div class="row">
+        <div>
+          <p class="eyebrow">custom-domain</p>
+          <h2>Custom Domain</h2>
+        </div>
+        <span class="status">SKIP</span>
+      </div>
+      <p><strong>Reason:</strong> Custom domain settings page loaded, but real domain/DNS verification needs a configured test domain.</p>
+      <p><strong>Assertion:</strong> AI avoids modifying real DNS without a test domain.</p>
+      <p class="human">Human verification required for this item.</p>
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/custom-domain.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/custom-domain.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/custom-domain.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/custom-domain.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card skip">
+      <div class="row">
+        <div>
+          <p class="eyebrow">custom-domain-public</p>
+          <h2>Custom Domain Public Route</h2>
+        </div>
+        <span class="status">SKIP</span>
+      </div>
+      <p><strong>Reason:</strong> Custom domain is not configured for this run.</p>
+
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/custom-domain-public.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/custom-domain-public.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/custom-domain-public.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/custom-domain-public.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">integrations</p>
+          <h2>Integrations / Webhooks</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Webhook integration was created, listed, toggled inactive, test-called, and deleted.</p>
+      <p><strong>Assertion:</strong> Webhook CRUD and test endpoint are functional for application.submitted.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/integrations.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/integrations.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/integrations.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/integrations.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">smtp</p>
+          <h2>SMTP Settings</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> SMTP page loaded and invalid SMTP config returned a connection validation error without saving.</p>
+      <p><strong>Assertion:</strong> Previous SMTP config was empty; invalid config was blocked.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/smtp.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/smtp.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/smtp.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/smtp.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">tracking</p>
+          <h2>Facebook Pixel / Tracking</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Existing Facebook Pixel config was protected and verified through public apply API.</p>
+      <p><strong>Assertion:</strong> Tracking config read/public exposure path is functional; mutation skipped to avoid overwriting real token.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/tracking.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/tracking.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/tracking.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/tracking.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">branding</p>
+          <h2>Branding / Careers Settings</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Branding/careers settings were saved, verified via public API, and restored.</p>
+      <p><strong>Assertion:</strong> Branding persistence and public careers/apply reflection is functional.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/branding.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/branding.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/branding.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/branding.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">team-permissions</p>
+          <h2>Team &amp; Permissions</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Team page loaded with member/role management surface.</p>
+      <p><strong>Assertion:</strong> Team/permission management surface is accessible.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/team-permissions.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/team-permissions.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/team-permissions.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/team-permissions.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">analytics</p>
+          <h2>Analytics</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Analytics page loaded and API counts matched the real submitted candidate/job from this run.</p>
+      <p><strong>Assertion:</strong> Job analytics total=1, submitted=1.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/analytics.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/analytics.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/analytics.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/analytics.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">billing-activity</p>
+          <h2>Billing / Activity / Notifications</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Billing route loaded; activity route checked when role allowed it.</p>
+      <p><strong>Assertion:</strong> Billing/activity surfaces are reachable. Real payment checkout still requires test payment mode.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/billing-activity.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/billing-activity.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/billing-activity.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/billing-activity.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">mobile-public</p>
+          <h2>Mobile Public Pages</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Mobile careers/apply pages rendered without horizontal overflow for the created job.</p>
+      <p><strong>Assertion:</strong> Candidate-facing pages are usable on mobile viewport.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/mobile-public.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/mobile-public.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/mobile-public.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/mobile-public.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card pass">
+      <div class="row">
+        <div>
+          <p class="eyebrow">support-404</p>
+          <h2>Support / Contact / 404</h2>
+        </div>
+        <span class="status">PASS</span>
+      </div>
+      <p><strong>Reason:</strong> Public route loaded with HTTP 200.</p>
+      <p><strong>Assertion:</strong> Public route returned usable content.</p>
+
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/support-404.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/support-404.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/support-404.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/support-404.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card skip">
+      <div class="row">
+        <div>
+          <p class="eyebrow">gmail-delivery</p>
+          <h2>Gmail Email Delivery</h2>
+        </div>
+        <span class="status">SKIP</span>
+      </div>
+      <p><strong>Reason:</strong> AI has no Gmail/test inbox access in this run. Human must verify received email delivery.</p>
+
+      <p class="human">Human verification required for this item.</p>
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/gmail-delivery.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/gmail-delivery.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/gmail-delivery.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/gmail-delivery.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card skip">
+      <div class="row">
+        <div>
+          <p class="eyebrow">dns-ssl</p>
+          <h2>Real DNS / SSL Propagation</h2>
+        </div>
+        <span class="status">SKIP</span>
+      </div>
+      <p><strong>Reason:</strong> AI has no DNS provider access in this run. Human or DNS API access is required to verify propagation.</p>
+
+      <p class="human">Human verification required for this item.</p>
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/dns-ssl.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/dns-ssl.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/dns-ssl.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/dns-ssl.png">Screenshot</a>
+
+      </div>
+    </article>
+
+    <article class="card skip">
+      <div class="row">
+        <div>
+          <p class="eyebrow">payment-checkout</p>
+          <h2>Payment / License Checkout</h2>
+        </div>
+        <span class="status">SKIP</span>
+      </div>
+      <p><strong>Reason:</strong> AI has no test payment/license access in this run. Human must verify real checkout unless test payment mode is provided.</p>
+
+      <p class="human">Human verification required for this item.</p>
+      <div class="links">
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/videos/payment-checkout.webm">Video</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/storyboards/payment-checkout.html">Storyboard</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/captions/payment-checkout.vtt">Captions</a>
+        <a href="https://aamirmursleen.github.io/hiringcat-qa/runs/20260728T105846Z/screenshots/payment-checkout.png">Screenshot</a>
+
+      </div>
+    </article>
+
+  </main>
+</body>
+</html>

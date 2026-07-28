@@ -1,0 +1,29 @@
+WEBVTT
+
+1
+00:00:00.579 --> 00:00:01.579
+HiringCat AI QA - Candidate Dashboard / Pipeline
+
+2
+00:00:01.385 --> 00:00:02.385
+Running: Candidate Dashboard / Pipeline
+
+3
+00:00:02.054 --> 00:00:04.528
+Using saved authenticated browser session.
+
+4
+00:00:04.528 --> 00:00:08.340
+Opening HR dashboard candidate detail and verifying candidate can be managed.
+
+5
+00:00:08.340 --> 00:00:10.327
+REQUEST: API GET /api/applications/6bf875b2-655a-41b8-ad7f-4c8051587495/619747d7-18c2-46f7-920d-4ca8223bfce1 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+6
+00:00:10.327 --> 00:00:11.721
+PASS: API response GET /api/applications/6bf875b2-655a-41b8-ad7f-4c8051587495/619747d7-18c2-46f7-920d-4ca8223bfce1 - HTTP 200; {"id":"619747d7-18c2-46f7-920d-4ca8223bfce1","jobId":"6bf875b2-655a-41b8-ad7f-4c8051587495","stageId":"0d7437df-e678-4f47-861f-19b53ea5a48e","candidateName":"AI QA Human Candidate 110122","candidateEmail":"ai-qa-human-candidate-1785236482022@example.com","cand
+
+7
+00:00:11.721 --> 00:00:14.367
+Result: PASS - Submitted candidate opened in HR dashboard with correct job/application data.

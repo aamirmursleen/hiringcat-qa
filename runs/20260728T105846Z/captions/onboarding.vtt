@@ -1,0 +1,25 @@
+WEBVTT
+
+1
+00:00:00.796 --> 00:00:01.796
+HiringCat AI QA - Onboarding / Organization Setup
+
+2
+00:00:01.563 --> 00:00:02.563
+Running: Onboarding / Organization Setup
+
+3
+00:00:02.269 --> 00:00:04.648
+Using saved authenticated browser session.
+
+4
+00:00:04.648 --> 00:00:06.657
+Loading organization list from authenticated API.
+
+5
+00:00:06.657 --> 00:00:09.349
+Verified organization context: Fhdqewd
+
+6
+00:00:09.349 --> 00:00:12.710
+Result: PASS - Organization context loaded: fhd.

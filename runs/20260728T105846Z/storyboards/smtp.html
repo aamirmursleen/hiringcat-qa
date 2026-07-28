@@ -1,0 +1,113 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SMTP Settings Storyboard</title>
+<style>
+body{margin:0;background:#f8fafc;color:#111827;font:14px/1.55 Inter,Arial,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 44px}
+h1{font-size:26px;margin:0 0 4px}.meta{color:#64748b;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.step{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;box-shadow:0 6px 22px rgba(15,23,42,.07)}
+.step img{display:block;width:100%;height:auto;background:#e5e7eb}
+.caption{border-top:5px solid #3b82f6;padding:12px}.step.pass .caption{border-top-color:#16a34a}.step.fail .caption{border-top-color:#dc2626}.step.request .caption{border-top-color:#7c3aed}.step.skip .caption{border-top-color:#64748b}
+.caption b{display:block;text-transform:uppercase;font-size:12px;letter-spacing:.03em}.caption p{margin:6px 0 0;overflow-wrap:anywhere}
+</style></head><body><main>
+<h1>SMTP Settings Step Storyboard</h1>
+<div class="meta">Run 20260728T105846Z · smtp · 12 captured steps</div>
+<section class="grid">
+    <article class="step step">
+      <img src="../step-images/smtp-01.jpg" alt="Step 1">
+      <div class="caption">
+        <b>1. STEP</b>
+        <p>HiringCat AI QA - SMTP Settings</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/smtp-02.jpg" alt="Step 2">
+      <div class="caption">
+        <b>2. STEP</b>
+        <p>Running: SMTP Settings</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/smtp-03.jpg" alt="Step 3">
+      <div class="caption">
+        <b>3. STEP</b>
+        <p>Using saved authenticated browser session.</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/smtp-04.jpg" alt="Step 4">
+      <div class="caption">
+        <b>4. STEP</b>
+        <p>Opening SMTP settings and checking invalid SMTP validation without saving credentials.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/smtp-05.jpg" alt="Step 5">
+      <div class="caption">
+        <b>5. REQUEST</b>
+        <p>API GET /api/orgs/smtp - {&quot;orgId&quot;:&quot;5413bea4-80e3-4d78-b9cd-7933e5db4632&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step pass">
+      <img src="../step-images/smtp-06.jpg" alt="Step 6">
+      <div class="caption">
+        <b>6. PASS</b>
+        <p>API response GET /api/orgs/smtp - HTTP 200; {&quot;success&quot;:true,&quot;data&quot;:null}</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/smtp-07.jpg" alt="Step 7">
+      <div class="caption">
+        <b>7. STEP</b>
+        <p>UI Step 1: Type invalid SMTP details into visible SMTP form.</p>
+      </div>
+    </article>
+
+    <article class="step ui step">
+      <img src="../step-images/smtp-08.jpg" alt="Step 8">
+      <div class="caption">
+        <b>8. UI STEP</b>
+        <p>Invalid SMTP form values typed - host=invalid.smtp.hiringcat-ai-qa.local, port=587, sender=ai-qa@example.com</p>
+      </div>
+    </article>
+
+    <article class="step ui step">
+      <img src="../step-images/smtp-09.jpg" alt="Step 9">
+      <div class="caption">
+        <b>9. UI STEP</b>
+        <p>SMTP Save &amp; Verify clicked - UI attempted validation; backend assertion confirms invalid config was rejected.</p>
+      </div>
+    </article>
+
+    <article class="step request">
+      <img src="../step-images/smtp-10.jpg" alt="Step 10">
+      <div class="caption">
+        <b>10. REQUEST</b>
+        <p>API PUT /api/orgs/smtp - {&quot;host&quot;:&quot;invalid.smtp.hiringcat-ai-qa.local&quot;,&quot;port&quot;:587,&quot;secure&quot;:false,&quot;user&quot;:&quot;ai-qa@example.com&quot;,&quot;pass&quot;:&quot;invalid-test-password&quot;,&quot;fromEmail&quot;:&quot;ai-qa@example.com&quot;,&quot;fromName&quot;:&quot;AI QA&quot;,&quot;enabled&quot;:true}</p>
+      </div>
+    </article>
+
+    <article class="step fail">
+      <img src="../step-images/smtp-11.jpg" alt="Step 11">
+      <div class="caption">
+        <b>11. FAIL</b>
+        <p>API response PUT /api/orgs/smtp - HTTP 400; {&quot;success&quot;:false,&quot;error&quot;:&quot;SMTP connection failed: getaddrinfo ENOTFOUND invalid.smtp.hiringcat-ai-qa.local&quot;}</p>
+      </div>
+    </article>
+
+    <article class="step step">
+      <img src="../step-images/smtp-12.jpg" alt="Step 12">
+      <div class="caption">
+        <b>12. STEP</b>
+        <p>Result: PASS - SMTP page loaded and invalid SMTP config returned a connection validation error without saving.</p>
+      </div>
+    </article>
+  </section>
+</main></body></html>

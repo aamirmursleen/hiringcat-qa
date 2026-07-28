@@ -1,0 +1,93 @@
+WEBVTT
+
+1
+00:00:00.562 --> 00:00:01.562
+HiringCat AI QA - Create Job
+
+2
+00:00:01.407 --> 00:00:02.407
+Running: Create Job
+
+3
+00:00:02.103 --> 00:00:04.644
+Using saved authenticated browser session.
+
+4
+00:00:04.644 --> 00:00:07.192
+UI Step 1: Open New Job wizard.
+
+5
+00:00:07.192 --> 00:00:08.767
+UI Step 2: Fill job title, department, location, and employment type.
+
+6
+00:00:08.767 --> 00:00:10.390
+UI STEP: Visible job details were typed in the wizard - title=AI QA Human UI Job ms4jn1ty-1, department=QA Automation, location=Remote, type=Full-time
+
+7
+00:00:10.390 --> 00:00:23.843
+UI Step 3: Fill description editor and continue.
+
+8
+00:00:23.843 --> 00:00:25.526
+UI STEP: Description rich-text editor filled - Description entered through visible editor, not direct API create.
+
+9
+00:00:25.526 --> 00:00:35.083
+UI Step 4: Configure screening questions using visible question controls.
+
+10
+00:00:35.083 --> 00:00:36.734
+UI STEP: Question controls exercised in wizard - Short Text, Rating, Yes/No buttons were used where visible; default Video question remains enabled.
+
+11
+00:00:36.734 --> 00:00:39.999
+UI Step 5: Review welcome screen preview and continue.
+
+12
+00:00:39.999 --> 00:00:43.006
+UI Step 6: Confirm AI automation thresholds and continue.
+
+13
+00:00:43.006 --> 00:00:45.192
+UI STEP: AI automation settings visible and thresholds checked - strong=80, pass=50
+
+14
+00:00:45.192 --> 00:00:47.612
+UI Step 7: Review round rules and continue.
+
+15
+00:00:47.612 --> 00:00:49.198
+UI STEP: Round rules page reviewed - CV, Recorded Screening, and Live Interview rule sections visible.
+
+16
+00:00:49.198 --> 00:00:57.470
+UI Step 8: Review summary and click Create & Activate.
+
+17
+00:00:57.470 --> 00:00:59.116
+UI STEP: Create & Activate clicked in visible review step - Activated job title=AI QA Human UI Job ms4jn1ty-1
+
+18
+00:00:59.116 --> 00:01:01.181
+REQUEST: API GET /api/jobs - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+19
+00:01:01.181 --> 00:01:02.659
+PASS: API response GET /api/jobs - HTTP 200; [{"id":"6bf875b2-655a-41b8-ad7f-4c8051587495","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","title":"AI QA Human UI Job ms4jn1ty-1","slug":"ai-qa-human-ui-job-ms4jn1ty-1","description":"This is a human-style UI E2E job created by the HiringCat AI...","departm
+
+20
+00:01:02.659 --> 00:01:04.169
+REQUEST: API GET /api/jobs/6bf875b2-655a-41b8-ad7f-4c8051587495 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+21
+00:01:04.169 --> 00:01:05.169
+PASS: API response GET /api/jobs/6bf875b2-655a-41b8-ad7f-4c8051587495 - HTTP 200; {"id":"6bf875b2-655a-41b8-ad7f-4c8051587495","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","title":"AI QA Human UI Job ms4jn1ty-1","slug":"ai-qa-human-ui-job-ms4jn1ty-1","description":"This is a human-style UI E2E job created by the HiringCat AI...","departme
+
+22
+00:01:05.163 --> 00:01:07.281
+UI Step 9: Open created job detail and verify title is visible.
+
+23
+00:01:07.281 --> 00:01:12.944
+Result: PASS - Human-style UI wizard created and activated job "AI QA Human UI Job ms4jn1ty-1" (ai-qa-human-ui-job-ms4jn1ty-1).
