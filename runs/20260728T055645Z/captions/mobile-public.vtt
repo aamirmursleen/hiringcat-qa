@@ -1,0 +1,9 @@
+WEBVTT
+
+1
+00:00:00.646 --> 00:00:01.646
+HiringCat AI QA - Mobile Public Pages
+
+2
+00:00:01.406 --> 00:00:03.344
+Result: SKIP - Organization slug and job slug are missing, so AI cannot verify this public candidate route.

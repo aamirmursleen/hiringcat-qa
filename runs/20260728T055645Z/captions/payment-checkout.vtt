@@ -1,0 +1,9 @@
+WEBVTT
+
+1
+00:00:00.857 --> 00:00:01.857
+HiringCat AI QA - Payment / License Checkout
+
+2
+00:00:01.699 --> 00:00:03.724
+Result: SKIP - AI has no test payment/license access in this run. Human must verify real checkout unless test payment mode is provided.

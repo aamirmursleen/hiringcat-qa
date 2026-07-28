@@ -1,0 +1,9 @@
+WEBVTT
+
+1
+00:00:01.078 --> 00:00:02.078
+HiringCat AI QA - Team & Permissions
+
+2
+00:00:01.911 --> 00:00:03.760
+Result: SKIP - Private HiringCat test email/password are missing, so AI cannot safely verify authenticated dashboard flow.

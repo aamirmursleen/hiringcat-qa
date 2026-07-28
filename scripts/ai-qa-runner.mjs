@@ -28,6 +28,9 @@ const config = {
   reportPhone: process.env.QA_REPORT_PHONE || "",
   waqueenApiKey: process.env.WAQUEEN_API_KEY || "",
   waqueenMessagesUrl: process.env.WAQUEEN_MESSAGES_URL || "https://waqueen.com/api/v1/messages",
+  headless: process.env.QA_HEADLESS !== "0",
+  interactiveLogin: process.env.HIRINGCAT_LOGIN_INTERACTIVE === "1",
+  loginWaitMs: Number(process.env.HIRINGCAT_LOGIN_WAIT_MS || 180_000),
 };
 
 const runId = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
@@ -47,7 +50,7 @@ await fs.mkdir(rawVideoDir, { recursive: true });
 const sections = scenarioSections();
 const selectedSections = smokeMode ? sections.filter((section) => section.smoke) : sections;
 
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({ headless: config.headless });
 const results = [];
 
 try {
@@ -188,6 +191,7 @@ async function showChecklistContext(page, section, captionEvents, startedAt) {
 
 async function executeSection(page, section, captionEvents, startedAt) {
   if (section.id === "qa-form-smoke") return testQaChecklist(page, captionEvents, startedAt);
+  if (section.id === "target-app-preflight") return testTargetAppPreflight(page, captionEvents, startedAt);
   if (section.publicRoute) return testPublicRoute(page, section, captionEvents, startedAt);
   if (section.authenticatedRoute) return testAuthenticatedRoute(page, section, captionEvents, startedAt);
   return {
@@ -215,6 +219,43 @@ async function testQaChecklist(page, captionEvents, startedAt) {
   };
 }
 
+async function testTargetAppPreflight(page, captionEvents, startedAt) {
+  await caption(page, captionEvents, startedAt, `Opening HiringCat target app: ${config.hiringcatUrl}`);
+  const response = await page.goto(config.hiringcatUrl, { waitUntil: "domcontentloaded", timeout: 45_000 });
+  const statusCode = response?.status() ?? 0;
+  const bodyText = (await page.locator("body").innerText({ timeout: 5000 }).catch(() => "")).trim();
+
+  if (statusCode >= 500 || statusCode === 0) {
+    return {
+      status: "FAIL",
+      reason: `Target app returned HTTP ${statusCode || "unknown"}.`,
+      assertion: "HiringCat target app should load before dashboard E2E runs.",
+    };
+  }
+
+  if (hasAuthConfigError(bodyText)) {
+    return {
+      status: "FAIL",
+      reason: "Local app loaded but recruiter authentication is not configured. Set VITE_CLERK_PUBLISHABLE_KEY plus backend Clerk/API/database env before localhost dashboard E2E.",
+      assertion: "Localhost dashboard testing requires configured Clerk and backend env.",
+    };
+  }
+
+  if (!bodyText || hasBlockingAppError(bodyText)) {
+    return {
+      status: "FAIL",
+      reason: "Target app loaded but body is empty or contains an app error.",
+      assertion: "HiringCat target app should show usable content.",
+    };
+  }
+
+  return {
+    status: "PASS",
+    reason: `Target app loaded with HTTP ${statusCode}.`,
+    assertion: "HiringCat target app preflight passed.",
+  };
+}
+
 async function testPublicRoute(page, section, captionEvents, startedAt) {
   const target = resolveSectionUrl(section);
   await caption(page, captionEvents, startedAt, `Opening public URL: ${target}`);
@@ -229,7 +270,7 @@ async function testPublicRoute(page, section, captionEvents, startedAt) {
   }
   await page.waitForTimeout(1200);
   const bodyText = (await page.locator("body").innerText({ timeout: 5000 }).catch(() => "")).trim();
-  if (!bodyText || /Application error|Internal Server Error|Something went wrong/i.test(bodyText)) {
+  if (!bodyText || hasBlockingAppError(bodyText)) {
     return {
       status: "FAIL",
       reason: "Public route loaded but body is empty or contains an app error.",
@@ -266,7 +307,7 @@ async function testAuthenticatedRoute(page, section, captionEvents, startedAt) {
       assertion: "Private credentials should allow dashboard access.",
     };
   }
-  if (!bodyText || /Application error|Internal Server Error|Something went wrong/i.test(bodyText)) {
+  if (!bodyText || hasBlockingAppError(bodyText)) {
     return {
       status: "FAIL",
       reason: "Dashboard route loaded but body is empty or contains an app error.",
@@ -282,6 +323,10 @@ async function testAuthenticatedRoute(page, section, captionEvents, startedAt) {
 
 async function login(page) {
   await page.goto(`${config.hiringcatUrl}/sign-in`, { waitUntil: "domcontentloaded", timeout: 45_000 });
+  const initialBody = await page.locator("body").innerText({ timeout: 5000 }).catch(() => "");
+  if (hasAuthConfigError(initialBody)) {
+    throw new Error("Login page cannot run because authentication is not configured. Set VITE_CLERK_PUBLISHABLE_KEY, Clerk backend keys, API URL, and database env for localhost.");
+  }
   await fillFirst(page, [
     'input[name="identifier"]',
     'input[name="email"]',
@@ -300,6 +345,22 @@ async function login(page) {
   ]);
   await page.waitForLoadState("domcontentloaded").catch(() => {});
   await page.waitForTimeout(3500);
+
+  if (/dashboard/i.test(page.url())) return;
+
+  const bodyText = await page.locator("body").innerText({ timeout: 5000 }).catch(() => "");
+  if (/verification code|verify.*email|enter.*code|we sent.*code/i.test(bodyText)) {
+    if (!config.interactiveLogin) {
+      throw new Error("Login requires an email/OTP verification code. Re-run with QA_HEADLESS=0 and HIRINGCAT_LOGIN_INTERACTIVE=1 so a human can enter the code.");
+    }
+    console.log(`Interactive login required. Enter the code in the browser within ${Math.round(config.loginWaitMs / 1000)} seconds.`);
+    await page.waitForURL("**/dashboard**", { timeout: config.loginWaitMs });
+    return;
+  }
+
+  if (/could not sign in|check your email and password|invalid|incorrect|unauthorized/i.test(bodyText)) {
+    throw new Error("Login failed with an invalid credential or authorization error.");
+  }
 }
 
 function preflightSection(section) {
@@ -325,6 +386,14 @@ function resolveSectionUrl(section) {
   if (section.publicRoute === "availability") return `${config.hiringcatUrl}/availability/${encodeURIComponent(config.orgSlug)}`;
   if (section.publicRoute === "custom-domain") return config.customDomain;
   return config.hiringcatUrl;
+}
+
+function hasAuthConfigError(text) {
+  return /Authentication is not configured|Set VITE_CLERK_PUBLISHABLE_KEY/i.test(text || "");
+}
+
+function hasBlockingAppError(text) {
+  return /Application error|Internal Server Error|Something went wrong|Authentication is not configured|Set VITE_CLERK_PUBLISHABLE_KEY/i.test(text || "");
 }
 
 async function fillFirst(page, selectors, value) {
@@ -594,6 +663,7 @@ function summarize(results) {
 function scenarioSections() {
   return [
     { id: "qa-form-smoke", checklistId: "login", title: "QA form infrastructure", smoke: true },
+    { id: "target-app-preflight", checklistId: "dashboard", title: "Target App Local/Live Preflight", smoke: true },
     { id: "login-signup", checklistId: "login", title: "Login / Signup", authenticatedRoute: true, path: "/dashboard", requiresCredentials: true, smoke: true },
     { id: "onboarding", title: "Onboarding / Organization Setup", authenticatedRoute: true, path: "/dashboard/onboarding", requiresCredentials: true },
     { id: "create-job", title: "Create Job", authenticatedRoute: true, path: "/dashboard/jobs/new", requiresCredentials: true },

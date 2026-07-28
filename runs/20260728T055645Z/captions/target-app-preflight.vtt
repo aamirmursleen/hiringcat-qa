@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.536 --> 00:00:01.536
+HiringCat AI QA - Target App Local/Live Preflight
+
+2
+00:00:01.276 --> 00:00:02.276
+Running: Target App Local/Live Preflight
+
+3
+00:00:01.909 --> 00:00:05.166
+Opening HiringCat target app: http://localhost:5173
+
+4
+00:00:05.166 --> 00:00:07.749
+Result: FAIL - Local app loaded but recruiter authentication is not configured. Set VITE_CLERK_PUBLISHABLE_KEY plus backend Clerk/API/database env before localhost dashboard E2E.

@@ -48,6 +48,24 @@ Fast smoke run:
 npm run qa:ai:smoke
 ```
 
+Localhost dashboard E2E:
+
+```bash
+# In the HiringCat app repo, start the local web/API with real dev env first.
+# Required there: VITE_CLERK_PUBLISHABLE_KEY, Clerk backend keys, API URL, DATABASE_URL.
+
+cd /root/abdullah/hiringcat-qa
+HIRINGCAT_URL=http://localhost:5173 npm run qa:ai
+```
+
+If Clerk asks for an email/OTP code:
+
+```bash
+QA_HEADLESS=0 HIRINGCAT_LOGIN_INTERACTIVE=1 HIRINGCAT_URL=http://localhost:5173 npm run qa:ai
+```
+
+The browser will stay open long enough for a human to enter the code, then the AI runner continues the dashboard checks.
+
 Run output is written to:
 
 ```text

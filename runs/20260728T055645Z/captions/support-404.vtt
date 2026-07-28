@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.959 --> 00:00:01.959
+HiringCat AI QA - Support / Contact / 404
+
+2
+00:00:01.794 --> 00:00:02.794
+Running: Support / Contact / 404
+
+3
+00:00:02.435 --> 00:00:05.079
+Opening public URL: http://localhost:5173/this-page-should-not-exist
+
+4
+00:00:05.079 --> 00:00:07.282
+Result: FAIL - Public route loaded but body is empty or contains an app error.

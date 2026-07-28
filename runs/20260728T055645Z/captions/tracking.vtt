@@ -1,0 +1,9 @@
+WEBVTT
+
+1
+00:00:01.710 --> 00:00:02.710
+HiringCat AI QA - Facebook Pixel / Tracking
+
+2
+00:00:02.665 --> 00:00:04.319
+Result: SKIP - Private HiringCat test email/password are missing, so AI cannot safely verify authenticated dashboard flow.

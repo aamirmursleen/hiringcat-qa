@@ -30,6 +30,8 @@ assert(runner.includes("https://waqueen.com/api/v1/messages"), "runner must targ
 assert(runner.includes("MoonPush"), "runner must document/support MoonPush upload path");
 assert(runner.includes("Cloudflare") || readme.includes("Cloudflare"), "docs should mention permanent upload option");
 assert(runner.includes("humanOnly"), "runner must support human-only skip handling");
+assert(runner.includes("target-app-preflight"), "runner must include target app/local preflight");
+assert(runner.includes("HIRINGCAT_LOGIN_INTERACTIVE"), "runner must support interactive login for OTP/code flows");
 
 const scenarioCount = [...runner.matchAll(/id: "/g)].length;
 assert(scenarioCount >= 24, `expected at least 24 scenario entries, found ${scenarioCount}`);
@@ -38,6 +40,8 @@ const checklistSections = [...index.matchAll(/title: "/g)].length;
 assert(checklistSections >= 20, `expected checklist section/task definitions in index.html, found ${checklistSections}`);
 
 assert(envExample.includes("SEND_WHATSAPP=0"), ".env.example must default WhatsApp sending off");
+assert(envExample.includes("QA_HEADLESS=1"), ".env.example must default browser to headless mode");
+assert(envExample.includes("HIRINGCAT_URL=http://localhost:5173"), ".env.example must document localhost target mode");
 assert(!/wsk_(live|test)_[A-Za-z0-9_-]{12,}/.test(runner), "runner must not contain a private WAQueen API key");
 assert(!/wsk_(live|test)_[A-Za-z0-9_-]{12,}/.test(envExample), ".env.example must not contain a private WAQueen API key");
 
