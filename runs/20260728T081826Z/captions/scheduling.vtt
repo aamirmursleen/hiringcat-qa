@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:01.471 --> 00:00:02.488
+HiringCat AI QA - Scheduling
+
+2
+00:00:02.488 --> 00:00:03.488
+Running: Scheduling
+
+3
+00:00:03.210 --> 00:00:06.638
+Using saved authenticated browser session.
+
+4
+00:00:06.638 --> 00:00:09.714
+Opening scheduling dashboard after real candidate submit.
+
+5
+00:00:09.714 --> 00:00:15.891
+Result: PASS - Scheduling surface loaded after real candidate E2E data was created.

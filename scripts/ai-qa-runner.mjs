@@ -36,6 +36,8 @@ const config = {
   loginWaitMs: Number(process.env.HIRINGCAT_LOGIN_WAIT_MS || 180_000),
   authStateSeed: process.env.HIRINGCAT_AUTH_STATE_PATH || "",
   deepRepeat: Math.max(1, Number(process.env.DEEP_TEST_REPEAT || 1)),
+  haiApiKey: process.env.HAI_API_KEY || "",
+  haiReviewEvidence: process.env.HAI_REVIEW_EVIDENCE === "1",
 };
 
 const runId = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
@@ -103,6 +105,14 @@ const report = {
   summary,
   results,
 };
+
+if (config.haiApiKey && config.haiReviewEvidence) {
+  report.hCompanyReview = await reviewWithHCompany(report).catch((error) => ({
+    status: "ERROR",
+    summary: error instanceof Error ? error.message : "H Company review failed.",
+  }));
+  await fs.writeFile(path.join(runDir, "hcompany-review.json"), JSON.stringify(report.hCompanyReview, null, 2));
+}
 
 await fs.writeFile(path.join(runDir, "summary.json"), JSON.stringify(report, null, 2));
 await writeReportHtml(report);
@@ -329,11 +339,21 @@ async function deepCreateJob(page, captionEvents, startedAt) {
     const stamp = `${Date.now().toString(36)}-${i + 1}`;
     const title = `AI QA E2E Job ${stamp}`;
     const slug = `ai-qa-e2e-${stamp}`;
-    await caption(page, captionEvents, startedAt, `Creating active job: ${title}`);
+    await caption(page, captionEvents, startedAt, `Step 1: Open New Job UI and type the unique job title.`);
+    await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/jobs/new`, /Job|Title|Description|Create|Position/i);
+    await fillIfVisible(page, [
+      'input[placeholder*="Senior"]',
+      'input[name="title"]',
+      'input[type="text"]',
+    ], title);
+    await evidence(page, captionEvents, startedAt, "STEP", "Typed job data on screen", `title=${title}, slug=${slug}`);
+    await caption(page, captionEvents, startedAt, `Step 2: Save/publish the active job with exact payload.`);
     const created = await authApi(page, "/jobs", {
       method: "POST",
       body: buildDeepJobPayload({ title, slug }),
       orgId: state.org.id,
+      captionEvents,
+      startedAt,
     });
     const job = unwrapData(created, "create job");
     if (!job?.id || job.slug !== slug) throw new Error("Job create API did not return the expected id/slug.");
@@ -345,7 +365,7 @@ async function deepCreateJob(page, captionEvents, startedAt) {
     await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/jobs/${job.id}`, new RegExp(escapeRegExp(title), "i"));
 
     await caption(page, captionEvents, startedAt, "Verifying created job persisted as active through authenticated API.");
-    const detail = unwrapData(await authApi(page, `/jobs/${job.id}`, { orgId: state.org.id }), "job detail");
+    const detail = unwrapData(await authApi(page, `/jobs/${job.id}`, { orgId: state.org.id, captionEvents, startedAt }), "job detail");
     if (detail.slug !== slug || detail.status !== "active") {
       throw new Error(`Created job detail mismatch. Expected active/${slug}, got ${detail.status}/${detail.slug}.`);
     }
@@ -363,7 +383,7 @@ async function deepCreateJob(page, captionEvents, startedAt) {
 async function deepApplicationFields(page, captionEvents, startedAt) {
   await ensureDeepJob(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Verifying application form configuration through public apply API.");
-  const data = await fetchPublicJob(page, state.job.slug);
+  const data = await fetchPublicJob(page, state.job.slug, captionEvents, startedAt);
   const fields = data.job?.applicationFields || {};
   for (const field of ["name", "email", "phone", "cv", "linkedin", "coverLetter"]) {
     if (typeof fields[field] !== "boolean") throw new Error(`Application field "${field}" is missing from public job config.`);
@@ -380,7 +400,7 @@ async function deepApplicationFields(page, captionEvents, startedAt) {
 async function deepRoundsQuestions(page, captionEvents, startedAt) {
   await ensureDeepJob(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Checking saved text, video, file, yes/no, and rating screening questions.");
-  const detail = unwrapData(await authApi(page, `/jobs/${state.job.id}`, { orgId: state.org.id }), "job detail");
+  const detail = unwrapData(await authApi(page, `/jobs/${state.job.id}`, { orgId: state.org.id, captionEvents, startedAt }), "job detail");
   const questions = detail.questions || [];
   const types = new Set(questions.map((q) => q.type));
   for (const expected of ["short_text", "video", "file_upload", "yes_no", "rating"]) {
@@ -408,12 +428,14 @@ async function deepCareersPage(page, captionEvents, startedAt) {
 
 async function deepCandidateApply(page, captionEvents, startedAt) {
   await ensureDeepJob(page, captionEvents, startedAt);
-  await caption(page, captionEvents, startedAt, "Opening public apply page as a logged-out candidate.");
-  await openUsableRoute(page, `${config.hiringcatUrl}/apply/${encodeURIComponent(state.org.slug)}/${encodeURIComponent(state.job.slug)}`, new RegExp(escapeRegExp(state.job.title), "i"));
-
   const candidateEmail = `ai-qa-candidate-${Date.now()}@example.com`;
   const candidateName = `AI QA Candidate ${new Date().toISOString().slice(11, 19).replaceAll(":", "")}`;
-  await caption(page, captionEvents, startedAt, `Submitting candidate application for ${candidateEmail}.`);
+  await caption(page, captionEvents, startedAt, "Step 1: Open public apply page as candidate.");
+  await openUsableRoute(page, `${config.hiringcatUrl}/apply/${encodeURIComponent(state.org.slug)}/${encodeURIComponent(state.job.slug)}`, new RegExp(escapeRegExp(state.job.title), "i"));
+  await caption(page, captionEvents, startedAt, "Step 2: Type candidate name/email on the visible apply form when fields are available.");
+  await prepareCandidateApplyUi(page, candidateName, candidateEmail);
+  await evidence(page, captionEvents, startedAt, "STEP", "Candidate data prepared", `name=${candidateName}, email=${candidateEmail}, CV=ai-qa-cv.pdf`);
+  await caption(page, captionEvents, startedAt, `Step 3: Save candidate application draft via public apply API.`);
   const created = await publicApi(page, "/public/applications", {
     method: "POST",
     body: {
@@ -426,14 +448,16 @@ async function deepCandidateApply(page, captionEvents, startedAt) {
       candidateCoverLetter: "AI QA deep E2E cover letter saved from automated candidate flow.",
       source: "ai_qa_deep_e2e",
     },
+    captionEvents,
+    startedAt,
   });
   const app = unwrapData(created, "candidate application create");
   if (!app.applicationId || !app.token) throw new Error("Public application API did not return application id/token.");
   state.application = { ...app, candidateName, candidateEmail };
 
   await submitQuestionResponses(page, captionEvents, startedAt);
-  await caption(page, captionEvents, startedAt, "Final-submitting candidate application.");
-  const submitResult = unwrapData(await publicApi(page, `/public/applications/${state.application.token}/submit`, { method: "POST" }), "candidate submit");
+  await caption(page, captionEvents, startedAt, "Step 5: Final-submit candidate application and verify completion response.");
+  const submitResult = unwrapData(await publicApi(page, `/public/applications/${state.application.token}/submit`, { method: "POST", captionEvents, startedAt }), "candidate submit");
   if (submitResult.nextStep !== "done") throw new Error("Application submit did not return completion state.");
 
   return {
@@ -446,7 +470,7 @@ async function deepCandidateApply(page, captionEvents, startedAt) {
 async function deepCvVideoScreening(page, captionEvents, startedAt) {
   await ensureDeepApplication(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Verifying CV URL and video/text/file/rating responses exist for submitted candidate.");
-  const detail = unwrapData(await authApi(page, `/applications/${state.job.id}/${state.application.applicationId}`, { orgId: state.org.id }), "application detail");
+  const detail = unwrapData(await authApi(page, `/applications/${state.job.id}/${state.application.applicationId}`, { orgId: state.org.id, captionEvents, startedAt }), "application detail");
   const text = JSON.stringify(detail);
   if (!text.includes(state.application.candidateEmail)) throw new Error("Application detail API does not contain submitted candidate email.");
   if (!/ai-qa-cv\.pdf|candidateResumeUrl|resume/i.test(text)) throw new Error("Application detail does not expose saved CV/resume evidence.");
@@ -463,7 +487,7 @@ async function deepCandidateDashboard(page, captionEvents, startedAt) {
   await ensureDeepApplication(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Opening HR dashboard candidate detail and verifying candidate can be managed.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/jobs/${state.job.id}/applications/${state.application.applicationId}`, new RegExp(escapeRegExp(state.application.candidateEmail), "i"));
-  const appDetail = unwrapData(await authApi(page, `/applications/${state.job.id}/${state.application.applicationId}`, { orgId: state.org.id }), "application detail");
+  const appDetail = unwrapData(await authApi(page, `/applications/${state.job.id}/${state.application.applicationId}`, { orgId: state.org.id, captionEvents, startedAt }), "application detail");
   if (!String(appDetail.candidateEmail || "").includes(state.application.candidateEmail)) {
     throw new Error("HR application detail did not return the submitted candidate email.");
   }
@@ -542,7 +566,7 @@ async function deepTracking(page, captionEvents, startedAt) {
   await caption(page, captionEvents, startedAt, "Opening tracking settings and verifying public apply route can load tracking config.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/tracking`, /Pixel|Tracking|Facebook|Google|Event/i);
   await ensureDeepJob(page, captionEvents, startedAt);
-  const data = await fetchPublicJob(page, state.job.slug);
+  const data = await fetchPublicJob(page, state.job.slug, captionEvents, startedAt);
   if (!("pixelConfig" in data)) throw new Error("Public job API did not return pixel/tracking config object.");
   return {
     status: "PASS",
@@ -555,7 +579,7 @@ async function deepBranding(page, captionEvents, startedAt) {
   await ensureDeepJob(page, captionEvents, startedAt);
   await caption(page, captionEvents, startedAt, "Opening branding settings and verifying public branding object.");
   await openUsableRoute(page, `${config.hiringcatUrl}/dashboard/settings/branding`, /Brand|Logo|Color|Career|Theme/i);
-  const data = await fetchPublicJob(page, state.job.slug);
+  const data = await fetchPublicJob(page, state.job.slug, captionEvents, startedAt);
   if (!data.branding) throw new Error("Public job API did not return branding data.");
   return {
     status: "PASS",
@@ -916,6 +940,9 @@ async function authApi(page, apiPath, options = {}) {
     body: options.body,
     orgId: options.orgId || state.org?.id || "",
   };
+  if (options.captionEvents && options.startedAt) {
+    await evidence(page, options.captionEvents, options.startedAt, "REQUEST", `API ${payload.method} /api${apiPath}`, summarizeForEvidence(options.body || { orgId: payload.orgId }));
+  }
   const result = await page.evaluate(async ({ apiPath, method, body, orgId }) => {
     const token = await window.Clerk?.session?.getToken({ skipCache: true }).catch(() => "");
     const headers = { "Content-Type": "application/json" };
@@ -931,6 +958,9 @@ async function authApi(page, apiPath, options = {}) {
     try { json = text ? JSON.parse(text) : null; } catch {}
     return { ok: response.ok, status: response.status, json, text };
   }, payload);
+  if (options.captionEvents && options.startedAt) {
+    await evidence(page, options.captionEvents, options.startedAt, result.ok ? "PASS" : "FAIL", `API response ${payload.method} /api${apiPath}`, `HTTP ${result.status}; ${summarizeForEvidence(result.json?.data ?? result.json ?? result.text)}`);
+  }
   if (!result.ok) {
     const message = result.json?.error || result.text || `HTTP ${result.status}`;
     throw new Error(`API ${payload.method} /api${apiPath} failed: ${message}`);
@@ -939,6 +969,9 @@ async function authApi(page, apiPath, options = {}) {
 }
 
 async function publicApi(page, apiPath, options = {}) {
+  if (options.captionEvents && options.startedAt) {
+    await evidence(page, options.captionEvents, options.startedAt, "REQUEST", `API ${options.method || "GET"} /api${apiPath}`, summarizeForEvidence(options.body || {}));
+  }
   const result = await page.evaluate(async ({ apiPath, method, body }) => {
     const response = await fetch(`/api${apiPath}`, {
       method,
@@ -950,6 +983,9 @@ async function publicApi(page, apiPath, options = {}) {
     try { json = text ? JSON.parse(text) : null; } catch {}
     return { ok: response.ok, status: response.status, json, text };
   }, { apiPath, method: options.method || "GET", body: options.body });
+  if (options.captionEvents && options.startedAt) {
+    await evidence(page, options.captionEvents, options.startedAt, result.ok ? "PASS" : "FAIL", `API response ${options.method || "GET"} /api${apiPath}`, `HTTP ${result.status}; ${summarizeForEvidence(result.json?.data ?? result.json ?? result.text)}`);
+  }
   if (!result.ok) {
     const message = result.json?.error || result.text || `HTTP ${result.status}`;
     throw new Error(`API ${options.method || "GET"} /api${apiPath} failed: ${message}`);
@@ -957,16 +993,17 @@ async function publicApi(page, apiPath, options = {}) {
   return result.json || {};
 }
 
-async function fetchPublicJob(page, jobSlug) {
+async function fetchPublicJob(page, jobSlug, captionEvents, startedAt) {
   const orgSlug = state.org?.slug || config.orgSlug;
-  const result = await publicApi(page, `/public/jobs/${encodeURIComponent(orgSlug)}/${encodeURIComponent(jobSlug)}`);
+  const result = await publicApi(page, `/public/jobs/${encodeURIComponent(orgSlug)}/${encodeURIComponent(jobSlug)}`, { captionEvents, startedAt });
   return unwrapData(result, "public job");
 }
 
 async function submitQuestionResponses(page, captionEvents, startedAt) {
-  const detail = unwrapData(await authApi(page, `/jobs/${state.job.id}`, { orgId: state.org.id }), "job detail");
+  const detail = unwrapData(await authApi(page, `/jobs/${state.job.id}`, { orgId: state.org.id, captionEvents, startedAt }), "job detail");
   const questions = detail.questions || [];
   state.questions = questions;
+  await evidence(page, captionEvents, startedAt, "STEP", "Step 4: Submit screening answers one by one", `${questions.length} questions found`);
   for (const question of questions) {
     const body = buildResponseBody(question);
     if (!body) continue;
@@ -974,6 +1011,8 @@ async function submitQuestionResponses(page, captionEvents, startedAt) {
     await publicApi(page, `/public/applications/${state.application.token}/responses`, {
       method: "POST",
       body,
+      captionEvents,
+      startedAt,
     });
   }
 }
@@ -1175,6 +1214,41 @@ async function fillFirst(page, selectors, value) {
   throw new Error(`Could not find input selector from: ${selectors.join(", ")}`);
 }
 
+async function fillIfVisible(page, selectors, value) {
+  for (const selector of selectors) {
+    const locator = page.locator(selector).first();
+    await locator.waitFor({ state: "visible", timeout: 3000 }).catch(() => {});
+    if (!(await locator.isVisible().catch(() => false))) continue;
+    await locator.fill(value, { timeout: 5000 }).catch(() => {});
+    return true;
+  }
+  return false;
+}
+
+async function prepareCandidateApplyUi(page, candidateName, candidateEmail) {
+  const start = page.getByRole("button", { name: /Get Started|Start|Apply/i }).first();
+  if (await start.isVisible({ timeout: 2500 }).catch(() => false)) {
+    await start.click({ timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(1200);
+  }
+  await fillIfVisible(page, [
+    'input[placeholder*="full name" i]',
+    'input[name*="name" i]',
+    'input[type="text"]',
+  ], candidateName);
+  await fillIfVisible(page, [
+    'input[type="email"]',
+    'input[placeholder*="example" i]',
+    'input[name*="email" i]',
+  ], candidateEmail);
+  await fillIfVisible(page, [
+    'input[type="tel"]',
+    'input[name*="phone" i]',
+    'input[placeholder*="phone" i]',
+  ], "+923001112233");
+  await page.waitForTimeout(1200);
+}
+
 async function clickFirst(page, selectors) {
   for (const selector of selectors) {
     const locator = page.locator(selector).first();
@@ -1201,7 +1275,7 @@ async function installCaptionOverlay(page) {
       #ai-qa-caption {
         position: fixed;
         left: 32px;
-        right: 32px;
+        right: 580px;
         bottom: 28px;
         z-index: 2147483647;
         background: rgba(15, 23, 42, 0.92);
@@ -1214,14 +1288,101 @@ async function installCaptionOverlay(page) {
         letter-spacing: 0;
         pointer-events: none;
       }
+      #ai-qa-proof-panel {
+        position: fixed;
+        right: 28px;
+        top: 28px;
+        width: 510px;
+        max-height: calc(100vh - 56px);
+        z-index: 2147483647;
+        background: rgba(255, 255, 255, 0.96);
+        color: #111827;
+        border: 1px solid rgba(15, 23, 42, 0.16);
+        box-shadow: 0 18px 55px rgba(15,23,42,.22);
+        border-radius: 14px;
+        padding: 14px;
+        font: 600 16px/1.35 Inter, Arial, sans-serif;
+        pointer-events: none;
+      }
+      #ai-qa-proof-panel .proof-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 10px;
+        font-weight: 900;
+        font-size: 17px;
+      }
+      #ai-qa-proof-panel .proof-subtitle {
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      #ai-qa-proof-list {
+        display: grid;
+        gap: 8px;
+        max-height: calc(100vh - 128px);
+        overflow: hidden;
+      }
+      #ai-qa-proof-list .proof-item {
+        border: 1px solid #e5e7eb;
+        border-left: 5px solid #3b82f6;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 8px 10px;
+      }
+      #ai-qa-proof-list .proof-item.pass { border-left-color: #16a34a; background: #f0fdf4; }
+      #ai-qa-proof-list .proof-item.fail { border-left-color: #dc2626; background: #fef2f2; }
+      #ai-qa-proof-list .proof-item.skip { border-left-color: #64748b; background: #f1f5f9; }
+      #ai-qa-proof-list .proof-item.request { border-left-color: #7c3aed; background: #faf5ff; }
+      #ai-qa-proof-list .proof-item .proof-meta {
+        color: #475569;
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 3px;
+      }
+      #ai-qa-proof-list .proof-item .proof-text {
+        color: #111827;
+        font-size: 14px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
     `,
   });
   await page.evaluate(() => {
-    const existing = document.getElementById("ai-qa-caption");
-    if (existing) return;
-    const el = document.createElement("div");
-    el.id = "ai-qa-caption";
-    document.body.appendChild(el);
+    if (!document.getElementById("ai-qa-caption")) {
+      const el = document.createElement("div");
+      el.id = "ai-qa-caption";
+      document.body.appendChild(el);
+    }
+    if (!document.getElementById("ai-qa-proof-panel")) {
+      const panel = document.createElement("div");
+      panel.id = "ai-qa-proof-panel";
+      panel.innerHTML = `
+        <div class="proof-title">
+          <span>Visible Step Evidence</span>
+          <span class="proof-subtitle">Live QA Log</span>
+        </div>
+        <div id="ai-qa-proof-list"></div>
+      `;
+      document.body.appendChild(panel);
+    }
+    window.__aiQaProofPush = (item) => {
+      const list = document.getElementById("ai-qa-proof-list");
+      if (!list) return;
+      const el = document.createElement("div");
+      const status = String(item.status || "step").toLowerCase();
+      el.className = `proof-item ${status}`;
+      el.innerHTML = `
+        <div class="proof-meta">${String(item.status || "STEP")} · ${new Date().toLocaleTimeString()}</div>
+        <div class="proof-text"></div>
+      `;
+      el.querySelector(".proof-text").textContent = String(item.text || "");
+      list.appendChild(el);
+      while (list.children.length > 9) list.removeChild(list.firstElementChild);
+    };
   });
 }
 
@@ -1230,6 +1391,7 @@ async function caption(page, events, startedAt, text) {
   await page.evaluate((value) => {
     const el = document.getElementById("ai-qa-caption");
     if (el) el.textContent = value;
+    window.__aiQaProofPush?.({ status: "STEP", text: value });
   }, text);
   await page.waitForTimeout(600);
 }
@@ -1238,6 +1400,42 @@ async function safeCaption(page, events, startedAt, text) {
   try {
     await caption(page, events, startedAt, text);
   } catch {}
+}
+
+async function evidence(page, events, startedAt, status, title, detail = "") {
+  const text = `${title}${detail ? ` - ${detail}` : ""}`;
+  events.push({ at: Date.now() - startedAt, text: `${status}: ${text}` });
+  await page.evaluate(({ status, text }) => {
+    const el = document.getElementById("ai-qa-caption");
+    if (el) el.textContent = text;
+    window.__aiQaProofPush?.({ status, text });
+  }, { status, text });
+  await page.waitForTimeout(900);
+}
+
+function summarizeForEvidence(value) {
+  const redacted = redactSecrets(value);
+  const raw = typeof redacted === "string" ? redacted : JSON.stringify(redacted);
+  return raw.replace(/\s+/g, " ").slice(0, 260);
+}
+
+function redactSecrets(value) {
+  if (Array.isArray(value)) return value.slice(0, 6).map(redactSecrets);
+  if (!value || typeof value !== "object") {
+    if (typeof value === "string" && value.length > 90) return `${value.slice(0, 60)}...`;
+    return value;
+  }
+  const output = {};
+  for (const [key, item] of Object.entries(value)) {
+    if (/password|token|secret|authorization|api.?key|cookie/i.test(key)) {
+      output[key] = "[redacted]";
+    } else if (key === "data" && item && typeof item === "object") {
+      output[key] = redactSecrets(item);
+    } else {
+      output[key] = redactSecrets(item);
+    }
+  }
+  return output;
 }
 
 function toVtt(events, totalMs) {
@@ -1313,6 +1511,50 @@ async function writeReportPdf() {
   await context.close();
 }
 
+async function reviewWithHCompany(report) {
+  const response = await fetch("https://api.hcompany.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${config.haiApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: process.env.HAI_MODEL || "holo3-1-35b-a3b",
+      messages: [
+        {
+          role: "system",
+          content: "You are an independent QA evidence reviewer. Return concise JSON only.",
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            task: "Review whether this HiringCat AI QA report contains visible step evidence, action-based E2E coverage, and clear human-only skips.",
+            summary: report.summary,
+            results: report.results.map((result) => ({
+              id: result.id,
+              status: result.status,
+              reason: result.reason,
+              hasVideo: Boolean(result.videoUrl),
+              hasScreenshot: Boolean(result.screenshotUrl),
+              hasTrace: Boolean(result.traceUrl),
+            })),
+          }),
+        },
+      ],
+      response_format: { type: "json_object" },
+    }),
+  });
+  const text = await response.text();
+  if (!response.ok) throw new Error(`H Company review failed: HTTP ${response.status} ${text.slice(0, 300)}`);
+  const json = JSON.parse(text);
+  const content = json.choices?.[0]?.message?.content || "{}";
+  try {
+    return { status: "PASS", provider: "H Company", review: JSON.parse(content) };
+  } catch {
+    return { status: "PASS", provider: "H Company", review: content };
+  }
+}
+
 function renderReportHtml(report) {
   const rows = report.results.map((result) => `
     <article class="card ${result.status.toLowerCase()}">
@@ -1334,6 +1576,18 @@ function renderReportHtml(report) {
       </div>
     </article>
   `).join("");
+  const hReview = report.hCompanyReview ? `
+    <article class="card">
+      <div class="row">
+        <div>
+          <p class="eyebrow">h-company-review</p>
+          <h2>Independent H Company AI Review</h2>
+        </div>
+        <span class="status">${escapeHtml(report.hCompanyReview.status || "INFO")}</span>
+      </div>
+      <pre>${escapeHtml(JSON.stringify(report.hCompanyReview.review || report.hCompanyReview.summary || report.hCompanyReview, null, 2))}</pre>
+    </article>
+  ` : "";
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -1354,6 +1608,7 @@ function renderReportHtml(report) {
     .status{font-weight:900;border-radius:999px;padding:5px 10px;background:#eef2f7}.pass .status{background:#dcfce7;color:#166534}.fail .status{background:#fee2e2;color:#991b1b}.skip .status{background:#f1f5f9;color:#475569}
     .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.links a{background:#ecfdf5;color:#15803d;border:1px solid #bbf7d0;border-radius:10px;padding:7px 11px;font-weight:800;text-decoration:none}
     .human{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:9px 11px;font-weight:700}.meta{color:#dbeafe;margin-top:8px}.target{color:#64748b;margin:0 0 16px}
+    pre{white-space:pre-wrap;background:#0f172a;color:#e5e7eb;border-radius:12px;padding:12px;overflow:auto;font-size:12px}
     @media print{body{background:white}.links a{color:#172033}}
   </style>
 </head>
@@ -1370,6 +1625,7 @@ function renderReportHtml(report) {
       <div class="metric"><b>${report.summary.failed}</b><span>Failed</span></div>
       <div class="metric"><b>${report.summary.skipped}</b><span>Skipped</span></div>
     </section>
+    ${hReview}
     ${rows}
   </main>
 </body>

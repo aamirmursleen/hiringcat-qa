@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "provider": "H Company",
+  "review": {
+    "review": {
+      "step_evidence": true,
+      "action_coverage": true,
+      "human_skips_only": true
+    },
+    "summary": "Report passes all checks."
+  }
+}

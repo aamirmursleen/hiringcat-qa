@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:01.316 --> 00:00:02.316
+HiringCat AI QA - Team & Permissions
+
+2
+00:00:02.151 --> 00:00:03.151
+Running: Team & Permissions
+
+3
+00:00:02.877 --> 00:00:06.192
+Using saved authenticated browser session.
+
+4
+00:00:06.192 --> 00:00:09.730
+Opening Team page and checking member/role surface.
+
+5
+00:00:09.730 --> 00:00:25.484
+Result: PASS - Team page loaded with member/role management surface.

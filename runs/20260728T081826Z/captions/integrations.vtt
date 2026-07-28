@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.745 --> 00:00:01.745
+HiringCat AI QA - Integrations / Webhooks
+
+2
+00:00:01.534 --> 00:00:02.534
+Running: Integrations / Webhooks
+
+3
+00:00:02.167 --> 00:00:05.218
+Using saved authenticated browser session.
+
+4
+00:00:05.218 --> 00:00:08.132
+Opening Integrations / Webhooks and checking visible controls/state.
+
+5
+00:00:08.132 --> 00:00:20.074
+Result: PASS - Integrations / Webhooks surface loaded with expected controls/state text.

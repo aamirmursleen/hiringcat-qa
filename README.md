@@ -57,6 +57,7 @@ npm run qa:ai:deep
 Deep mode creates real QA data in the configured HiringCat test workspace:
 
 - logs in and reuses the same browser session
+- shows a visible proof panel in every video with the current step, request, response, and assertion
 - creates a unique active job
 - verifies the job in dashboard and public careers/apply pages
 - submits a unique candidate application with CV URL and screening answers
@@ -70,6 +71,14 @@ To repeat the destructive core flow more than once in one run:
 ```bash
 DEEP_TEST_REPEAT=2 npm run qa:ai:deep
 ```
+
+Optional H Company review:
+
+```bash
+HAI_REVIEW_EVIDENCE=1 HAI_API_KEY=<private Portal-H key> npm run qa:ai:deep
+```
+
+This keeps Playwright as the deterministic QA runner and uses H Company only as an independent evidence reviewer in the final report. Do not commit `HAI_API_KEY`.
 
 Localhost dashboard E2E:
 

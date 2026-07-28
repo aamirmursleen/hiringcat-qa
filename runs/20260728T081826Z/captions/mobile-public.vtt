@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:01.028 --> 00:00:02.028
+HiringCat AI QA - Mobile Public Pages
+
+2
+00:00:01.855 --> 00:00:02.855
+Running: Mobile Public Pages
+
+3
+00:00:02.511 --> 00:00:06.330
+Using saved authenticated browser session.
+
+4
+00:00:06.330 --> 00:00:10.231
+Switching to mobile viewport and checking careers/apply pages for layout breakage.
+
+5
+00:00:10.231 --> 00:00:12.011
+Result: PASS - Mobile careers/apply pages rendered without horizontal overflow for the created job.

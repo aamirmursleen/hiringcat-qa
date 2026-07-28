@@ -36,6 +36,8 @@ assert(runner.includes("deepMode"), "runner must support deep E2E mode");
 assert(runner.includes("buildDeepJobPayload"), "deep E2E mode must create a real job payload");
 assert(runner.includes("submitQuestionResponses"), "deep E2E mode must submit candidate screening responses");
 assert(runner.includes("HIRINGCAT_AUTH_STATE_PATH"), "runner must support auth state reuse");
+assert(runner.includes("Visible Step Evidence"), "runner must render a visible step evidence panel in videos");
+assert(runner.includes("HAI_API_KEY"), "runner must support optional H Company evidence review through env only");
 
 const scenarioCount = [...runner.matchAll(/id: "/g)].length;
 assert(scenarioCount >= 24, `expected at least 24 scenario entries, found ${scenarioCount}`);
@@ -47,8 +49,11 @@ assert(envExample.includes("SEND_WHATSAPP=0"), ".env.example must default WhatsA
 assert(envExample.includes("QA_HEADLESS=1"), ".env.example must default browser to headless mode");
 assert(envExample.includes("HIRINGCAT_URL=http://localhost:5173"), ".env.example must document localhost target mode");
 assert(envExample.includes("DEEP_TEST_REPEAT=1"), ".env.example must document deep E2E repeat count");
+assert(envExample.includes("HAI_REVIEW_EVIDENCE=0"), ".env.example must default H Company review off");
 assert(!/wsk_(live|test)_[A-Za-z0-9_-]{12,}/.test(runner), "runner must not contain a private WAQueen API key");
 assert(!/wsk_(live|test)_[A-Za-z0-9_-]{12,}/.test(envExample), ".env.example must not contain a private WAQueen API key");
+assert(!/hk-[A-Za-z0-9]{24,}/.test(runner), "runner must not contain a private H Company API key");
+assert(!/hk-[A-Za-z0-9]{24,}/.test(envExample), ".env.example must not contain a private H Company API key");
 
 console.log("AI QA validation passed");
 console.log(`Scenarios: ${scenarioCount}`);

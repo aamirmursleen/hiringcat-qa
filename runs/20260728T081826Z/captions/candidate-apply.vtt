@@ -1,0 +1,125 @@
+WEBVTT
+
+1
+00:00:00.809 --> 00:00:01.809
+HiringCat AI QA - Candidate Apply Flow
+
+2
+00:00:01.602 --> 00:00:02.602
+Running: Candidate Apply Flow
+
+3
+00:00:02.231 --> 00:00:06.776
+Using saved authenticated browser session.
+
+4
+00:00:06.776 --> 00:00:09.650
+Step 1: Open public apply page as candidate.
+
+5
+00:00:09.650 --> 00:00:29.916
+Step 2: Type candidate name/email on the visible apply form when fields are available.
+
+6
+00:00:29.916 --> 00:00:30.916
+STEP: Candidate data prepared - name=AI QA Candidate 082134, email=ai-qa-candidate-1785226894269@example.com, CV=ai-qa-cv.pdf
+
+7
+00:00:30.825 --> 00:00:31.825
+Step 3: Save candidate application draft via public apply API.
+
+8
+00:00:31.433 --> 00:00:32.433
+REQUEST: API POST /api/public/applications - {"jobId":"c7a029ca-cff5-4e69-8aa5-038cca112aa3","candidateName":"AI QA Candidate 082134","candidateEmail":"ai-qa-candidate-1785226894269@example.com","candidatePhone":"+923001112233","candidateResumeUrl":"https://aamirmursleen.github.io/hiringcat-qa/assets/ai-
+
+9
+00:00:32.400 --> 00:00:33.503
+PASS: API response POST /api/public/applications - HTTP 201; {"applicationId":"3783946f-40d5-4c98-8d2c-447700acf10a","token":"[redacted]"}
+
+10
+00:00:33.503 --> 00:00:35.784
+REQUEST: API GET /api/jobs/c7a029ca-cff5-4e69-8aa5-038cca112aa3 - {"orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632"}
+
+11
+00:00:35.784 --> 00:00:37.005
+PASS: API response GET /api/jobs/c7a029ca-cff5-4e69-8aa5-038cca112aa3 - HTTP 200; {"id":"c7a029ca-cff5-4e69-8aa5-038cca112aa3","orgId":"5413bea4-80e3-4d78-b9cd-7933e5db4632","title":"AI QA E2E Job ms4dxdss-1","slug":"ai-qa-e2e-ms4dxdss-1","description":"<p>AI QA E2E Job ms4dxdss-1 created by HiringCat AI deep E2E...","department":"QA Automa
+
+12
+00:00:37.005 --> 00:00:38.091
+STEP: Step 4: Submit screening answers one by one - 5 questions found
+
+13
+00:00:38.091 --> 00:00:39.091
+Answering short_text question: Summarize your QA testing experience.
+
+14
+00:00:38.789 --> 00:00:40.099
+REQUEST: API POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - {"questionId":"6ac98129-70cf-4353-89a1-d554a2e2e9cc","type":"short_text","durationSecs":12,"textValue":"AI QA E2E answer: I can test forms, validations, CV screenin..."}
+
+15
+00:00:40.099 --> 00:00:41.321
+PASS: API response POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - HTTP 200; {"id":"daa0908b-b1b7-46eb-a9c6-ad1acc8caff4","applicationId":"3783946f-40d5-4c98-8d2c-447700acf10a","questionId":"6ac98129-70cf-4353-89a1-d554a2e2e9cc","type":"short_text","videoUrl":null,"audioUrl":null,"fileUrl":null,"textValue":"AI QA E2E answer: I can test
+
+16
+00:00:41.321 --> 00:00:42.321
+Answering video question: Record a short introduction video.
+
+17
+00:00:42.271 --> 00:00:43.661
+REQUEST: API POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - {"questionId":"6930ead3-fc62-4b37-a9c0-a30d519d68fa","type":"video","durationSecs":12,"videoUrl":"https://aamirmursleen.github.io/hiringcat-qa/assets/ai-qa-video.webm","fileSizeBytes":1024}
+
+18
+00:00:43.661 --> 00:00:44.770
+PASS: API response POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - HTTP 200; {"id":"abbf2ca2-96c7-4867-91a4-c2725b42e930","applicationId":"3783946f-40d5-4c98-8d2c-447700acf10a","questionId":"6930ead3-fc62-4b37-a9c0-a30d519d68fa","type":"video","videoUrl":"https://aamirmursleen.github.io/hiringcat-qa/assets/ai-qa-video.webm","audioUrl":
+
+19
+00:00:44.770 --> 00:00:45.770
+Answering file_upload question: Upload one supporting work sample.
+
+20
+00:00:45.603 --> 00:00:46.904
+REQUEST: API POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - {"questionId":"9444b48a-3101-4344-a948-d578c87ba3ac","type":"file_upload","durationSecs":12,"fileUrl":"https://aamirmursleen.github.io/hiringcat-qa/assets/ai-qa-answer.pdf","fileSizeBytes":1024}
+
+21
+00:00:46.904 --> 00:00:48.024
+PASS: API response POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - HTTP 200; {"id":"90d1b571-7ac6-446d-8af8-ef4e46aeb5ea","applicationId":"3783946f-40d5-4c98-8d2c-447700acf10a","questionId":"9444b48a-3101-4344-a948-d578c87ba3ac","type":"file_upload","videoUrl":null,"audioUrl":null,"fileUrl":"https://aamirmursleen.github.io/hiringcat-qa
+
+22
+00:00:48.024 --> 00:00:49.024
+Answering yes_no question: Are you available for a QA interview this week?
+
+23
+00:00:48.845 --> 00:00:50.401
+REQUEST: API POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - {"questionId":"7e7c56fe-8615-4226-99dc-5743ce2c3df7","type":"yes_no","durationSecs":12,"textValue":"yes","choiceValue":["yes"]}
+
+24
+00:00:50.401 --> 00:00:51.478
+PASS: API response POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - HTTP 200; {"id":"b7062aa0-078f-44c6-aea6-7da37b07a5ca","applicationId":"3783946f-40d5-4c98-8d2c-447700acf10a","questionId":"7e7c56fe-8615-4226-99dc-5743ce2c3df7","type":"yes_no","videoUrl":null,"audioUrl":null,"fileUrl":null,"textValue":"yes","numberValue":null,"dateVal
+
+25
+00:00:51.478 --> 00:00:52.478
+Answering rating question: Rate your confidence with E2E testing.
+
+26
+00:00:52.385 --> 00:00:53.782
+REQUEST: API POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - {"questionId":"8cad559f-b13a-4b5e-b13f-87b9c8fdaf54","type":"rating","durationSecs":12,"numberValue":5}
+
+27
+00:00:53.782 --> 00:00:55.121
+PASS: API response POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/responses - HTTP 200; {"id":"1958954c-5def-461d-8721-89776a5b6eb3","applicationId":"3783946f-40d5-4c98-8d2c-447700acf10a","questionId":"8cad559f-b13a-4b5e-b13f-87b9c8fdaf54","type":"rating","videoUrl":null,"audioUrl":null,"fileUrl":null,"textValue":null,"numberValue":5,"dateValue":
+
+28
+00:00:55.121 --> 00:00:56.121
+Step 5: Final-submit candidate application and verify completion response.
+
+29
+00:00:55.837 --> 00:00:57.499
+REQUEST: API POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/submit - {}
+
+30
+00:00:57.499 --> 00:00:58.634
+PASS: API response POST /api/public/applications/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbklkIjoiMzc4Mzk0NmYtNDBkNS00Yzk4LThkMmMtNDQ3NzAwYWNmMTBhIiwiam9iSWQiOiJjN2EwMjljYS1jZmY1LTRlNjktOGFhNS0wMzhjY2ExMTJhYTMiLCJzY29wZSI6ImFwcGx5IiwiaWF0IjoxNzg1MjI2OTE5LCJleHAiOjE3ODUzMTMzMTl9.e1zNyRobtPL5qLoH2GNDL52pNYTzZwQmaPXCttTJ4wk/submit - HTTP 200; {"thankYouMessage":"Thank you. AI QA deep E2E application has been submitted.","redirectUrl":null,"nextStep":"done"}
+
+31
+00:00:58.634 --> 00:01:38.956
+Result: PASS - Candidate ai-qa-candidate-1785226894269@example.com applied and final submit returned completion.
