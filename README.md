@@ -65,6 +65,7 @@ QA_HEADLESS=0 HIRINGCAT_LOGIN_INTERACTIVE=1 HIRINGCAT_URL=http://localhost:5173 
 ```
 
 The browser will stay open long enough for a human to enter the code, then the AI runner continues the dashboard checks.
+If the code is already available, pass it once with `HIRINGCAT_LOGIN_CODE=123456`; the runner saves the authenticated browser state for that run and reuses it across dashboard sections.
 
 Run output is written to:
 

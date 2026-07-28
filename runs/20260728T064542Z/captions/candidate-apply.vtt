@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.603 --> 00:00:01.603
+HiringCat AI QA - Candidate Apply Flow
+
+2
+00:00:01.365 --> 00:00:02.365
+Running: Candidate Apply Flow
+
+3
+00:00:01.999 --> 00:00:04.455
+Opening public URL: https://hiringcat.com/apply/fhd/backend
+
+4
+00:00:04.455 --> 00:00:06.442
+Result: PASS - Public route loaded with HTTP 200.

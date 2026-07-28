@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.902 --> 00:00:01.902
+HiringCat AI QA - Onboarding / Organization Setup
+
+2
+00:00:01.667 --> 00:00:02.667
+Running: Onboarding / Organization Setup
+
+3
+00:00:02.290 --> 00:00:03.290
+Using saved authenticated browser session.
+
+4
+00:00:02.927 --> 00:00:06.397
+Opening authenticated URL: https://hiringcat.com/dashboard/onboarding
+
+5
+00:00:06.397 --> 00:00:13.160
+Result: PASS - Onboarding / Organization Setup route loaded after login.

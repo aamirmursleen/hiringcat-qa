@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.718 --> 00:00:01.718
+HiringCat AI QA - Branding / Careers Settings
+
+2
+00:00:01.498 --> 00:00:02.498
+Running: Branding / Careers Settings
+
+3
+00:00:02.123 --> 00:00:03.123
+Using saved authenticated browser session.
+
+4
+00:00:02.772 --> 00:00:05.686
+Opening authenticated URL: https://hiringcat.com/dashboard/settings/branding
+
+5
+00:00:05.686 --> 00:00:11.279
+Result: PASS - Branding / Careers Settings route loaded after login.

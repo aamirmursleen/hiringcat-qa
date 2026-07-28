@@ -30,6 +30,8 @@ const config = {
   waqueenMessagesUrl: process.env.WAQUEEN_MESSAGES_URL || "https://waqueen.com/api/v1/messages",
   headless: process.env.QA_HEADLESS !== "0",
   interactiveLogin: process.env.HIRINGCAT_LOGIN_INTERACTIVE === "1",
+  loginCode: process.env.HIRINGCAT_LOGIN_CODE || "",
+  loginCodeStdin: process.env.HIRINGCAT_LOGIN_STDIN === "1",
   loginWaitMs: Number(process.env.HIRINGCAT_LOGIN_WAIT_MS || 180_000),
 };
 
@@ -41,6 +43,7 @@ const screenshotsDir = path.join(runDir, "screenshots");
 const tracesDir = path.join(runDir, "traces");
 const captionsDir = path.join(runDir, "captions");
 const rawVideoDir = path.join(runDir, "raw-videos");
+const authStatePath = path.join(runDir, "auth-state.json");
 await fs.mkdir(videosDir, { recursive: true });
 await fs.mkdir(screenshotsDir, { recursive: true });
 await fs.mkdir(tracesDir, { recursive: true });
@@ -54,6 +57,9 @@ const browser = await chromium.launch({ headless: config.headless });
 const results = [];
 
 try {
+  if (config.email && config.password && config.loginCode) {
+    await ensureAuthState(browser);
+  }
   for (const section of selectedSections) {
     const result = await runSection(browser, section);
     results.push(result);
@@ -96,13 +102,17 @@ console.log(`Public report after push: ${publicUrl("report.html")}`);
 
 async function runSection(browserInstance, section) {
   const startedAt = Date.now();
-  const context = await browserInstance.newContext({
+  const contextOptions = {
     viewport: { width: 1920, height: 1080 },
     recordVideo: {
       dir: rawVideoDir,
       size: { width: 1920, height: 1080 },
     },
-  });
+  };
+  if (section.authenticatedRoute && section.id !== "login-signup" && await fileExists(authStatePath)) {
+    contextOptions.storageState = authStatePath;
+  }
+  const context = await browserInstance.newContext(contextOptions);
   await context.tracing.start({ screenshots: true, snapshots: true, sources: false });
   const page = await context.newPage();
   const captionEvents = [];
@@ -285,8 +295,15 @@ async function testPublicRoute(page, section, captionEvents, startedAt) {
 }
 
 async function testAuthenticatedRoute(page, section, captionEvents, startedAt) {
-  await caption(page, captionEvents, startedAt, "Logging into HiringCat with private test credentials.");
-  await login(page);
+  if (!(await fileExists(authStatePath))) {
+    await caption(page, captionEvents, startedAt, "Logging into HiringCat with private test credentials.");
+    await login(page);
+    if (await waitForDashboardReady(page)) {
+      await page.context().storageState({ path: authStatePath });
+    }
+  } else {
+    await caption(page, captionEvents, startedAt, "Using saved authenticated browser session.");
+  }
   const target = resolveSectionUrl(section);
   await caption(page, captionEvents, startedAt, `Opening authenticated URL: ${target}`);
   const response = await page.goto(target, { waitUntil: "domcontentloaded", timeout: 45_000 });
@@ -328,6 +345,29 @@ async function testAuthenticatedRoute(page, section, captionEvents, startedAt) {
   };
 }
 
+async function ensureAuthState(browserInstance) {
+  if (await fileExists(authStatePath)) return;
+  const context = await browserInstance.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await context.newPage();
+  try {
+    await login(page);
+    if (!/dashboard/i.test(page.url())) {
+      await page.goto(`${config.hiringcatUrl}/dashboard`, { waitUntil: "domcontentloaded", timeout: 30_000 }).catch(() => {});
+    }
+    const bodyText = await page.locator("body").innerText({ timeout: 5000 }).catch(() => "");
+    if (await waitForDashboardReady(page) && !hasAuthFormOrError(bodyText)) {
+      await context.storageState({ path: authStatePath });
+      console.log("Saved authenticated browser state for this QA run.");
+      return;
+    }
+    const finalUrl = page.url();
+    const finalText = (await page.locator("body").innerText({ timeout: 5000 }).catch(() => "")).replace(/\s+/g, " ").slice(0, 700);
+    throw new Error(`Could not save auth state because login did not reach dashboard. Final URL: ${finalUrl}. Page text: ${finalText}`);
+  } finally {
+    await context.close().catch(() => {});
+  }
+}
+
 async function login(page) {
   await page.goto(`${config.hiringcatUrl}/sign-in`, { waitUntil: "domcontentloaded", timeout: 45_000 });
   const initialBody = await page.locator("body").innerText({ timeout: 5000 }).catch(() => "");
@@ -345,25 +385,74 @@ async function login(page) {
     'input[type="password"]',
     'input[autocomplete="current-password"]',
   ], config.password);
-  await passwordInput.press("Enter");
+  await page.locator("form button[type='submit']").first().click({ timeout: 10_000 }).catch(async () => {
+    await passwordInput.press("Enter");
+  });
   await page.waitForLoadState("domcontentloaded").catch(() => {});
-  await page.waitForTimeout(3500);
+  await waitForLoginAdvance(page);
+}
 
-  if (/dashboard/i.test(page.url())) return;
-
-  const bodyText = await page.locator("body").innerText({ timeout: 5000 }).catch(() => "");
-  if (/verification code|verify.*email|enter.*code|we sent.*code/i.test(bodyText)) {
-    if (!config.interactiveLogin) {
-      throw new Error("Login requires an email/OTP verification code. Re-run with QA_HEADLESS=0 and HIRINGCAT_LOGIN_INTERACTIVE=1 so a human can enter the code.");
+async function waitForLoginAdvance(page) {
+  const deadline = Date.now() + 35_000;
+  let lastText = "";
+  while (Date.now() < deadline) {
+    await page.waitForTimeout(1000);
+    if (await waitForDashboardReady(page)) return;
+    const bodyText = await page.locator("body").innerText({ timeout: 5000 }).catch(() => "");
+    lastText = bodyText.replace(/\s+/g, " ").slice(0, 700);
+    if (/verification code|verify.*email|enter.*code|we sent.*code|Check your email/i.test(bodyText)) {
+      await completeVerificationCode(page);
+      return;
     }
-    console.log(`Interactive login required. Enter the code in the browser within ${Math.round(config.loginWaitMs / 1000)} seconds.`);
-    await page.waitForURL("**/dashboard**", { timeout: config.loginWaitMs });
-    return;
+    if (/Couldn't find your account|Could not find your account|could not sign in|check your email and password|invalid password|incorrect password|unauthorized/i.test(bodyText)) {
+      throw new Error(`Login failed with an invalid credential or authorization error. Page text: ${lastText}`);
+    }
   }
+  throw new Error(`Login did not advance to dashboard or OTP screen after submit. Last page text: ${lastText}`);
+}
 
-  if (hasAuthFormOrError(bodyText)) {
-    throw new Error("Login failed with an invalid credential or authorization error.");
+async function completeVerificationCode(page) {
+  const code = config.loginCode || (config.loginCodeStdin ? await readOtpFromStdin() : "");
+  if (code) {
+    await page.locator('input[autocomplete="one-time-code"], input[inputmode="numeric"], input[type="text"]').first().fill(code);
+    await page.locator("form button[type='submit']").first().click({ timeout: 10_000 });
+    await page.waitForLoadState("domcontentloaded").catch(() => {});
+    await page.waitForTimeout(3000);
+    if (await waitForDashboardReady(page)) return;
+    const bodyText = await page.locator("body").innerText({ timeout: 5000 }).catch(() => "");
+    throw new Error(`Verification code was submitted but dashboard did not load. Page text: ${bodyText.replace(/\s+/g, " ").slice(0, 700)}`);
   }
+  if (!config.interactiveLogin) {
+    throw new Error("Login requires an email/OTP verification code. Re-run with QA_HEADLESS=0 and HIRINGCAT_LOGIN_INTERACTIVE=1 so a human can enter the code.");
+  }
+  console.log(`Interactive login required. Enter the code in the browser within ${Math.round(config.loginWaitMs / 1000)} seconds.`);
+  await page.waitForURL("**/dashboard**", { timeout: config.loginWaitMs });
+}
+
+async function readOtpFromStdin() {
+  process.stdout.write("OTP_REQUIRED Enter verification code, then press Enter: ");
+  return new Promise((resolve) => {
+    const onData = (chunk) => {
+      process.stdin.off("data", onData);
+      resolve(String(chunk).trim().replace(/\s+/g, ""));
+    };
+    process.stdin.on("data", onData);
+    process.stdin.resume();
+  });
+}
+
+async function waitForDashboardReady(page) {
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    await page.waitForTimeout(1000);
+    const url = page.url();
+    const text = await page.locator("body").innerText({ timeout: 3000 }).catch(() => "");
+    if (hasAuthFormOrError(text)) return false;
+    if (/dashboard/i.test(url) && /Dashboard|Overview|Jobs|Candidates|Settings|Analytics|Workspace|Create job/i.test(text) && !/^Loading\.\.\.?$/i.test(text.trim())) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function preflightSection(section) {
@@ -713,6 +802,15 @@ async function loadEnv(filePath) {
       if (key && process.env[key] === undefined) process.env[key] = value;
     });
   } catch {}
+}
+
+async function fileExists(filePath) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function envUrl(name, fallback) {

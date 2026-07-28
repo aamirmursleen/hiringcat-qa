@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.837 --> 00:00:01.837
+HiringCat AI QA - Analytics
+
+2
+00:00:01.564 --> 00:00:02.564
+Running: Analytics
+
+3
+00:00:02.279 --> 00:00:03.279
+Using saved authenticated browser session.
+
+4
+00:00:02.913 --> 00:00:06.094
+Opening authenticated URL: https://hiringcat.com/dashboard/analytics
+
+5
+00:00:06.094 --> 00:00:13.331
+Result: PASS - Analytics route loaded after login.

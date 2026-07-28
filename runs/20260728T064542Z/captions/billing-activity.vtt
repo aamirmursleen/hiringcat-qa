@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.743 --> 00:00:01.743
+HiringCat AI QA - Billing / Activity / Notifications
+
+2
+00:00:01.531 --> 00:00:02.531
+Running: Billing / Activity / Notifications
+
+3
+00:00:02.161 --> 00:00:03.161
+Using saved authenticated browser session.
+
+4
+00:00:02.804 --> 00:00:05.671
+Opening authenticated URL: https://hiringcat.com/dashboard/billing
+
+5
+00:00:05.671 --> 00:00:12.771
+Result: PASS - Billing / Activity / Notifications route loaded after login.

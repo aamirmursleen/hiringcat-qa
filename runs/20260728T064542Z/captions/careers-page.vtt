@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.521 --> 00:00:01.521
+HiringCat AI QA - Public Careers Page
+
+2
+00:00:01.281 --> 00:00:02.281
+Running: Public Careers Page
+
+3
+00:00:01.918 --> 00:00:04.166
+Opening public URL: https://hiringcat.com/careers/fhd
+
+4
+00:00:04.166 --> 00:00:05.781
+Result: PASS - Public route loaded with HTTP 200.

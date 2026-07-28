@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.937 --> 00:00:01.937
+HiringCat AI QA - Login / Signup
+
+2
+00:00:01.791 --> 00:00:02.791
+Running: Login / Signup
+
+3
+00:00:02.543 --> 00:06:04.229
+Logging into HiringCat with private test credentials.
+
+4
+00:06:04.229 --> 00:06:07.881
+Opening authenticated URL: https://hiringcat.com/dashboard
+
+5
+00:06:07.881 --> 00:06:36.023
+Result: PASS - Login / Signup route loaded after login.

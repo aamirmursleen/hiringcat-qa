@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.829 --> 00:00:01.829
+HiringCat AI QA - SMTP Settings
+
+2
+00:00:01.616 --> 00:00:02.616
+Running: SMTP Settings
+
+3
+00:00:02.241 --> 00:00:03.241
+Using saved authenticated browser session.
+
+4
+00:00:02.909 --> 00:00:06.342
+Opening authenticated URL: https://hiringcat.com/dashboard/settings/smtp
+
+5
+00:00:06.342 --> 00:00:12.992
+Result: PASS - SMTP Settings route loaded after login.

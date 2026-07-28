@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:01.119 --> 00:00:02.119
+HiringCat AI QA - Application Form Fields
+
+2
+00:00:01.859 --> 00:00:02.859
+Running: Application Form Fields
+
+3
+00:00:02.516 --> 00:00:03.516
+Using saved authenticated browser session.
+
+4
+00:00:03.171 --> 00:00:06.637
+Opening authenticated URL: https://hiringcat.com/dashboard/jobs
+
+5
+00:00:06.637 --> 00:00:16.497
+Result: PASS - Application Form Fields route loaded after login.

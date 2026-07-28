@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:01.158 --> 00:00:02.158
+HiringCat AI QA - Team & Permissions
+
+2
+00:00:01.999 --> 00:00:02.999
+Running: Team & Permissions
+
+3
+00:00:02.656 --> 00:00:03.656
+Using saved authenticated browser session.
+
+4
+00:00:03.372 --> 00:00:06.613
+Opening authenticated URL: https://hiringcat.com/dashboard/team
+
+5
+00:00:06.613 --> 00:00:12.059
+Result: PASS - Team & Permissions route loaded after login.

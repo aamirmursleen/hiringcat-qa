@@ -5,3 +5,4 @@ node_modules/
 tmp/
 playwright-report/
 runs/*/raw-videos/
+runs/*/auth-state.json

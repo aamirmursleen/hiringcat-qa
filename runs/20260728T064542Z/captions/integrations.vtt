@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.798 --> 00:00:01.798
+HiringCat AI QA - Integrations / Webhooks
+
+2
+00:00:01.574 --> 00:00:02.574
+Running: Integrations / Webhooks
+
+3
+00:00:02.233 --> 00:00:03.233
+Using saved authenticated browser session.
+
+4
+00:00:02.865 --> 00:00:06.044
+Opening authenticated URL: https://hiringcat.com/dashboard/settings/integrations
+
+5
+00:00:06.044 --> 00:00:12.177
+Result: PASS - Integrations / Webhooks route loaded after login.

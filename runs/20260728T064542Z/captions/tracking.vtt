@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.744 --> 00:00:01.744
+HiringCat AI QA - Facebook Pixel / Tracking
+
+2
+00:00:01.505 --> 00:00:02.505
+Running: Facebook Pixel / Tracking
+
+3
+00:00:02.141 --> 00:00:03.141
+Using saved authenticated browser session.
+
+4
+00:00:02.772 --> 00:00:05.915
+Opening authenticated URL: https://hiringcat.com/dashboard/settings/tracking
+
+5
+00:00:05.915 --> 00:00:14.435
+Result: PASS - Facebook Pixel / Tracking route loaded after login.

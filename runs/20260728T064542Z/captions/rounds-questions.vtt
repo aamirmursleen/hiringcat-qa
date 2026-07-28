@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.890 --> 00:00:01.890
+HiringCat AI QA - Rounds / Questions
+
+2
+00:00:01.628 --> 00:00:02.628
+Running: Rounds / Questions
+
+3
+00:00:02.274 --> 00:00:03.274
+Using saved authenticated browser session.
+
+4
+00:00:02.909 --> 00:00:06.869
+Opening authenticated URL: https://hiringcat.com/dashboard/jobs
+
+5
+00:00:06.869 --> 00:00:16.111
+Result: PASS - Rounds / Questions route loaded after login.

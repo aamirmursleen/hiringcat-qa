@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.839 --> 00:00:01.839
+HiringCat AI QA - Emails / Inbox / Templates
+
+2
+00:00:01.589 --> 00:00:02.589
+Running: Emails / Inbox / Templates
+
+3
+00:00:02.237 --> 00:00:03.237
+Using saved authenticated browser session.
+
+4
+00:00:02.910 --> 00:00:06.262
+Opening authenticated URL: https://hiringcat.com/dashboard/settings/emails
+
+5
+00:00:06.262 --> 00:00:14.110
+Result: PASS - Emails / Inbox / Templates route loaded after login.

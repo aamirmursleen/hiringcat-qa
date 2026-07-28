@@ -1,0 +1,9 @@
+WEBVTT
+
+1
+00:00:00.610 --> 00:00:01.610
+HiringCat AI QA - Gmail Email Delivery
+
+2
+00:00:01.482 --> 00:00:03.361
+Result: SKIP - AI has no Gmail/test inbox access in this run. Human must verify received email delivery.

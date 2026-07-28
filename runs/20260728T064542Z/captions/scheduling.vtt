@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.805 --> 00:00:01.805
+HiringCat AI QA - Scheduling
+
+2
+00:00:01.535 --> 00:00:02.535
+Running: Scheduling
+
+3
+00:00:02.229 --> 00:00:03.229
+Using saved authenticated browser session.
+
+4
+00:00:02.883 --> 00:00:05.807
+Opening authenticated URL: https://hiringcat.com/dashboard/scheduling
+
+5
+00:00:05.807 --> 00:00:11.446
+Result: PASS - Scheduling route loaded after login.

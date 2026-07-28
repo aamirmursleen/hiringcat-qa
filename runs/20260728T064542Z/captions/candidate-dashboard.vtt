@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.819 --> 00:00:01.819
+HiringCat AI QA - Candidate Dashboard / Pipeline
+
+2
+00:00:01.708 --> 00:00:02.708
+Running: Candidate Dashboard / Pipeline
+
+3
+00:00:02.377 --> 00:00:03.377
+Using saved authenticated browser session.
+
+4
+00:00:03.026 --> 00:00:06.056
+Opening authenticated URL: https://hiringcat.com/dashboard/candidates
+
+5
+00:00:06.056 --> 00:00:12.636
+Result: PASS - Candidate Dashboard / Pipeline route loaded after login.

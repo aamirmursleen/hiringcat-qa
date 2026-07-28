@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.669 --> 00:00:01.669
+HiringCat AI QA - CV Upload + Video/Text Screening
+
+2
+00:00:01.478 --> 00:00:02.478
+Running: CV Upload + Video/Text Screening
+
+3
+00:00:02.132 --> 00:00:04.967
+Opening public URL: https://hiringcat.com/apply/fhd/backend
+
+4
+00:00:04.967 --> 00:00:06.604
+Result: PASS - Public route loaded with HTTP 200.

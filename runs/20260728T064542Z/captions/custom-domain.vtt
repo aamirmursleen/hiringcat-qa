@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.729 --> 00:00:01.729
+HiringCat AI QA - Custom Domain
+
+2
+00:00:01.518 --> 00:00:02.518
+Running: Custom Domain
+
+3
+00:00:02.164 --> 00:00:03.164
+Using saved authenticated browser session.
+
+4
+00:00:02.811 --> 00:00:06.528
+Opening authenticated URL: https://hiringcat.com/dashboard/settings/domain
+
+5
+00:00:06.528 --> 00:00:13.988
+Result: PASS - Custom Domain route loaded after login.

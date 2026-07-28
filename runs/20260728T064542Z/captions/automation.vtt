@@ -1,0 +1,21 @@
+WEBVTT
+
+1
+00:00:00.860 --> 00:00:01.860
+HiringCat AI QA - Automation Rules
+
+2
+00:00:01.656 --> 00:00:02.656
+Running: Automation Rules
+
+3
+00:00:02.287 --> 00:00:03.287
+Using saved authenticated browser session.
+
+4
+00:00:02.942 --> 00:00:05.981
+Opening authenticated URL: https://hiringcat.com/dashboard/settings/automation
+
+5
+00:00:05.981 --> 00:00:11.754
+Result: PASS - Automation Rules route loaded after login.
