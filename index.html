@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HiringCat QA Daily Checklist</title>
+  <title>HiringCat QA Do-or-Die Checklist</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -527,7 +527,7 @@
 <body>
   <div class="hero">
     <h1>HiringCat QA Checklist</h1>
-    <p class="tagline" id="heroTagline">Hi QA Tester! Daily testing checklist</p>
+    <p class="tagline" id="heroTagline">Hi QA Tester! 1-hour do-or-die checklist</p>
     <div class="date-pill" id="dateBar"></div>
   </div>
 
@@ -575,10 +575,6 @@
         <small>Example: hiringcat.com/apply/your-company/frontend-developer</small>
       </div>
       <div class="field">
-        <label for="customDomain">Custom domain</label>
-        <input id="customDomain" data-config="customDomain" type="url" placeholder="https://careers.company.com">
-      </div>
-      <div class="field">
         <label for="testEmail">Test email</label>
         <input id="testEmail" data-config="testEmail" type="email" placeholder="qa@example.com">
       </div>
@@ -623,7 +619,7 @@
       testEmail: ""
     };
 
-    const SECTIONS = [
+    const FULL_SECTIONS = [
       {
         id: "login",
         title: "Login / Signup",
@@ -1440,6 +1436,189 @@
       }
     ];
 
+    const SECTIONS = [
+      {
+        id: "create-publish-job",
+        title: "Create + Publish Job",
+        subtitle: "Admin creates the hiring post",
+        colors: ["#7c3aed", "#a78bfa"],
+        intro: "Do-or-die start yahan se hai. Tester already login hoga, isliye login ko separate task count nahi karna.",
+        tasks: [
+          {
+            title: "Create a real QA job and publish it",
+            links: [{ label: "New Job", url: "{{appBase}}/dashboard/jobs/new", type: "dashboard" }, { label: "Jobs List", url: "{{appBase}}/dashboard/jobs", type: "dashboard" }],
+            steps: [
+              "Create a fresh QA job with title, description, location, and job type.",
+              "Try saving/publishing with one required field missing, then fix it.",
+              "Publish the job.",
+              "Open jobs list and find the same QA job."
+            ],
+            expected: "Required-field validation works, job publishes successfully, and the job appears as Open/Live without duplicate records."
+          }
+        ]
+      },
+      {
+        id: "public-careers",
+        title: "Public Careers Page",
+        subtitle: "Published job visible to candidates",
+        colors: ["#0891b2", "#22d3ee"],
+        intro: "Candidate ko job public page par nazar aani chahiye. Agar public job visible nahi, hiring flow fail hai.",
+        tasks: [
+          {
+            title: "Verify published job on careers page",
+            links: [{ label: "Careers Page", url: "{{careersUrl}}", type: "public" }],
+            steps: [
+              "Open careers page in logged-out/incognito browser.",
+              "Find the QA job created in previous step.",
+              "Open the job card or apply button.",
+              "Confirm it goes to the correct apply page."
+            ],
+            expected: "Published job is visible publicly, draft/closed jobs are not shown as open, and apply link opens the correct job."
+          }
+        ]
+      },
+      {
+        id: "candidate-apply-cv",
+        title: "Candidate Apply + CV Upload",
+        subtitle: "Candidate submits profile and resume",
+        colors: ["#dc2626", "#fb7185"],
+        intro: "Yeh candidate side ka core form hai. Name/email/CV ke baghair HiringCat ka main purpose complete nahi hota.",
+        tasks: [
+          {
+            title: "Submit candidate application with CV",
+            links: [{ label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Open apply page as a logged-out candidate.",
+              "Submit once with missing required field and confirm error.",
+              "Fill name, email, phone, consent, and upload a valid test CV.",
+              "Continue or submit the application."
+            ],
+            expected: "Missing required fields block submit. Valid candidate data and CV submit successfully and move to next step or completion screen."
+          }
+        ]
+      },
+      {
+        id: "screening-questions",
+        title: "Screening Questions",
+        subtitle: "Text/video/audio questions submit",
+        colors: ["#4338ca", "#818cf8"],
+        intro: "Screening HiringCat ka filtering part hai. Required question submit nahi hota to candidate journey incomplete hai.",
+        tasks: [
+          {
+            title: "Complete available screening questions",
+            links: [{ label: "Apply Page", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Continue from candidate application into screening.",
+              "Answer available text/video/audio questions.",
+              "Try leaving one required answer empty if possible.",
+              "Submit final screening."
+            ],
+            expected: "Required questions are enforced, media/text answer saves, and final submit shows success/completion."
+          }
+        ]
+      },
+      {
+        id: "candidate-dashboard",
+        title: "HR Candidate Dashboard / Pipeline",
+        subtitle: "HR verifies and manages applicant",
+        colors: ["#0e7490", "#67e8f9"],
+        intro: "Candidate submit hone ke baad HR dashboard mein record aana lazmi hai. Yeh main verification point hai.",
+        tasks: [
+          {
+            title: "Find candidate and update pipeline",
+            links: [{ label: "Candidates", url: "{{appBase}}/dashboard/candidates", type: "dashboard" }, { label: "Jobs List", url: "{{appBase}}/dashboard/jobs", type: "dashboard" }],
+            steps: [
+              "Open candidates or the QA job pipeline.",
+              "Search the candidate by test email/name.",
+              "Open candidate profile and verify CV/answers are visible.",
+              "Add note and change stage/status or shortlist/reject."
+            ],
+            expected: "Candidate appears under the correct job, CV/answers load, and note/stage/status changes persist after refresh."
+          }
+        ]
+      },
+      {
+        id: "automation-rules",
+        title: "Automation Rules",
+        subtitle: "Trigger/action rule sanity check",
+        colors: ["#ca8a04", "#fde047"],
+        intro: "Automation do-or-die mein is liye rakhi hai kyun ke boss ne specifically bola. Sirf basic working rule test karna hai, full edge cases nahi.",
+        tasks: [
+          {
+            title: "Create, trigger, toggle, and delete a QA rule",
+            links: [{ label: "Automation", url: "{{appBase}}/dashboard/settings/automation", type: "settings" }],
+            steps: [
+              "Create a test rule for application submitted or stage changed.",
+              "Trigger the rule using a test candidate/stage action.",
+              "Turn rule off and confirm it does not run for another matching action.",
+              "Delete the QA rule after test."
+            ],
+            expected: "Rule saves, on rule runs once, off rule does not run, logs/status are clear, and deleted rule no longer appears."
+          }
+        ]
+      },
+      {
+        id: "smtp-settings",
+        title: "SMTP Settings",
+        subtitle: "Email sender validation",
+        colors: ["#334155", "#94a3b8"],
+        intro: "SMTP private credentials public form mein nahi likhne. Tester sirf private data se validation aur test email behavior check kare.",
+        tasks: [
+          {
+            title: "Validate SMTP save and test email behavior",
+            links: [{ label: "SMTP Settings", url: "{{appBase}}/dashboard/settings/smtp", type: "settings" }],
+            steps: [
+              "Open SMTP settings.",
+              "Try wrong SMTP host/port or username and send test email.",
+              "Restore correct private SMTP config if team provides it.",
+              "Confirm password remains hidden and test email status is clear."
+            ],
+            expected: "Wrong SMTP details show a clear error. Correct details save securely, password is not plain text, and test email only shows success when actually sent."
+          }
+        ]
+      },
+      {
+        id: "scheduling-email-smoke",
+        title: "Scheduling / Email Basic Check",
+        subtitle: "Candidate communication smoke test",
+        colors: ["#1d4ed8", "#93c5fd"],
+        intro: "1-hour QA mein yahan deep inbox verification nahi karni. Sirf link/action broken nahi hona chahiye.",
+        tasks: [
+          {
+            title: "Try basic schedule or candidate email action",
+            links: [{ label: "Scheduling", url: "{{appBase}}/dashboard/scheduling", type: "dashboard" }, { label: "Email Templates", url: "{{appBase}}/dashboard/settings/emails", type: "settings" }],
+            steps: [
+              "Open scheduling or candidate communication page.",
+              "Try creating/sending a safe test schedule/email action.",
+              "Check success, error, or disabled state.",
+              "If inbox/DNS/SMTP access is missing, write Skip reason clearly."
+            ],
+            expected: "Scheduling/email action is not broken. If external inbox or private config is needed, tester marks Skip with exact reason."
+          }
+        ]
+      },
+      {
+        id: "mobile-apply",
+        title: "Mobile Apply Page",
+        subtitle: "Candidate flow on phone viewport",
+        colors: ["#0369a1", "#7dd3fc"],
+        intro: "Mobile candidate experience do-or-die hai. Candidate phone par apply nahi kar sakta to public flow fail samjho.",
+        tasks: [
+          {
+            title: "Check public careers/apply page on mobile",
+            links: [{ label: "Careers", url: "{{careersUrl}}", type: "public" }, { label: "Apply", url: "{{applyUrl}}", type: "public" }],
+            steps: [
+              "Open careers and apply pages in mobile viewport.",
+              "Scroll top to bottom.",
+              "Fill basic candidate fields.",
+              "Confirm buttons, inputs, and CV upload controls are tappable."
+            ],
+            expected: "No horizontal scroll, no overlapping text, and the candidate can use the main apply form on mobile."
+          }
+        ]
+      }
+    ];
+
     const ALL_SECTIONS = SECTIONS.map((section) => section.id);
 
     function normalizeBase(url) {
@@ -1581,7 +1760,7 @@
     function updateHero() {
       const config = getConfig();
       const name = config.testerName || "QA Tester";
-      document.getElementById("heroTagline").textContent = `Hi ${name}! Daily testing checklist`;
+      document.getElementById("heroTagline").textContent = `Hi ${name}! 1-hour do-or-die checklist`;
     }
 
     function updateDynamicLinks() {

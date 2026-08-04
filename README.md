@@ -1,10 +1,10 @@
 # HiringCat QA Checklist
 
-Static GitHub Pages QA checklist for HiringCat.
+Static GitHub Pages QA checklist for HiringCat. The public checklist is scoped to a 1-hour do-or-die manual QA pass.
 
 ## Files
 
-- `index.html` - complete QA page with sections, checkboxes, Pass/Fail/Skip, notes, localStorage progress, copy report, and PDF download.
+- `index.html` - 1-hour do-or-die QA page with sections, checkboxes, Pass/Fail/Skip, notes, localStorage progress, copy report, and PDF download.
 - `scripts/ai-qa-runner.mjs` - Playwright-based AI QA runner that records HD evidence, adds visible captions, generates report HTML/PDF, and can send the report through WAQueen.
 - `.env.example` - safe config template. Never commit real passwords or API keys.
 
