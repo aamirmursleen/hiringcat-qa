@@ -1438,6 +1438,28 @@
 
     const SECTIONS = [
       {
+        id: "daily-new-account-first-job",
+        title: "Create New Account + Publish First Job",
+        subtitle: "Daily fresh signup and onboarding smoke test",
+        colors: ["#16a34a", "#4ade80"],
+        intro: "Har roz fresh account se yeh first task karein. Is se signup, onboarding, organization setup aur first job publish flow ek sath verify ho jata hai.",
+        tasks: [
+          {
+            title: "Create a new daily account and publish first job",
+            links: [{ label: "Sign Up", url: "{{appBase}}/sign-up", type: "dashboard" }, { label: "Jobs List", url: "{{appBase}}/dashboard/jobs", type: "dashboard" }, { label: "Careers Page", url: "{{careersUrl}}", type: "public" }],
+            steps: [
+              "Open HiringCat signup in a fresh/incognito browser.",
+              "Create a new account using today's private test email.",
+              "Complete company/organization setup.",
+              "Create the first job with title, description, location, and job type.",
+              "Publish the job.",
+              "Verify the job appears in jobs list and public careers page."
+            ],
+            expected: "New account signup, organization setup, first job creation, and publish flow complete successfully. Job shows Open/Live in dashboard and is visible on public careers page."
+          }
+        ]
+      },
+      {
         id: "create-publish-job",
         title: "Create + Publish Job",
         subtitle: "Admin creates the hiring post",
